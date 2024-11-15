@@ -1,16 +1,16 @@
-DROP TABLE CrecimientoUsuarios;
-DROP TABLE Users;
-DROP TABLE UsersSessions;
-DROP TABLE Countries
-DROP TABLE Cities;
-DROP TABLE Locations;
-DROP TABLE EscapeRooms;
-DROP TABLE Clue;
-DROP TABLE Participations;
-DROP TABLE UsersParticipations;
+DROP TABLE IF EXISTS CrecimientoUsuarios;
+DROP TABLE IF EXISTS UsersParticipations;
+DROP TABLE IF EXISTS UsersSessions;
+DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Participations;
+DROP TABLE IF EXISTS Clue;
+DROP TABLE IF EXISTS EscapeRooms;
+DROP TABLE IF EXISTS Locations;
+DROP TABLE IF EXISTS Cities;
+DROP TABLE IF EXISTS Countries;
 
 CREATE TABLE IF NOT EXISTS CrecimientoUsuarios(
-    id SERIAL PRIMARY KEY
+    id SERIAL PRIMARY KEY,
     info_date DATE,
     n_usuarios INTEGER,
     crecimiento INTEGER
@@ -20,29 +20,29 @@ CREATE TABLE IF NOT EXISTS Users(
     id SERIAL PRIMARY KEY,
     email VARCHAR(64) NOT NULL UNIQUE,
     username VARCHAR(64) NOT NULL UNIQUE,
-    passwd VARCHAR(128) NOT NULL
+    passwd VARCHAR(128) NOT NULL,
     user_role VARCHAR(16) NOT NULL CHECK(
-        'participant', 'admin'
-    )
+        user_role = 'participant' OR user_role = 'admin'
+    ),
     points INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS UsersSessions(
     id SERIAL PRIMARY KEY,
-    session_date NOT NULL,
-    user BIGINT UNSIGNED,
-    FOREIGN KEY (user) REFERENCES Users(id)
+    session_date DATE NOT NULL,
+    user_logued BIGINT,
+    FOREIGN KEY (user_logued) REFERENCES Users(id)
 );
 
 CREATE TABLE IF NOT EXISTS Countries(
     id SERIAL PRIMARY KEY,
     country_name VARCHAR(64)
-)
+);
 
 CREATE TABLE IF NOT EXISTS Cities(
     id SERIAL PRIMARY KEY,
     city_name VARCHAR(64),
-    country BIGINT SERIAL,
+    country BIGINT,
     FOREIGN KEY (country) REFERENCES Countries(id)
 );
 
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS Locations(
     street VARCHAR(64),
     street_number INTEGER,
     other_info VARCHAR(64),
-    city BIGINT UNSIGNED,
+    city BIGINT,
     FOREIGN KEY (city) REFERENCES Cities(id)
 );
 
@@ -61,15 +61,15 @@ CREATE TABLE IF NOT EXISTS EscapeRooms(
     title VARCHAR(64) NOT NULL,
     description VARCHAR(256),
     solution VARCHAR(32) NOT NULL,
-    difficulty INTEGER CHECK(0, 1, 2, 3, 4, 5)
-    price INTEGER
-    physical_location BIGINT UNSIGNED
-    FOREIGN KEY physical_location REFERENCES Locations(id)
+    difficulty INTEGER CHECK(difficulty IN (0, 1, 2, 3, 4, 5)),
+    price INTEGER,
+    physical_location BIGINT,
+    FOREIGN KEY (physical_location) REFERENCES Locations(id)
 );
 
 CREATE TABLE IF NOT EXISTS Clue(
     id SERIAL,
-    escape_room BIGINT UNSIGNED,
+    escape_room BIGINT,
     title VARCHAR(64),
     info VARCHAR(128),
     PRIMARY KEY (escape_room, id),
@@ -77,22 +77,23 @@ CREATE TABLE IF NOT EXISTS Clue(
 );
 
 CREATE TABLE IF NOT EXISTS Participations(
-    id SERIAL,
-    escape_room BIGINT UNSIGNED,
+    id SERIAL UNIQUE,
+    escape_room BIGINT UNIQUE,
     participation_date DATE,
     points INTEGER,
-    duration TIME
-    FOREIGN KEY (escape_room) REFERENCES EscapeRooms(id)
+    duration TIME,
+    FOREIGN KEY (escape_room) REFERENCES EscapeRooms(id),
+    PRIMARY KEY (id, escape_room)
 );
 
 CREATE TABLE IF NOT EXISTS UsersParticipations(
-    user BIGINT UNSIGNED,
-    participation BIGINT UNSIGNED,
-    escape_room BIGINT UNSIGNED,
+    participant BIGINT UNIQUE,
+    participation BIGINT UNIQUE,
+    escape_room BIGINT UNIQUE,
 
-    FOREIGN KEY (user) REFERENCES Users(id)
-    FOREIGN KEY (participantion) REFERENCES Participations(id)
-    FOREIGN KEY (escape_room) REFERENCES Participations(escape_room)
+    FOREIGN KEY (participant) REFERENCES Users(id),
+    FOREIGN KEY (participation) REFERENCES Participations(id),
+    FOREIGN KEY (escape_room) REFERENCES Participations(escape_room),
 
-    PRIMARY KEY(user, escape_room, participantion)
+    PRIMARY KEY(participant, escape_room, participation)
 )
