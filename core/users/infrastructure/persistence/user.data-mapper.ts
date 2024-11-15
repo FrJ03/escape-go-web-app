@@ -37,3 +37,5 @@ const UserDataMapper = {
         points: (user instanceof Admin) ? -1 : user.points,
     })
 }
+
+export default UserDataMapper
