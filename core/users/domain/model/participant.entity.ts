@@ -1,12 +1,13 @@
 import {User} from './user.entity';
+import { Email } from './value-objects/email';
 
 export class Participant extends User{
 
     private points: number;
 
-    constructor(e_mail: string, username: string, password: string, points?: number){ //constructor parametrizado
+    constructor(id: number, e_mail: Email, username: string, password: string, points?: number){ //constructor parametrizado
 
-        super(e_mail, username, password);
+        super(id, e_mail, username, password);
 
         if(points != undefined){
 

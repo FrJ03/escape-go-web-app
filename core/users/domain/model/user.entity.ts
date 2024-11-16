@@ -2,15 +2,17 @@ import { Email } from './value-objects/email';
 
 export class User{
 
+    private id: number
+
     private e_mail: Email | undefined;
 
     private username: string;
 
     private password: string;
 
-    constructor(e_mail: string, username: string, password: string){ //constructor parametrizado
-
-        this.setEmail(e_mail);
+    constructor(id: number, e_mail: Email, username: string, password: string){ //constructor parametrizado
+        this.id = id
+        this.e_mail = e_mail
 
         this.username = username;
 
