@@ -5,12 +5,12 @@ export class Email{
     constructor(private mail: string){
         this.value = mail
     }
-    public static create(mail: string): Email | null{
+    public static create(mail: string): Email | undefined{
         if(this.esMail(mail)){ //si es true es un mail
             return new Email(mail)
         }
         else{
-            return null
+            return undefined
         }
     }
 
