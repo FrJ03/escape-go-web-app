@@ -1,6 +1,6 @@
-import {user} from './user.entity';
+import {User} from './user.entity';
 
-export class Admin extends user{
+export class Admin extends User{
 
 
 

@@ -1,8 +1,8 @@
-import { email } from './value-objects/email';
+import { Email } from './value-objects/email';
 
 export class User{
 
-    private e_mail: email | undefined;
+    private e_mail: Email | undefined;
 
     private username: string;
 
@@ -18,7 +18,7 @@ export class User{
 
     }
     
-    public getEmail(): email | undefined{
+    public getEmail(): Email | undefined{
 
         return this.e_mail;
 
@@ -38,7 +38,7 @@ export class User{
 
     public setEmail(e_mail: string): void{ //recibe un string se crea el objeto e_mail y se realiza el set
 
-        this.e_mail = new email(e_mail); //devuelve un mail o cadena vacia (mail vacio) dependiendo de si el string tiene formato mail
+        this.e_mail = new Email(e_mail); //devuelve un mail o cadena vacia (mail vacio) dependiendo de si el string tiene formato mail
 
     }
 

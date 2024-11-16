@@ -1,4 +1,4 @@
-export class email{
+export class Email{
 
     private mail: string
 
