@@ -1,9 +1,9 @@
 export class Email{
 
-    private value: string
+    private _value: string
 
     constructor(private mail: string){
-        this.value = mail
+        this._value = mail
     }
     public static create(mail: string): Email | undefined{
         if(this.esMail(mail)){ //si es true es un mail
@@ -22,22 +22,15 @@ export class Email{
 
    }
 
-   public getMail(): string{
-        return this.value;
+   get value(): string{
+        return this._value;
    }
 
-   public setMail(newmail: string){
-
+   set value(newmail: string){
         if(Email.esMail(newmail)){
 
-            this.value= newmail;
+            this._value= newmail;
         }
-        else{
-
-            this.value = "";
-
-        }
-
    }
 
 }
