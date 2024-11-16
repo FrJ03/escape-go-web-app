@@ -3,7 +3,7 @@ import { Email } from './value-objects/email';
 
 export class Participant extends User{
 
-    private points: number;
+    private _points: number;
 
     constructor(id: number, e_mail: Email, username: string, password: string, points?: number){ //constructor parametrizado
 
@@ -11,26 +11,26 @@ export class Participant extends User{
 
         if(points != undefined){
 
-            this.points = points;
+            this._points = points;
 
         }
         else{
 
-            this.points = 0;
+            this._points = 0;
 
         }
 
     }
 
-    public getPoints(): number{
+    get points(): number{
 
-        return this.points;
+        return this._points;
 
     }
 
-    public setPoints(new_points: number){
+    set points(new_points: number){
 
-        this.points = new_points;
+        this._points = new_points;
 
     }
 
