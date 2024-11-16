@@ -1,76 +1,76 @@
 export class EscapeRoom {
 
-    private id: number;
-    private title: string;
-    private description: string;
-    private solution: string;
-    private difficulty: number;
-    private price: number;
-    private maxSessionDuration: number;
+    private _id: number;
+    private _title: string;
+    private _description: string;
+    private _solution: string;
+    private _difficulty: number;
+    private _price: number;
+    private _maxSessionDuration: number;
 
     constructor(id: number, title: string, description: string, solution: string, difficulty: number, price: number, maxSessionDuration: number) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.solution = solution;
-        this.difficulty = difficulty;
-        this.price = price;
-        this.maxSessionDuration = maxSessionDuration;
+        this._id = id;
+        this._title = title;
+        this._description = description;
+        this._solution = solution;
+        this._difficulty = difficulty;
+        this._price = price;
+        this._maxSessionDuration = maxSessionDuration;
     }
 
     getId(): number {
-        return this.id;
+        return this._id;
     }
 
     getTitle(): string {
-        return this.title;
+        return this._title;
     }
 
     getDescription(): string {
-        return this.description;
+        return this._description;
     }
 
     getSolution(): string {
-        return this.solution;
+        return this._solution;
     }
 
     getDifficulty(): number {
-        return this.difficulty;
+        return this._difficulty;
     }
 
     getPrice(): number {
-        return this.price;
+        return this._price;
     }
 
     getMaxSessionDuration(): number {
-        return this.maxSessionDuration;
+        return this._maxSessionDuration;
     }
 
     setId(id: number): void {
-        this.id = id;
+        this._id = id;
     }
 
     setTitle(title: string): void {
-        this.title = title;
+        this._title = title;
     }
 
     setDescription(description: string): void {
-        this.description = description;
+        this._description = description;
     }
 
     setSolution(solution: string): void {
-        this.solution = solution;
+        this._solution = solution;
     }
 
     setDifficulty(difficulty: number): void {
-        this.difficulty = difficulty;
+        this._difficulty = difficulty;
     }
 
     setPrice(price: number): void {
-        this.price = price;
+        this._price = price;
     }
 
     setMaxSessionDuration(maxSessionDuration: number): void {
-        this.maxSessionDuration = maxSessionDuration;
+        this._maxSessionDuration = maxSessionDuration;
     }
 }
