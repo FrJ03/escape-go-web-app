@@ -26,7 +26,7 @@ export class User{
         return this._email;
     }
 
-    get getUsername(): string{
+    get username(): string{
         return this._username;
     }
 
