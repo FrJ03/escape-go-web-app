@@ -13,8 +13,13 @@ export class UsersSql implements Users {
         this.publisher = new UserPublisher(postgres_config)
     }
 
-    async save(user: User): Promise<void>{
-        return await this.publisher.create(user)
+    async save(user: User): Promise<boolean>{
+        if(await this.findUser(user.email.value) != undefined){
+            return false
+        }
+        else{
+            return await this.publisher.create(user)
+        }   
     }
     async findUser(email: string): Promise<User | undefined>{
         const postgres = new Client(this.postgres_config)

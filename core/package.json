@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npm run build && ENV=prod node ./dist/index.js",
     "dev": "ENV=dev nodemon index.ts",
-    "test": "ENV=test jest --watch",
+    "test": "ENV=test jest --watch --setupFiles dotenv/config",
     "build": "tsc"
   },
   "keywords": [],

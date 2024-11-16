@@ -8,19 +8,20 @@ export class UserPublisher extends Publisher<User>{
     constructor(private readonly postgres_config: ClientConfig) {
         super()
     }
-    async create(user: User): Promise<void>{
+    async create(user: User): Promise<boolean>{
         const data = UserDataMapper.toType(user)
         try {
             const postgres = new Client(this.postgres_config)
             await postgres.connect()
-            await postgres.query('INSERT INTO users (email, username, passwd, user_role, points) VALUES ($1, $2, $3, $4, $5)', [data.email, data.username, data.password, data.role, data.points])
-            await postgres.end()
+            const response = await postgres.query('INSERT INTO users (email, username, passwd, user_role, points) VALUES ($1, $2, $3, $4, $5)', [data.email, data.username, data.password, data.role, data.points])
+            
+            return true
         } catch (error) {
-            throw new ApplicationError((error as Error).toString())
+            return false
         }
         
     }
-    async update(user: User): Promise<void>{
-        
+    async update(user: User): Promise<boolean>{
+        return false   
     }
 }
