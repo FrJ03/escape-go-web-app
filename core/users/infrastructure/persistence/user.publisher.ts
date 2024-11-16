@@ -1,6 +1,6 @@
 import { Publisher } from "../../../commons/domain/publisher/publisher";
 import { User } from "../../domain/model/user.entity"
-import { Client } from "pg"
+import { Client } from 'pg'
 import UserDataMapper from "./user.data-mapper";
 import { ApplicationError } from "../../../commons/domain/errors/application.error";
 
@@ -9,7 +9,7 @@ export class UserPublisher extends Publisher<User>{
         super()
     }
     async create(user: User): Promise<void>{
-        const data = UserDataMapper.toType(User)
+        const data = UserDataMapper.toType(user)
 
         try {
             await this.postgres.connect()
