@@ -3,16 +3,16 @@ export class Location {
     private _country: string;
     private _city: string;
     private _street: string;
-    private _number: number;  // Cambio de ":number" a "_number"
-    private _coordinates: { latitude: number, longitude: number };  // Cambio de ":coordinates" a "_coordinates"
+    private _number: number;
+    private _coordinates: { latitude: number, longitude: number };
 
     constructor(id: number, country: string, city: string, street: string, number: number, coordinates: { latitude: number, longitude: number }) {
         this._id = id;
         this._country = country;
         this._city = city;
         this._street = street;
-        this._number = number;  // Asignando al atributo privado "_number"
-        this._coordinates = coordinates;  // Asignando al atributo privado "_coordinates"
+        this._number = number;
+        this._coordinates = coordinates;
     }
 
     // Getters
