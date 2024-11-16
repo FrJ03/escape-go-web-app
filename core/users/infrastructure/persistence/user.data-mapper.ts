@@ -1,6 +1,6 @@
 import { UserType } from "./user.type";
-import {Admin} from '../../domain/model/admin.entity.ts'
-import {Participant} from '../../domain/model/participant.entity.ts'
+import {Admin} from '../../domain/model/admin.entity'
+import {Participant} from '../../domain/model/participant.entity'
 import { Email } from '../../domain/model/value-objects/email'
 import { User } from '../../domain/model/user.entity'
 
@@ -11,7 +11,7 @@ import { User } from '../../domain/model/user.entity'
 const UserDataMapper = {
     toModel: (user: UserType): User => {
         if(user.role === "admin"){
-            return Admin(
+            return new Admin(
                 user.id,
                 new Email(user.email),
                 user.username,
@@ -19,7 +19,7 @@ const UserDataMapper = {
             )
         }
         else{
-            return Participant(
+            return new Participant(
                 user.id,
                 new Email(user.email),
                 user.username,
@@ -31,10 +31,10 @@ const UserDataMapper = {
     toType: (user: User): UserType => ({
         id: user.id,
         email: user.email.value,
-        username: user.email.value,
+        username: user.username,
         password: user.password,
         role: (user instanceof Admin) ? 'admin' : 'participant',
-        points: (user instanceof Admin) ? -1 : user.points,
+        points: (user instanceof Participant) ? user.points: -1,
     })
 }
 
