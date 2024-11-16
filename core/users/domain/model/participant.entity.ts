@@ -1,6 +1,6 @@
 import {user} from './user.entity';
 
-export class participant extends user{
+export class Participant extends user{
 
     private points: number;
 

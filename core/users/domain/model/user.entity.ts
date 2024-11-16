@@ -1,6 +1,6 @@
 import { email } from './value-objects/email';
 
-export class user{
+export class User{
 
     private e_mail: email | undefined;
 
