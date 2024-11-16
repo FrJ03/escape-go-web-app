@@ -12,7 +12,9 @@ export class UserPublisher extends Publisher<User>{
         const data = UserDataMapper.toType(User)
 
         try {
+            await this.postgres.connect()
             await this.postgres.query('INSERT INTO users (email, username, password, user_role, points) VALUES ($1, $2, $3, $4, $5)', [data.email, data.username, data.password, data.role, data.points])
+            await this.postgres.end()
         } catch (error) {
             throw new ApplicationError((error as Error).toString())
         }
