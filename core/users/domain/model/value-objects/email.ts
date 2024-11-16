@@ -1,23 +1,20 @@
 export class Email{
 
-    private mail: string
+    private value: string
 
-    constructor(mail: string){
-
+    constructor(private mail: string){
+        this.value = mail
+    }
+    public static create(mail: string): Email | null{
         if(this.esMail(mail)){ //si es true es un mail
-
-            this.mail = mail;
-
+            return new Email(mail)
         }
         else{
-
-            this.mail = "";
-
+            return null
         }
-
     }
 
-   private esMail(posiblemail: string): boolean {
+   private static esMail(posiblemail: string): boolean {
     
         const patronEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/; //indica el patron de un mail
 
@@ -26,23 +23,20 @@ export class Email{
    }
 
    public getMail(): string{
-
-    return this.mail;
-
+        return this.value;
    }
 
    public setMail(newmail: string){
 
-    if(this.esMail(newmail)){
+        if(Email.esMail(newmail)){
 
-        this.mail= newmail;
+            this.value= newmail;
+        }
+        else{
 
-    }
-    else{
+            this.value = "";
 
-        this.mail = "";
-
-    }
+        }
 
    }
 
