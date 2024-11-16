@@ -4,7 +4,7 @@ export class User{
 
     private id: number
 
-    private e_mail: Email | undefined;
+    private e_mail: Email;
 
     private username: string;
 
