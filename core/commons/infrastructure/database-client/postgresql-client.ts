@@ -1,15 +1,22 @@
-import pg from pg
 import 'dotenv'
+import { ClientConfig } from 'pg';
 
-const { Client } = pg
+const PostgresSqlConfig = 
+  (process.env.ENV === 'PROD') ? 
+    {
+      connectionString: process.env.PROD_POSTGRES_URL,
+      ssl: true,
+    } as ClientConfig
+    :
+    (process.env.ENV === 'DEV') ? 
+      {
+        connectionString: process.env.DEV_POSTGRES_URL,
+        ssl: true,
+      } as ClientConfig
+      :
+      {
+        connectionString: process.env.TEST_POSTGRES_URL,
+        ssl: true,
+      } as ClientConfig
 
-const PostgresSqlClient = new Client({
-  host: process.env.POSTGRES_HOST,
-  user: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DB,
-  port: process.env.POSTGRES_PORT,
-  idleTimeoutMillis: 30000,
-});
-
-export default PostgresSqlClient;
+export default PostgresSqlConfig;
