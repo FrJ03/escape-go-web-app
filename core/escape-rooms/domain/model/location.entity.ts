@@ -16,52 +16,52 @@ export class Location {
     }
 
     // Getters
-    getId(): number {
+    get id(): number {
         return this._id;
     }
 
-    getCountry(): string {
+    get country(): string {
         return this._country;
     }
 
-    getCity(): string {
+    get city(): string {
         return this._city;
     }
 
-    getStreet(): string {
+    get street(): string {
         return this._street;
     }
 
-    getNumber(): number {
+    get number(): number {
         return this._number;
     }
 
-    getCoordinates(): { latitude: number, longitude: number } {
+    get coordinates(): { latitude: number, longitude: number } {
         return this._coordinates;
     }
 
     // Setters
-    setId(id: number): void {
+    set id(id: number){
         this._id = id;
     }
 
-    setCountry(country: string): void {
+    set country(country: string){
         this._country = country;
     }
 
-    setCity(city: string): void {
+    set city(city: string){
         this._city = city;
     }
 
-    setStreet(street: string): void {
+    set street(street: string){
         this._street = street;
     }
 
-    setNumber(number: number): void {
+    set number(number: number){
         this._number = number;
     }
 
-    setCoordinates(coordinates: { latitude: number, longitude: number }): void {
+    set coordinates(coordinates: { latitude: number, longitude: number }){
         this._coordinates = coordinates;
     }
 }

@@ -18,59 +18,59 @@ export class EscapeRoom {
         this._maxSessionDuration = maxSessionDuration;
     }
 
-    getId(): number {
+    get id(): number {
         return this._id;
     }
 
-    getTitle(): string {
+    get title(): string {
         return this._title;
     }
 
-    getDescription(): string {
+    get description(): string {
         return this._description;
     }
 
-    getSolution(): string {
+    get solution(): string {
         return this._solution;
     }
 
-    getDifficulty(): number {
+    get difficulty(): number {
         return this._difficulty;
     }
 
-    getPrice(): number {
+    get price(): number {
         return this._price;
     }
 
-    getMaxSessionDuration(): number {
+    get maxSessionDuration(): number {
         return this._maxSessionDuration;
     }
 
-    setId(id: number): void {
+    set id(id: number) {
         this._id = id;
     }
 
-    setTitle(title: string): void {
+    set title(title: string){
         this._title = title;
     }
 
-    setDescription(description: string): void {
+    set description(description: string){
         this._description = description;
     }
 
-    setSolution(solution: string): void {
+    set solution(solution: string){
         this._solution = solution;
     }
 
-    setDifficulty(difficulty: number): void {
+    set difficulty(difficulty: number){
         this._difficulty = difficulty;
     }
 
-    setPrice(price: number): void {
+    set price(price: number){
         this._price = price;
     }
 
-    setMaxSessionDuration(maxSessionDuration: number): void {
+    set maxSessionDuration(maxSessionDuration: number){
         this._maxSessionDuration = maxSessionDuration;
     }
 }

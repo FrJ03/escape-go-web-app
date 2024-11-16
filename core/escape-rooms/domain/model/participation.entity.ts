@@ -1,4 +1,4 @@
-import { Participant } from './participant.entity';
+import { Participant } from '../../../users/domain/model/participant.entity';
 import { EscapeRoom } from './escapeRoom.entity';
 
 export class Participation {
@@ -18,47 +18,43 @@ export class Participation {
         this._escapeRoom = escapeRoom;
     }
 
-    getDate(): Date {
+    get date(): Date {
         return this._date;
     }
 
-    getPoints(): number {
+    get points(): number {
         return this._points;
     }
 
-    getSessionDuration(): number {
+    get sessionDuration(): number {
         return this._sessionDuration;
     }
 
-    getMaxSessionDuration(): number {
-        return this._escapeRoom.getMaxSessionDuration();
-    }
-
-    getParticipant(): Participant {
+    get participant(): Participant {
         return this._participant;
     }
 
-    getEscapeRoom(): EscapeRoom {
+    get sscapeRoom(): EscapeRoom {
         return this._escapeRoom;
     }
 
-    setDate(date: Date): void {
+    set date(date: Date){
         this._date = date;
     }
 
-    setPoints(points: number): void {
+    set points(points: number){
         this._points = points;
     }
 
-    setSessionDuration(sessionDuration: number): void {
+    set sessionDuration(sessionDuration: number){
         this._sessionDuration = sessionDuration;
     }
 
-    setParticipant(participant: Participant): void {
+    set participant(participant: Participant){
         this._participant = participant;
     }
 
-    setEscapeRoom(escapeRoom: EscapeRoom): void {
+    set escapeRoom(escapeRoom: EscapeRoom){
         this._escapeRoom = escapeRoom;
     }
 
@@ -66,7 +62,7 @@ export class Participation {
         this._interval = window.setInterval(() => {
             this._sessionDuration = Math.floor((Date.now() - this._date.getTime()) / 1000); // segundos
             
-            if (this._sessionDuration >= this.getMaxSessionDuration() * 60) { // Convertir de minutos a segundos
+            if (this._sessionDuration >= this.escapeRoom.maxSessionDuration * 60) { // Convertir de minutos a segundos
                 window.clearInterval(this._interval!);
                 console.log("¡Tiempo límite alcanzado!");
             }
