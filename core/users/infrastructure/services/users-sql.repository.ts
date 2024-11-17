@@ -5,7 +5,7 @@ import { User } from "../../domain/model/user.entity"
 import { ClientConfig, Client } from 'pg'
 import { UserType } from "../persistence/user.type";
 import UserDataMapper from "../persistence/user.data-mapper";
-import { FIND_USER_BY_EMAIL, FIND_USER_BY_USERNAME } from "../queries/users.query";
+import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_USERNAME } from "../queries/users.query";
 import { Email } from "../../domain/model/value-objects/email";
 
 export class UsersSql implements Users {
@@ -62,5 +62,20 @@ export class UsersSql implements Users {
         else{
             return undefined
         }
+    }
+
+    async delete(user_id: number): Promise<boolean> {
+        try {
+            const postgres = new Client(this.postgres_config)
+
+            await postgres.connect()
+            const response = await postgres.query(DELETE_USER, [user_id])
+            await postgres.end()
+
+            return (response.rowCount !== 0)
+        } catch (error) {
+            return false
+        }
+        
     }
 }

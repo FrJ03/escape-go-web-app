@@ -159,3 +159,63 @@ describe('Insert users tests', () => {
         
     })
 })
+
+describe('Delete users tests', () => {
+    test('Delete without an user inserted', async () => {
+        const users = new UsersSql(PostgresSqlClient)
+
+        const response = await users.delete(1)
+
+        expect(response).toBeFalsy()
+    })
+    describe('With an user inserted', () => {
+        const user_username = 'test'
+        const new_user = UserDataMapper.toModel({
+            id: 1,
+            email: 'test@test.com',
+            username: user_username,
+            password: 'test',
+            role: 'admin',
+            points: -1
+        } as UserType)
+
+        beforeEach( async () => {
+            const postgres = new Client(PostgresSqlClient)
+            await postgres.connect()
+            await postgres.query('DELETE FROM users')
+            await postgres.end()
+        })
+        beforeEach(async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            await users.save(new_user)
+        })
+
+        test('Delete an existing user', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const user = await users.findUserByUsername(user_username)
+            if(user instanceof User){
+                const response = await users.delete(user.id)
+
+                expect(response).toBeTruthy()
+                expect(await users.delete(user.id)).toBeFalsy()
+            }
+        })
+        test('Delete a non-existing user', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const user = await users.findUserByUsername(user_username)
+            if(user instanceof User){
+                const response = await users.delete(user.id + 1)
+
+                expect(response).toBeFalsy()
+            }
+        })
+    })
+    
+    afterAll( async () => {
+        const postgres = new Client(PostgresSqlClient)
+        await postgres.connect()
+        await postgres.query('DELETE FROM users')
+        await postgres.end()
+        
+    })
+})
