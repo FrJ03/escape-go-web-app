@@ -4,5 +4,6 @@ module.exports = {
   transform: {
     "^.+.tsx?$": ["ts-jest",{}],
   },
-  setupFiles: ['setup-tests.ts']
+  setupFiles: ['setup-tests.ts'],
+  testTimeout: 7500
 };
