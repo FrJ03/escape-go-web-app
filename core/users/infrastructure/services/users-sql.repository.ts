@@ -5,6 +5,8 @@ import { User } from "../../domain/model/user.entity"
 import { ClientConfig, Client } from 'pg'
 import { UserType } from "../persistence/user.type";
 import UserDataMapper from "../persistence/user.data-mapper";
+import { FIND_USER_BY_EMAIL } from "../queries/users.query";
+import { Email } from "../../domain/model/value-objects/email";
 
 export class UsersSql implements Users {
     private publisher: UserPublisher
@@ -14,17 +16,17 @@ export class UsersSql implements Users {
     }
 
     async save(user: User): Promise<boolean>{
-        if(await this.findUser(user.email.value) != undefined){
+        if(await this.findUserByEmail(user.email) != undefined){
             return false
         }
         else{
             return await this.publisher.create(user)
         }   
     }
-    async findUser(email: string): Promise<User | undefined>{
+    async findUserByEmail(email: Email): Promise<User | undefined>{
         const postgres = new Client(this.postgres_config)
         await postgres.connect()
-        const response = await postgres.query('SELECT * FROM users WHERE email = $1', [email])
+        const response = await postgres.query(FIND_USER_BY_EMAIL, [email.value])
         await postgres.end()
         if(response.rowCount != 0){
             const data = {
