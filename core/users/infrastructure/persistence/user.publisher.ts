@@ -16,7 +16,7 @@ export class UserPublisher extends Publisher<User>{
             await postgres.connect()
             const response = await postgres.query(INSERT_USER, [data.email, data.username, data.password, data.role, data.points])
             
-            return true
+            return (response.rowCount !== 0)
         } catch (error) {
             return false
         }
