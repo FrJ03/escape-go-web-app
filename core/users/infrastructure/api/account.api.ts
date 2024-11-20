@@ -1,5 +1,8 @@
 import express from 'express';
 import { Email } from '../../domain/model/value-objects/email';
+import { SignUpRequest } from '../../dto/requests/signup.request';
+import { SignUpResponse } from '../../dto/responses/signup.response';
+import { container } from '../../../commons/container/container'
 
 
 const accountRouter = express.Router();
@@ -16,7 +19,19 @@ accountRouter.post('/signup', async (req, res) => { //REGISTRO -- solo se regist
 
     if(username != undefined && password != undefined && Email.esMail(posiblemail) == true){
 
-        res.send('datos: ' + username + ', ' + password + ', ' + posiblemail + '\n');
+        //res.send('datos: ' + username + ', ' + password + ', ' + posiblemail + '\n');
+
+        const userRequest = SignUpRequest.with({ //esta request se enviara luego al container.registerUser
+
+            email: req.body.email,
+            username: req.body.username,
+            password: req.body.password
+
+        });
+
+        const userResponse: SignUpResponse = await container.signUpUser.with(userRequest);
+
+        res.status(userResponse.code || 200).send(userResponse);
 
     }
     else{
