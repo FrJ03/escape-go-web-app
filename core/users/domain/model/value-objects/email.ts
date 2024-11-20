@@ -14,7 +14,7 @@ export class Email{
         }
     }
 
-   private static esMail(posiblemail: string): boolean {
+   public static esMail(posiblemail: string): boolean {
     
         const patronEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/; //indica el patron de un mail
 
