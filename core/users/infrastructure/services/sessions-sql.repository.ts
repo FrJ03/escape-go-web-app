@@ -7,7 +7,7 @@ import { SessionDataMapper } from "../persistence/session.data-mapper";
 import { SessionType } from "../persistence/session.type";
 import { UserType } from "../persistence/user.type";
 
-class SessionsSql implements Sessions{
+export class SessionsSql implements Sessions{
     constructor(private readonly postgres_config: ClientConfig){
 
     }
@@ -20,18 +20,20 @@ class SessionsSql implements Sessions{
 
         const sessions: Array<Session> = []
 
+        console.error(response.rows[0])
+
         response.rows.forEach(session => 
             sessions.push(
                 SessionDataMapper.toModel({
-                    id: session.userssessions.id,
-                    date: new Date(session.userssessions.session_date),
+                    id: session.id,
+                    date: new Date(session.session_date),
                     user: {
-                        id: session.user.id,
-                        email: session.user.email,
-                        username: session.user.username,
-                        password: session.user.passwd,
-                        role: session.user.user_role,
-                        points: session.user.points
+                        id: session.user_logued,
+                        email: session.email,
+                        username: session.username,
+                        password: session.passwd,
+                        role: session.user_role,
+                        points: session.points
                     } as UserType
                 } as SessionType) 
             )   
