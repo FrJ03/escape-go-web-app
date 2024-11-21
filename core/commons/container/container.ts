@@ -1,6 +1,7 @@
 import { UsersSql } from "../../users/infrastructure/services/users-sql.repository"
 import PostgresSqlClient from "../infrastructure/database-client/postgresql-client"
 import { SignUpUserUseCase } from '../../users/application/signup-user.use-case';
+import { LoginUserUseCase } from '../../users/application/login-user.use-case';
 
 const Container = {
     init: () => {
@@ -9,6 +10,7 @@ const Container = {
         return {
             
             signUpUser: new SignUpUserUseCase(users),
+            loginUser: new LoginUserUseCase(users),
 
         }
     }

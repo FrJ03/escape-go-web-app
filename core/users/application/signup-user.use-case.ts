@@ -1,5 +1,4 @@
 import { Email } from '../domain/model/value-objects/email';
-import { Participant } from '../domain/model/participant.entity';
 import { Users } from '../domain/services/users.repository';
 import { SignUpRequest } from '../dto/requests/signup.request';
 import { SignUpResponse } from '../dto/responses/signup.response';
@@ -21,9 +20,9 @@ export class SignUpUserUseCase{
 
             try{
 
-                const Participant = await this.users.findUserByEmail(email) //buscamos al usuario por mail
+                const posible_user = await this.users.findUserByEmail(email) //buscamos al usuario por mail
                                 
-                if(Participant != null){ //si se cumple quiere decir que el usuario ya existe en la BD
+                if(posible_user != null){ //si se cumple quiere decir que el usuario ya existe en la BD
 
                     return{
 
