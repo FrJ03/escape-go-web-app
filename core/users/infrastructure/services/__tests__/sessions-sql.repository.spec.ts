@@ -222,4 +222,84 @@ describe('Sessions Sql tests', () => {
             await postgres.end()
         })
     })
+    describe('Insert sessions tests', () => {
+        const user_data = {
+            id: 1,
+            email: 'p1@test.es',
+            username: 'p1',
+            password: 'p1',
+            role: 'participant',
+            points: 10
+        } as UserType
+
+        test('Insert without a user', async () => {
+            const session = new Session(1, new Date(Date.now()), UserDataMapper.toModel(user_data))
+            const sessions = new SessionsSql(PostgresSqlConfig)
+
+            const response = await sessions.save(session)
+
+            expect(response).toBeFalsy()
+        })
+
+        describe('Insert with an user inserted', () => {
+            let user: User
+
+            beforeAll(async () => {
+                const postgres = new Client(PostgresSqlConfig)
+                await postgres.connect()
+                await postgres.query('DELETE FROM userssessions')
+                await postgres.query('DELETE FROM users')
+                await postgres.end()
+            })
+            beforeAll(async () => {
+                const users = new UsersSql(PostgresSqlConfig)
+
+                await users.save(UserDataMapper.toModel(user_data))
+
+                const user_aux = await users.findUserByUsername('p1')
+
+                if(user_aux){
+                    user = user_aux
+                }
+            })
+
+            test('Add session to an existing user', async () => {
+                const session = new Session(1, new Date(Date.now()), user)
+                const sessions = new SessionsSql(PostgresSqlConfig)
+
+                const response = await sessions.save(session)
+
+                expect(response).toBeTruthy()
+            })
+            test('Add session to an existing user', async () => {
+                const session = new Session(1, new Date(Date.now()), UserDataMapper.toModel({
+                    id: user.id + 1,
+                    email: 'p2@test.es',
+                    username: 'p2',
+                    password: 'p2',
+                    role: 'participant',
+                    points: 10
+                } as UserType))
+                const sessions = new SessionsSql(PostgresSqlConfig)
+
+                const response = await sessions.save(session)
+
+                expect(response).toBeFalsy()
+            })
+
+            afterEach(async () => {
+                const postgres = new Client(PostgresSqlConfig)
+                await postgres.connect()
+                await postgres.query('DELETE FROM userssessions')
+                await postgres.end()
+            })
+            afterAll(async () => {
+                const postgres = new Client(PostgresSqlConfig)
+                await postgres.connect()
+                await postgres.query('DELETE FROM userssessions')
+                await postgres.query('DELETE FROM users')
+                await postgres.end()
+            })
+        })
+    })
 })

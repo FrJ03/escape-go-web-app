@@ -7,10 +7,14 @@ import { SessionDataMapper } from "../persistence/session.data-mapper";
 import { SessionType } from "../persistence/session.type";
 import { UserType } from "../persistence/user.type";
 import { User } from "../../domain/model/user.entity";
+import PostgresSqlConfig from "../../../commons/infrastructure/database-client/postgresql-client";
+import { SessionPublisher } from "../persistence/session.publisher";
 
 export class SessionsSql implements Sessions{
-    constructor(private readonly postgres_config: ClientConfig){
+    private publisher: SessionPublisher
 
+    constructor(private readonly postgres_config: ClientConfig){
+        this.publisher = new SessionPublisher(postgres_config)
     }
     async getAll(): Promise<Array<Session>> {
         const postgres = new Client(this.postgres_config)
@@ -72,5 +76,20 @@ export class SessionsSql implements Sessions{
         )
 
         return sessions
+    }
+
+    async save(session: Session): Promise<boolean> {
+        const users = new UsersSql(PostgresSqlConfig)
+
+        const user = await users.findUserByEmail(session.user.email)
+
+        if(user === undefined){
+            return false
+        }
+        else{
+            session.user.id = user.id
+            
+            return await this.publisher.create(session)
+        }  
     }
 }

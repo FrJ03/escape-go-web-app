@@ -4,4 +4,5 @@ import { User } from "../model/user.entity";
 export interface Sessions{
     getAll(): Promise<Array<Session>>
     getByUser(user: User): Promise<Array<Session>>
+    save(session: Session): Promise<boolean>
 }
