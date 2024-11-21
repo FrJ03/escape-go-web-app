@@ -8,6 +8,85 @@ import { Client } from "pg";
 import { Email } from "../../../domain/model/value-objects/email";
 import { User } from "../../../domain/model/user.entity";
 import { Admin } from "../../../domain/model/admin.entity";
+import { Participant } from "../../../domain/model/participant.entity";
+
+describe('Get all users tests', () => {
+    test('without users', async () => {
+        const users = new UsersSql(PostgresSqlClient)
+
+        const response: Array<User> = await users.getAll()
+
+        expect(response.length).toBe(0)
+    })
+    describe('With users', () => {
+        test('with an admin', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const admin_data = {
+                id: 1,
+                email: 'admin@test.es',
+                username: 'admin',
+                password: 'admin',
+                role: 'admin',
+                points: -1
+            } as UserType
+            await users.save(UserDataMapper.toModel(admin_data))
+    
+            const response: Array<User> = await users.getAll()
+
+            expect(response.length).toBe(1)
+            expect(response[1] instanceof Admin).toBeTruthy()
+        })
+        test('with a participant', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const participant_data = {
+                id: 1,
+                email: 'p1@test.es',
+                username: 'p1',
+                password: 'p1',
+                role: 'participant',
+                points: -1
+            } as UserType
+            await users.save(UserDataMapper.toModel(participant_data))
+    
+            const response: Array<User> = await users.getAll()
+
+            expect(response.length).toBe(1)
+            expect(response[1] instanceof Participant).toBeTruthy()
+        })
+        test('with an admin and a participant', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const admin_data = {
+                id: 1,
+                email: 'admin@test.es',
+                username: 'admin',
+                password: 'admin',
+                role: 'admin',
+                points: -1
+            } as UserType
+            const participant_data = {
+                id: 1,
+                email: 'p1@test.es',
+                username: 'p1',
+                password: 'p1',
+                role: 'participant',
+                points: -1
+            } as UserType
+            await users.save(UserDataMapper.toModel(admin_data))
+            await users.save(UserDataMapper.toModel(participant_data))
+    
+            const response: Array<User> = await users.getAll()
+
+            expect(response.length).toBe(2)
+        })
+        afterEach(async () => {
+            const postgres = new Client(PostgresSqlClient)
+            await postgres.connect()
+            await postgres.query('DELETE FROM users')
+            await postgres.end()
+        })
+    })
+    
+})
 
 describe('Find by email tests', () => {
     test('Find without any users inserted', async () => {

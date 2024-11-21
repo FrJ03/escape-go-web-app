@@ -6,4 +6,5 @@ export interface Users{
     findUserByEmail(email: Email): Promise<User | undefined>
     findUserByUsername(username: string): Promise<User | undefined>
     delete(user_id: number): Promise<boolean>
+    getAll(): Promise<Array<User>>
 }
