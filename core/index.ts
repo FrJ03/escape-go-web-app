@@ -1,14 +1,9 @@
 import express, { request, Request, Response } from "express";
-import dotenv from "dotenv";
-
 import accountRouter from "./users/infrastructure/api/account.api";
+import { PORT } from "./commons/utils/config";
 
-
-dotenv.config();
 const app = express();
 app.use(express.json()); //middleware que transforma req.body a JSON
-
-const PORT = process.env.PORT;
 
 app.listen(PORT, () => { 
     console.log("Server running at PORT: ", PORT); 
