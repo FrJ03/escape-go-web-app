@@ -3,6 +3,7 @@ import PostgresSqlClient from "../infrastructure/database-client/postgresql-clie
 import { SignUpUserUseCase } from '../../users/application/signup-user.use-case';
 import { LoginUserUseCase } from '../../users/application/login-user.use-case';
 import { CheckUserRoleUseCase } from "../../users/application/check-user-role.use-case";
+import { DeleteUserUseCase } from '../../users/application/delete-user.use-case';
 
 const Container = {
     init: () => {
@@ -12,7 +13,8 @@ const Container = {
             
             signUpUser: new SignUpUserUseCase(users),
             loginUser: new LoginUserUseCase(users),
-            checkUserRole: new CheckUserRoleUseCase(users)
+            checkUserRole: new CheckUserRoleUseCase(users),
+            deleteUser: new DeleteUserUseCase(users)
 
         }
     }
