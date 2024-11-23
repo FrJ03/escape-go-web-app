@@ -3,6 +3,7 @@ import { Users } from '../domain/services/users.repository';
 import { SignUpRequest } from '../dto/requests/signup.request';
 import { SignUpResponse } from '../dto/responses/signup.response';
 import { User } from '../domain/model/user.entity';
+import bcrypt from 'bcrypt';
 
 export class SignUpUserUseCase{
 
@@ -35,7 +36,11 @@ export class SignUpUserUseCase{
 
                     //lo creamos
 
-                    const new_user = new User(0, email, command.username, command.password);
+                    const saltRounds = 10;
+
+                    const hashedPassword = await bcrypt.hash(command.password, saltRounds); //encriptamos la contraseña antes de guardarla junto con los datos del usuario en la BD
+
+                    const new_user = new User(0, email, command.username, hashedPassword);
 
                     //lo registramos
 

@@ -4,6 +4,7 @@ import { Users } from "../domain/services/users.repository";
 import { LoginRequest } from "../dto/requests/login.request";
 import { LoginResponse } from "../dto/responses/login.response";
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 export class LoginUserUseCase{
 
@@ -23,7 +24,9 @@ export class LoginUserUseCase{
 
                 if(posible_user != undefined){ //usuario encontrado, comprobar credenciales
 
-                    if(command.username == posible_user.username && command.password == posible_user.password){
+                    const password_correct = await bcrypt.compare(command.password, posible_user.password);
+
+                    if(command.username == posible_user.username && password_correct){
 
                         const userForToken = {
 
