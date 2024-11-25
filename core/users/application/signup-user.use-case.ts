@@ -4,10 +4,12 @@ import { SignUpRequest } from '../dto/requests/signup.request';
 import { SignUpResponse } from '../dto/responses/signup.response';
 import { User } from '../domain/model/user.entity';
 import bcrypt from 'bcrypt';
+import { SessionsSql } from '../../users/infrastructure/services/sessions-sql.repository';
+import { Session } from '../domain/model/session.entity';
 
 export class SignUpUserUseCase{
 
-    constructor(private readonly users: Users){}
+    constructor(private readonly users: Users, private readonly sessions: SessionsSql){}
 
 
 
@@ -45,6 +47,12 @@ export class SignUpUserUseCase{
                     //lo registramos
 
                     if(await this.users.save(new_user)){ //introduce al usuario en la BD, la BD machaca el valor del ID generando uno automático
+
+                        const fecha_actual: Date = new Date();
+
+                        const sesion = new Session(0, fecha_actual, new_user); //creamos el objeto sesion necesario para la funcion save
+
+                        this.sessions.save(sesion); //guarda log de registro en BD
 
                         return{
 

@@ -73,14 +73,6 @@ accountRouter.post('/signin', async (req, res) => { //FUNCIONALIDAD
 
 });
 
-//DELETE /account/session --> cierra sesion (determinar si es necesario)
-
-accountRouter.delete('/session', async (req, res) => { //FUNCIONALIDAD
-
-    res.send('Closing sessions !!');
-
-});
-
 //DELETE /account --> elimina la cuenta
 
 accountRouter.delete('/', async (req, res) => { //FUNCIONALIDAD

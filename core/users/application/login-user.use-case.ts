@@ -1,14 +1,15 @@
 import { Email } from "../domain/model/value-objects/email";
-import { User } from "../domain/model/user.entity";
 import { Users } from "../domain/services/users.repository";
 import { LoginRequest } from "../dto/requests/login.request";
 import { LoginResponse } from "../dto/responses/login.response";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { SessionsSql } from "../infrastructure/services/sessions-sql.repository";
+import { Session } from '../domain/model/session.entity';
 
 export class LoginUserUseCase{
 
-    constructor(private readonly users: Users){}
+    constructor(private readonly users: Users, private readonly sessions: SessionsSql){}
 
     async with(command: LoginRequest): Promise<LoginResponse>{
 
@@ -37,6 +38,12 @@ export class LoginUserUseCase{
                         }
 
                         const token = jwt.sign(userForToken, ''); //hay que modificar las opciones del sign
+
+                        const fecha_actual: Date = new Date();
+
+                        const sesion = new Session(0, fecha_actual, posible_user); //creamos objeto sesion para la funcion save
+
+                        this.sessions.save(sesion); //guarda log de inicio de sesion en BD
 
                         return{
 
