@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db:/var/lib/postgresql/data
+      - ./create.sql:/docker-entrypoint-initdb.d/create_database.sql
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=escape_go_test
+      - POSTGRES_PASSWORD=ISM_FINAL_Project
