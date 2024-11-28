@@ -1,3 +1,5 @@
+import { Location } from "./location.entity";
+
 export class EscapeRoom {
 
     private _id: number;
@@ -7,8 +9,9 @@ export class EscapeRoom {
     private _difficulty: number;
     private _price: number;
     private _maxSessionDuration: number;
+    private _location: Location
 
-    constructor(id: number, title: string, description: string, solution: string, difficulty: number, price: number, maxSessionDuration: number) {
+    constructor(id: number, title: string, description: string, solution: string, difficulty: number, price: number, maxSessionDuration: number, location: Location) {
         this._id = id;
         this._title = title;
         this._description = description;
@@ -16,6 +19,7 @@ export class EscapeRoom {
         this._difficulty = difficulty;
         this._price = price;
         this._maxSessionDuration = maxSessionDuration;
+        this._location = location
     }
 
     get id(): number {
@@ -46,6 +50,10 @@ export class EscapeRoom {
         return this._maxSessionDuration;
     }
 
+    get location(): Location{
+        return this._location
+    }
+
     set id(id: number) {
         this._id = id;
     }
@@ -72,5 +80,9 @@ export class EscapeRoom {
 
     set maxSessionDuration(maxSessionDuration: number){
         this._maxSessionDuration = maxSessionDuration;
+    }
+
+    set location(location: Location){
+        this._location = location
     }
 }
