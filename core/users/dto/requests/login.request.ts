@@ -3,7 +3,6 @@ import { DeepReadonly } from "ts-essentials";
 type LoginRequest = DeepReadonly<{
 
     email: string,
-    username: string,
     password: string
 
 }>

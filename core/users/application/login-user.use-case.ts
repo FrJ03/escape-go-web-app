@@ -27,11 +27,11 @@ export class LoginUserUseCase{
 
                     const password_correct = await bcrypt.compare(command.password, posible_user.password);
 
-                    if(command.username == posible_user.username && password_correct){
+                    if(password_correct){
 
                         const userForToken = {
 
-                            username: command.username,
+                            username: posible_user.username,
                             email: command.email,
                             id: posible_user.id
 
@@ -47,7 +47,7 @@ export class LoginUserUseCase{
 
                         return{
 
-                            username: command.username,
+                            username: posible_user.username,
                             email: command.email,
                             code: 200,
                             token: token
