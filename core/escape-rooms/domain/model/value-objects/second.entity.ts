@@ -13,4 +13,13 @@ export class Second{
     get value(): number{
         return this._value
     }
+
+    public toString(): string{
+        if(this._value >= 10){
+            return `${this._value}`
+        }
+        else{
+            return `0${this._value}`
+        }
+    }
 }

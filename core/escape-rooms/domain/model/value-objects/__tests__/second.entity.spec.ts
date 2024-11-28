@@ -1,4 +1,4 @@
-import { describe } from "@jest/globals";
+import { describe, test } from "@jest/globals";
 import { Second } from "../second.entity";
 
 describe('Minute Value Object tests', () => {
@@ -43,6 +43,24 @@ describe('Minute Value Object tests', () => {
             const minute = Second.create(value)
     
             expect(minute).toBeUndefined()
+        })
+    })
+    describe('to string method', () => {
+        test(' value < 10', () => {
+            const value = 9
+            const str_value = `0${value}`
+
+            const minute: Second = new Second(value)
+
+            expect(minute.toString()).toBe(str_value)
+        })
+        test(' value = 10', () => {
+            const value = 10
+            const str_value = `${value}`
+
+            const minute: Second = new Second(value)
+
+            expect(minute.toString()).toBe(str_value)
         })
     })
 })
