@@ -1,9 +1,9 @@
-import { POSTGRES_URL } from '../../utils/config';
+import { POSTGRES_URL, SSL } from '../../utils/config';
 import { ClientConfig } from 'pg';
 
 const PostgresSqlConfig = {
   connectionString: POSTGRES_URL,
-  ssl: true,
+  ssl: SSL,
 } as ClientConfig
 
 export default PostgresSqlConfig;
