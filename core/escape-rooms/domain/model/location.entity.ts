@@ -1,18 +1,22 @@
+import { Coordinate } from "./coordinate.entity";
+
 export class Location {
     private _id: number;
     private _country: string;
     private _city: string;
     private _street: string;
     private _number: number;
-    private _coordinates: { latitude: number, longitude: number };
+    private _coordinates: Coordinate;
+    private _info: string
 
-    constructor(id: number, country: string, city: string, street: string, number: number, coordinates: { latitude: number, longitude: number }) {
+    constructor(id: number, country: string, city: string, street: string, number: number, coordinates: Coordinate, info: string = '') {
         this._id = id;
         this._country = country;
         this._city = city;
         this._street = street;
         this._number = number;
         this._coordinates = coordinates;
+        this._info = info
     }
 
     // Getters
@@ -36,7 +40,7 @@ export class Location {
         return this._number;
     }
 
-    get coordinates(): { latitude: number, longitude: number } {
+    get coordinates(): Coordinate {
         return this._coordinates;
     }
 
@@ -61,7 +65,7 @@ export class Location {
         this._number = number;
     }
 
-    set coordinates(coordinates: { latitude: number, longitude: number }){
+    set coordinates(coordinates: Coordinate){
         this._coordinates = coordinates;
     }
 }
