@@ -1,5 +1,4 @@
 import { Email } from "../domain/model/value-objects/email";
-import { User } from "../domain/model/user.entity";
 import { Users } from "../domain/services/users.repository";
 import { DeleteRequest } from "../dto/requests/delete.request";
 import { DeleteResponse } from "../dto/responses/delete.response";
@@ -82,7 +81,7 @@ export class DeleteUserUseCase{
 
             return{
 
-                code: 400
+                code: 404
 
             } as DeleteResponse
 
