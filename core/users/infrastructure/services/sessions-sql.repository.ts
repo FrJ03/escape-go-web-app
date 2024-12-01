@@ -25,8 +25,6 @@ export class SessionsSql implements Sessions{
 
         const sessions: Array<Session> = []
 
-        console.error(response.rows[0])
-
         response.rows.forEach(session => 
             sessions.push(
                 SessionDataMapper.toModel({
@@ -55,8 +53,6 @@ export class SessionsSql implements Sessions{
         await postgres.end()
 
         const sessions: Array<Session> = []
-
-        console.error(response.rows[0])
 
         response.rows.forEach(session => 
             sessions.push(

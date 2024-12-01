@@ -34,7 +34,7 @@ describe('Get all users tests', () => {
             const response: Array<User> = await users.getAll()
 
             expect(response.length).toBe(1)
-            expect(response[1] instanceof Admin).toBeTruthy()
+            expect(response[0] instanceof Admin).toBeTruthy()
         })
         test('with a participant', async () => {
             const users = new UsersSql(PostgresSqlClient)
@@ -51,7 +51,7 @@ describe('Get all users tests', () => {
             const response: Array<User> = await users.getAll()
 
             expect(response.length).toBe(1)
-            expect(response[1] instanceof Participant).toBeTruthy()
+            expect(response[0] instanceof Participant).toBeTruthy()
         })
         test('with an admin and a participant', async () => {
             const users = new UsersSql(PostgresSqlClient)

@@ -15,6 +15,7 @@ export class UserPublisher extends Publisher<User>{
             const postgres = new Client(this.postgres_config)
             await postgres.connect()
             const response = await postgres.query(INSERT_USER, [data.email, data.username, data.password, data.role, data.points])
+            await postgres.end()
             
             return (response.rowCount !== 0)
         } catch (error) {
