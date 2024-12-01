@@ -77,6 +77,10 @@ export class DMSData{
         return this._degrees.value + this._minutes.value/60 + this._seconds.value/60
     }
 
+    get radians(): number{
+        return this.decimal * (Math.PI/180)
+    }
+
     public toString(): string{
         const card_dir_letter = 
             (this._cardinal_direction === CardinalDirections.North) ? 
