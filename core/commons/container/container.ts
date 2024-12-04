@@ -8,6 +8,7 @@ import { SessionsSql } from '../../users/infrastructure/services/sessions-sql.re
 import { CreateEscapeRoomUseCase } from "../../escape-rooms/application/create-escape-room.use-case";
 import { EscapeRoomsSql } from "../../escape-rooms/infrastructure/services/escape_rooms_sql.repository";
 import PostgresSqlConfig from "../infrastructure/database-client/postgresql-client";
+import { GetEscapeRoomsByDistanceUseCase } from "../../escape-rooms/application/get-escape-rooms-by-distance.use-case";
 
 const Container = {
     init: () => {
@@ -20,7 +21,8 @@ const Container = {
             loginUser: new LoginUserUseCase(users, sessions),
             checkUserRole: new CheckUserRoleUseCase(users),
             deleteUser: new DeleteUserUseCase(users),
-            createEscapeRoom: new CreateEscapeRoomUseCase(escape_rooms)
+            createEscapeRoom: new CreateEscapeRoomUseCase(escape_rooms),
+            getEscapeRoomsByDistance: new GetEscapeRoomsByDistanceUseCase(escape_rooms)
         }
     }
 }
