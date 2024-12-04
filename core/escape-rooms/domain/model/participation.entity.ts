@@ -8,7 +8,7 @@ export class Participation {
     private _sessionDuration: number;
     private _participant: Participant;
     private _escapeRoom: EscapeRoom;
-    private _interval: number | null = null;
+    private _interval: number | undefined = undefined;
 
     constructor(participant: Participant, escapeRoom: EscapeRoom) {
         this._date = new Date();
