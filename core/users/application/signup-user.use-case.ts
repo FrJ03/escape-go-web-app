@@ -25,7 +25,7 @@ export class SignUpUserUseCase{
 
                 const posible_user = await this.users.findUserByEmail(email) //buscamos al usuario por mail
                                 
-                if(posible_user != null){ //si se cumple quiere decir que el usuario ya existe en la BD
+                if(posible_user != undefined){ //si se cumple quiere decir que el usuario ya existe en la BD
 
                     return{
 
@@ -65,7 +65,7 @@ export class SignUpUserUseCase{
 
                         return{
 
-                            code: 404
+                            code: 4043
 
                         } as SignUpResponse
 
@@ -74,6 +74,8 @@ export class SignUpUserUseCase{
                 }
 
             }catch (error){
+
+                console.error(error);
 
                 return{
 
