@@ -10,6 +10,7 @@ import { Admin } from "../../domain/model/admin.entity";
 import { Email } from "../../domain/model/value-objects/email";
 import { Client } from "pg";
 import * as bcrypt from 'bcrypt'
+import { SALT } from "../../../commons/utils/config";
 
 describe('Delete users use case tests', () => {
     test('Delete without an user inserted', async () => {
@@ -33,7 +34,7 @@ describe('Delete users use case tests', () => {
             await postgres.end()
         })
         beforeEach(async () => {
-            const password_cipher = await bcrypt.hash(password_plain, 10);
+            const password_cipher = await bcrypt.hash(password_plain, SALT);
             const new_user = new Admin(1, new Email('test@test.es'), 'test', password_cipher)
 
             const users = new UsersSql(PostgresSqlClient)
