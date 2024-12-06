@@ -50,7 +50,7 @@ export class DeleteUserUseCase{
 
                         return{
 
-                            code: 400
+                            code: 401
 
                         } as DeleteResponse
 
