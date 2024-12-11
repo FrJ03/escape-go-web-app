@@ -2,7 +2,8 @@ import { DeepReadonly } from "ts-essentials";
 
 type CreateEscapeRoomResponse = DeepReadonly<{
 
-    code: number
+    code: number,
+    id?: number;
 
 }>
 

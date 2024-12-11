@@ -39,7 +39,8 @@ export class CreateEscapeRoomUseCase{
         try {
             if(await this.escape_rooms.save(escape_room)){
                 return {
-                    code: 200
+                    code: 200,
+                    id: escape_room.id
                 } as CreateEscapeRoomResponse
             }
             else{
