@@ -1,3 +1,3 @@
 const INSERT_PARTICIPATION = 'INSERT INTO participations (escape_room, start_time, end_time, points) VALUES ($1, $2, $3, $4);'
-
-export { INSERT_PARTICIPATION }
+const SELECT_PARTICIPATION_BY_ID = 'SELECT * FROM participations p, escape_rooms e, locations l, cities ci, countries, co WHERE p.id = $1 AND p.escape_room = $2 AND p.escape_room = e.id AND e.physical_location = l.id AND l.city = ci.id AND ci.country = co.id'
+export { INSERT_PARTICIPATION, SELECT_PARTICIPATION_BY_ID }
