@@ -10,12 +10,15 @@ import { EscapeRoomsSql } from "../../escape-rooms/infrastructure/services/escap
 import PostgresSqlConfig from "../infrastructure/database-client/postgresql-client";
 import { GetEscapeRoomsByDistanceUseCase } from "../../escape-rooms/application/get-escape-rooms-by-distance.use-case";
 import { DeleteEscapeRoomUseCase } from "../../escape-rooms/application/delete-escape-room.use-case";
+import { ParticipationsSql } from "../../escape-rooms/infrastructure/services/participation_sql.repository";
+import { CreateParticipationUseCase } from "../../escape-rooms/application/create-participation.use-case";
 
 const Container = {
     init: () => {
         const users = new UsersSql(PostgresSqlClient)
         const sessions = new SessionsSql(PostgresSqlClient);
         const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
+        const participations = new ParticipationsSql(PostgresSqlClient)
 
         return {
             signUpUser: new SignUpUserUseCase(users, sessions),
@@ -24,7 +27,8 @@ const Container = {
             deleteUser: new DeleteUserUseCase(users),
             createEscapeRoom: new CreateEscapeRoomUseCase(escape_rooms),
             getEscapeRoomsByDistance: new GetEscapeRoomsByDistanceUseCase(escape_rooms),
-            deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms)
+            deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms),
+            createParticipation: new CreateParticipationUseCase(escape_rooms, participations)
         }
     }
 }
