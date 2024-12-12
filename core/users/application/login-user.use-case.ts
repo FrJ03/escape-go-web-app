@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { SessionsSql } from "../infrastructure/services/sessions-sql.repository";
 import { Session } from '../domain/model/session.entity';
+import { PASS } from "../../commons/utils/config";
 
 export class LoginUserUseCase{
 
@@ -37,7 +38,7 @@ export class LoginUserUseCase{
 
                         }
 
-                        const token = jwt.sign(userForToken, ''); //hay que modificar las opciones del sign
+                        const token = jwt.sign(userForToken, PASS); //hay que modificar las opciones del sign
 
                         const fecha_actual: Date = new Date();
 

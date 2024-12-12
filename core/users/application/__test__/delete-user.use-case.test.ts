@@ -1,11 +1,7 @@
 import { DeleteUserUseCase } from "../delete-user.use-case";
 import { DeleteRequest } from "../../dto/requests/delete.request";
-import { SessionsSql } from "../../infrastructure/services/sessions-sql.repository"; 
 import { UsersSql } from "../../infrastructure/services/users-sql.repository";
 import PostgresSqlClient from "../../../commons/infrastructure/database-client/postgresql-client"
-import { User } from "../../domain/model/user.entity";
-import UserDataMapper from "../../infrastructure/persistence/user.data-mapper";
-import { UserType } from "../../infrastructure/persistence/user.type";
 import { Admin } from "../../domain/model/admin.entity";
 import { Email } from "../../domain/model/value-objects/email";
 import { Client } from "pg";
@@ -52,6 +48,7 @@ describe('Delete users use case tests', () => {
             const response = await delete_uc.with(request)
 
             expect(response.code).toBe(200)
+
         })
         test('Delete an existing user with a wrong password', async () => {
             const users = new UsersSql(PostgresSqlClient)

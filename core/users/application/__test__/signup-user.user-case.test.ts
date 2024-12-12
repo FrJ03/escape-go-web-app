@@ -3,16 +3,25 @@ import { SignUpRequest } from "../../dto/requests/signup.request";
 import { SessionsSql } from "../../infrastructure/services/sessions-sql.repository"; 
 import { UsersSql } from "../../infrastructure/services/users-sql.repository";
 import PostgresSqlClient from "../../../commons/infrastructure/database-client/postgresql-client"
+import { Client } from "pg";
 
 describe('SignupUserUseCase', () => {
 
-    test('Recibir SignUpRequest correctamente y obtener SignUpResponse válida', () => {
+    beforeEach( async () => {
+        const postgres = new Client(PostgresSqlClient)
+        await postgres.connect()
+        await postgres.query('DELETE FROM userssessions');
+        await postgres.query('DELETE FROM users')
+        await postgres.end()
+    })
+
+    test('Recibir SignUpRequest correctamente y obtener SignUpResponse válida', async () => {
 
         const request: SignUpRequest = { //request válido
 
-            email: 'notrealmail@mail.com',
-            username: 'notrealusername',
-            password: 'notrealpassword'
+            email: 'test@test.es',
+            username: 'test',
+            password: 'testpassword'
 
         }
 
@@ -20,34 +29,44 @@ describe('SignupUserUseCase', () => {
         const sessions = new SessionsSql(PostgresSqlClient);
         const signupusercase = new SignUpUserUseCase(users, sessions);
 
-        signupusercase.with(request).then((response)=> {
+        const response = await signupusercase.with(request);
 
-            expect(response.code).toBe(200);
-
-        });
+        expect(response.code).toBe(200);
 
     });
 
-    test('Recibir SignUpRequest inválida  y comprobar el SignUpResponse', () => {
+    describe('SignUpUserUseCase', () => {
 
-        const request: SignUpRequest = { //request válido
+        test('Recibir SignUpRequest inválida  y comprobar el SignUpResponse', async () => {
 
-            email: 'notrealmail@mail.com@notrealmail',
-            username: 'notrealusername',
-            password: 'notrealpassword'
-
-        }
-
-        const users = new UsersSql(PostgresSqlClient);
-        const sessions = new SessionsSql(PostgresSqlClient);
-        const signupusercase = new SignUpUserUseCase(users, sessions);
-
-        signupusercase.with(request).then((response)=> {
-
+            const request: SignUpRequest = { //request válido
+    
+                email: 'test@test.es@test.com',
+                username: 'test',
+                password: 'testpassword'
+    
+            }
+    
+            const users = new UsersSql(PostgresSqlClient);
+            const sessions = new SessionsSql(PostgresSqlClient);
+            const signupusercase = new SignUpUserUseCase(users, sessions);
+    
+            const response = await signupusercase.with(request);
+    
             expect(response.code).toBe(404);
-
+    
         });
 
     });
+
+    afterAll( async () => {
+
+        const postgres = new Client(PostgresSqlClient)
+        await postgres.connect()
+        await postgres.query('DELETE FROM userssessions');
+        await postgres.query('DELETE FROM users')
+        await postgres.end()
+        
+    })
 
 })

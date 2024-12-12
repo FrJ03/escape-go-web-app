@@ -15,5 +15,6 @@ const POSTGRES_URL =
 
 const SSL = (ENV !== 'test') || false
 const SALT = process.env.SALT || 10
+const PASS = process.env.PASS || 'password'
 
-export { ENV, PORT, POSTGRES_URL, SSL, SALT }
+export { ENV, PORT, POSTGRES_URL, SSL, SALT, PASS }
