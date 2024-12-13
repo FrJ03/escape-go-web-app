@@ -50,4 +50,49 @@ escapeRoomRouter.delete('/', async (req, res) => { //Borrar escape room
     }
 });
 
+escapeRoomRouter.get('/proximity', async (req, res) => { //GET obtener escapeRooms por cercania
+
+    if(req.body.coordinates != undefined){
+
+        const escape_roomRequest = GetEscapeRoomsByDistanceRequest.with({
+
+            coordinates: req.body.coordinates
+
+        });
+
+        const escape_roomResponse: GetEscapeRoomsByDistanceResponse = await container.getEscapeRoomsByDistance.with(escape_roomRequest);
+        res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
+
+    }else{
+
+        res.sendStatus(400); //error al obtener las coordenadas del usuario
+
+    }
+
+});
+
+escapeRoomRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
+
+    //res.send('Endpoint /info listening !!');
+
+    if(req.body.id != undefined){
+
+        //code
+
+    }else{
+
+        res.sendStatus(400); //error al obtener el id del escape_room
+
+    }
+
+});
+
+//POST participar en el scapeRoom ID
+
+escapeRoomRouter.post('/participate', (req, res) => {
+
+    res.send('Endpoint /participate listening !!');
+
+});
+
 export default escapeRoomRouter;

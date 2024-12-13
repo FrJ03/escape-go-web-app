@@ -12,6 +12,7 @@ import { GetEscapeRoomsByDistanceUseCase } from "../../escape-rooms/application/
 import { DeleteEscapeRoomUseCase } from "../../escape-rooms/application/delete-escape-room.use-case";
 import { ParticipationsSql } from "../../escape-rooms/infrastructure/services/participation_sql.repository";
 import { CreateParticipationUseCase } from "../../escape-rooms/application/create-participation.use-case";
+import { GetEscapeRoomInfoByIdUseCase } from "../../escape-rooms/application/get-escape-room-info-by-id.use-case";
 
 const Container = {
     init: () => {
@@ -28,7 +29,8 @@ const Container = {
             createEscapeRoom: new CreateEscapeRoomUseCase(escape_rooms),
             getEscapeRoomsByDistance: new GetEscapeRoomsByDistanceUseCase(escape_rooms),
             deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms),
-            createParticipation: new CreateParticipationUseCase(escape_rooms, participations)
+            createParticipation: new CreateParticipationUseCase(escape_rooms, participations),
+            getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms)
         }
     }
 }
