@@ -6,6 +6,10 @@ import { GetEscapeRoomsByDistanceResponse } from '../../dto/responses/get-escape
 import { GetEscapeRoomsByDistanceRequest } from '../../dto/resquests/get-escape-rooms-by-distance.request';
 import { DeleteEscapeRoomRequest } from '../../dto/resquests/delete-escape-room.request';
 import { DeleteEscapeRoomResponse } from '../../dto/responses/delete-escape-room.response';
+import { GetEscapeRoomInfoRequest } from '../../dto/resquests/get-escape-room-info.request';
+import { GetEscapeRoomInfoResponse } from '../../dto/responses/get-escape-room-info.response';
+import { CreateParticipationRequest } from '../../dto/resquests/create-participation.request';
+import { CreateParticipationResponse } from '../../dto/responses/create-participation.response';
 
 const escapeRoomRouter = express.Router();
 
@@ -73,11 +77,17 @@ escapeRoomRouter.get('/proximity', async (req, res) => { //GET obtener escapeRoo
 
 escapeRoomRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
 
-    //res.send('Endpoint /info listening !!');
-
     if(req.body.id != undefined){
 
-        //code
+        const escape_roomRequest = GetEscapeRoomInfoRequest.with({
+
+            id: req.body.id
+
+        });
+
+        const escape_roomResponse: GetEscapeRoomInfoResponse = await container.getEscapeRoomInfoById.with(escape_roomRequest);
+
+        res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
 
     }else{
 
@@ -89,9 +99,28 @@ escapeRoomRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
 
 //POST participar en el scapeRoom ID
 
-escapeRoomRouter.post('/participate', (req, res) => {
+escapeRoomRouter.post('/participate', async (req, res) => {
 
-    res.send('Endpoint /participate listening !!');
+    if(req.body.id != undefined && req.body.start_date != undefined && req.body.end_date != undefined){
+
+        const escape_roomRequest = CreateParticipationRequest.with({
+
+            start_date: req.body.start_date,
+            end_date: req.body.end_date,
+            escape_room_id: req.body.id
+
+
+        });
+
+        const escape_roomResponse: CreateParticipationResponse = await container.createParticipation.with(escape_roomRequest);
+
+        res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
+
+    }else{
+
+        res.sendStatus(400); //error al obtener la informacion
+
+    }
 
 });
 
