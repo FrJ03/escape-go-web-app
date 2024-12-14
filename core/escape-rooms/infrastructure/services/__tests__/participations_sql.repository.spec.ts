@@ -9,8 +9,6 @@ import { ParticipationType } from "../../persistence/participation.type";
 import { ParticipationsSql } from "../participations_sql.repository";
 import { ParticipationDataMapper } from "../../persistence/participation.data-mapper";
 import { Coordinate } from "../../../domain/model/coordinate.entity";
-import { EscapeRoom } from "../../../domain/model/escapeRoom.entity";
-import { Participation } from "../../../domain/model/participation.entity";
 
 describe('Participations repository tests', () => {
     beforeAll(async () => {

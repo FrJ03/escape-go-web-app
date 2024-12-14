@@ -12,7 +12,7 @@ import { LocationType } from "./location.type";
 const EscapeRoomDataMapper = {
     toModel: (escape_room: EscapeRoomType): EscapeRoom => {
         const coordinate = Coordinate.create(escape_room.location.coordinates)
-        if(coordinate){
+        if(coordinate !== undefined){
             const location: Location = new Location(
                 escape_room.location.id,
                 escape_room.location.country,

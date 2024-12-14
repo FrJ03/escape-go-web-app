@@ -71,7 +71,23 @@ export class EscapeRoomsSql implements EscapeRooms{
             return undefined; // No se encontró el EscapeRoom
         }
 
-        const escape_room = response.rows[0];
+        const escape_room = {
+            id: response.rows[0].id,
+            title: response.rows[0].title,
+            description: response.rows[0].description,
+            solution: response.rows[0].solution,
+            difficulty: response.rows[0].difficulty,
+            price: response.rows[0].price,
+            location: {
+                id: response.rows[0].physical_location,
+                coordinates: response.rows[0].coordinates,
+                street: response.rows[0].street,
+                street_number: response.rows[0].street_number,
+                other_info: response.rows[0].other_info,
+                city: response.rows[0].city_name,
+                country: response.rows[0].country_name
+            } as LocationType
+        } as EscapeRoomType
 
         const escapeRoom = EscapeRoomDataMapper.toModel(escape_room);
         return escapeRoom;
