@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS Clue(
 );
 
 CREATE TABLE IF NOT EXISTS Participations(
-    id SERIAL UNIQUE,
-    escape_room BIGINT UNIQUE,
+    id SERIAL,
+    escape_room BIGINT,
     start_time DATE,
     points INTEGER,
     end_time DATE,
@@ -92,8 +92,6 @@ CREATE TABLE IF NOT EXISTS UsersParticipations(
     escape_room BIGINT UNIQUE,
 
     FOREIGN KEY (participant) REFERENCES Users(id),
-    FOREIGN KEY (participation) REFERENCES Participations(id),
-    FOREIGN KEY (escape_room) REFERENCES Participations(escape_room),
-
+    FOREIGN KEY (participation, escape_room) REFERENCES Participations(id, escape_room),
     PRIMARY KEY(participant, escape_room, participation)
 )
