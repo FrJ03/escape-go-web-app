@@ -1,6 +1,9 @@
+import { QueryResult } from "pg";
 import { Participation } from "../../domain/model/participation.entity";
 import { EscapeRoomDataMapper } from "./escape_room.data-mapper";
 import { ParticipationType } from "./participation.type";
+import { LocationType } from "./location.type";
+import { EscapeRoomType } from "./escape_room.type";
 
 const ParticipationDataMapper = {
     toModel: (participation: ParticipationType): Participation => {

@@ -10,7 +10,7 @@ import { EscapeRoomsSql } from "../../escape-rooms/infrastructure/services/escap
 import PostgresSqlConfig from "../infrastructure/database-client/postgresql-client";
 import { GetEscapeRoomsByDistanceUseCase } from "../../escape-rooms/application/get-escape-rooms-by-distance.use-case";
 import { DeleteEscapeRoomUseCase } from "../../escape-rooms/application/delete-escape-room.use-case";
-import { ParticipationsSql } from "../../escape-rooms/infrastructure/services/participation_sql.repository";
+import { ParticipationsSql } from "../../escape-rooms/infrastructure/services/participations_sql.repository";
 import { CreateParticipationUseCase } from "../../escape-rooms/application/create-participation.use-case";
 import { GetEscapeRoomInfoByIdUseCase } from "../../escape-rooms/application/get-escape-room-info-by-id.use-case";
 
