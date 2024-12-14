@@ -14,7 +14,14 @@ const POSTGRES_URL =
             process.env.TEST_POSTGRES_URL || ''
 
 const SSL = (ENV !== 'test') || false
-const SALT = process.env.SALT || 10
+let s
+if(process.env.SALT !== undefined && Number.isInteger(process.env.SALT)){
+    s = process.env.SALT
+}
+else{
+    s = 10
+}
+const SALT = s
 const PASS = process.env.PASS || 'password'
 
 export { ENV, PORT, POSTGRES_URL, SSL, SALT, PASS }
