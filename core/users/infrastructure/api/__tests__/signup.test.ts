@@ -6,10 +6,16 @@ import PostgresSqlConfig from '../../../../commons/infrastructure/database-clien
 describe('POST /signup', () => {
   let postgres: Client;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     postgres = new Client(PostgresSqlConfig);
     await postgres.connect();
-    await postgres.query('DELETE FROM users WHERE username = $1', ['testusersignup']);
+    await postgres.query('DELETE FROM userssessions');
+    await postgres.query('DELETE FROM users WHERE email = $1', ['testusersignup@gmail.com']);
+  });
+
+  afterAll(async () => {
+    await postgres.query('DELETE FROM userssessions');
+    await postgres.query('DELETE FROM users WHERE email = $1', ['testusersignup@gmail.com']);
     await postgres.end();
   });
 
@@ -19,7 +25,7 @@ describe('POST /signup', () => {
       .send({
         username: 'testusersignup',
         password: 'password',
-        email: 'testuser@gmail.com',
+        email: 'testusersignup@gmail.com',
       });
 
     expect(response.status).toBe(200);
