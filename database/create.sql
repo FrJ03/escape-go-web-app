@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS EscapeRooms(
     difficulty INTEGER CHECK(difficulty IN (0, 1, 2, 3, 4, 5)),
     price INTEGER,
     physical_location BIGINT,
+    deleted BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (physical_location) REFERENCES Locations(id)
 );
 
