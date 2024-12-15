@@ -6,7 +6,7 @@ import { GetEscapeRoomsRequest } from "../dto/resquests/get-escape-rooms.request
 export class GetEscapeRoomsUseCase{
     constructor(private readonly escape_rooms: EscapeRooms){}
 
-    async with(command: GetEscapeRoomsRequest): Promise<GetEscapeRoomsResponse>{
+    async with(): Promise<GetEscapeRoomsResponse>{
         try {
             const escape_rooms = await this.escape_rooms.getAll()
             if(escape_rooms.length === 0){

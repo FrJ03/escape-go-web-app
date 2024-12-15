@@ -24,11 +24,8 @@ describe('Get escape rooms use case', () => {
     const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
     test('Without escape rooms', async () => {
         const use_case = new GetEscapeRoomsUseCase(escape_rooms)
-        const request = {
 
-        } as GetEscapeRoomsRequest
-
-        const response = await use_case.with(request)
+        const response = await use_case.with()
 
         expect(response.code).toBe(200)
         expect(response.escape_rooms.length).toBe(0)
@@ -90,11 +87,8 @@ describe('Get escape rooms use case', () => {
         test('With one escape room', async () => {
             await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
             const use_case = new GetEscapeRoomsUseCase(escape_rooms)
-            const request = {
-                
-            } as GetEscapeRoomsRequest
     
-            const response = await use_case.with(request)
+            const response = await use_case.with()
     
             expect(response.code).toBe(200)
             expect(response.escape_rooms.length).toBe(1)
@@ -103,26 +97,22 @@ describe('Get escape rooms use case', () => {
             await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
             await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[1]))
             const use_case = new GetEscapeRoomsUseCase(escape_rooms)
-            const request = {
-                
-            } as GetEscapeRoomsRequest
     
-            const response = await use_case.with(request)
+            const response = await use_case.with()
     
             expect(response.code).toBe(200)
             expect(response.escape_rooms.length).toBe(2)
         })
         test('With n escape rooms', async () => {
-            escape_rooms_data.forEach(async escape_room => {
-                await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_room))
-            })
+            for (let i = 0 ; i < escape_rooms_data.length ; i++){
+                await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[i]))
+            }
             const use_case = new GetEscapeRoomsUseCase(escape_rooms)
-            const request = {
-                
-            } as GetEscapeRoomsRequest
     
-            const response = await use_case.with(request)
+            const response = await use_case.with()
     
+            const postgres = new Client(PostgresSqlConfig)
+
             expect(response.code).toBe(200)
             expect(response.escape_rooms.length).toBe(escape_rooms_data.length)            
         })

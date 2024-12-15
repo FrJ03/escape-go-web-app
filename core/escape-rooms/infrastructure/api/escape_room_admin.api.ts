@@ -55,11 +55,9 @@ escapeRoomAdminRouter.delete('/', async (req, res) => { //Borrar escape room
 });
 
 escapeRoomAdminRouter.get('/', async (req, res) => { //GET escape rooms
-        const request = GetEscapeRoomsRequest.with({});
+        const response: GetEscapeRoomsResponse = await container.getEscapeRooms.with();
 
-        const response: GetEscapeRoomsResponse = await container.getEscapeRooms.with(request);
-
-        res.sendStatus(response.code || 200)
+        res.status(response.code || 200).send(response)
 });
 
 escapeRoomAdminRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
