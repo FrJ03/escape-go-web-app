@@ -15,6 +15,7 @@ import { CreateParticipationUseCase } from "../../escape-rooms/application/creat
 import { GetEscapeRoomInfoByIdUseCase } from "../../escape-rooms/application/get-escape-room-info-by-id.use-case";
 import { LoginAdminUseCase } from "../../users/application/login-admin.use-case";
 import { GetEscapeRoomsUseCase } from "../../escape-rooms/application/get-escape-rooms.use-case";
+import { GetEscapeRoomUseCase } from "../../escape-rooms/application/get-escape-room.use-case";
 
 const Container = {
     init: () => {
@@ -34,6 +35,7 @@ const Container = {
             getEscapeRoomsByDistance: new GetEscapeRoomsByDistanceUseCase(escape_rooms),
             deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms),
             createParticipation: new CreateParticipationUseCase(escape_rooms, participations),
+            getEscapeRoom: new GetEscapeRoomUseCase(escape_rooms),
             getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms)
         }
     }
