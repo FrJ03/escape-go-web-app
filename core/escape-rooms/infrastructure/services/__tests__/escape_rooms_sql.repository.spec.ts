@@ -53,7 +53,117 @@ describe('Escape rooms sql repository tests', () => {
             await postgres.end()
         })
     })
-    
+    describe('Get all escape rooms', () => {
+        beforeAll(async () => {
+            const postgres = new Client(PostgresSqlClient)
+            await postgres.connect()
+            await postgres.query('DELETE FROM escaperooms')
+            await postgres.query('DELETE FROM locations')
+            await postgres.query('DELETE FROM cities')
+            await postgres.query('DELETE FROM countries')
+            await postgres.end()
+        })
+        test('Without escape rooms', async () => {
+            const escape_rooms = new EscapeRoomsSql(PostgresSqlClient)
+
+            const response = await escape_rooms.getAll()
+
+            expect(response.length).toBe(0)
+        })
+        describe('With escape rooms inserted tests', () => {
+            const escape_rooms_data = [
+                {
+                    id: -1,
+                    title: 'test',
+                    description: 'test',
+                    solution: 'test',
+                    difficulty: 1,
+                    price: 100,
+                    location: {
+                        id: -1,
+                        coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                        street: 'test',
+                        street_number: 1,
+                        other_info: '',
+                        city: 'cordoba',
+                        country: 'españa'
+                    } as LocationType
+                } as EscapeRoomType,
+                {
+                    id: -1,
+                    title: 'test',
+                    description: 'test',
+                    solution: 'test',
+                    difficulty: 1,
+                    price: 100,
+                    location: {
+                        id: -1,
+                        coordinates: '10º 30\'30\" N, 0º 30\'30\" N',
+                        street: 'test',
+                        street_number: 1,
+                        other_info: '',
+                        city: 'sevilla',
+                        country: 'españa'
+                    } as LocationType
+                } as EscapeRoomType,
+                {
+                    id: -1,
+                    title: 'test',
+                    description: 'test',
+                    solution: 'test',
+                    difficulty: 1,
+                    price: 100,
+                    location: {
+                        id: -1,
+                        coordinates: '10º 30\'30\" N, 10º 30\'30\" N',
+                        street: 'test',
+                        street_number: 1,
+                        other_info: '',
+                        city: 'sevilla',
+                        country: 'españa'
+                    } as LocationType
+                } as EscapeRoomType
+            ]
+            test('With one escape room', async () => {
+                const escape_rooms = new EscapeRoomsSql(PostgresSqlClient)
+                await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
+
+                const response = await escape_rooms.getAll()
+
+                expect(response.length).toBe(1)
+            })
+            test('With two escape rooms', async () => {
+                const escape_rooms = new EscapeRoomsSql(PostgresSqlClient)
+                await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
+                await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[1]))
+
+                const response = await escape_rooms.getAll()
+
+                expect(response.length).toBe(2)
+                
+            })
+            test('With n escape rooms', async () => {
+                const escape_rooms = new EscapeRoomsSql(PostgresSqlClient)
+                for(let i = 0 ; i < escape_rooms_data.length ; i++){
+                    await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[i]))
+                }
+
+                const response = await escape_rooms.getAll()
+
+                expect(response.length).toBe(escape_rooms_data.length)
+            })
+
+            afterEach(async () => {
+                const postgres = new Client(PostgresSqlClient)
+                await postgres.connect()
+                await postgres.query('DELETE FROM escaperooms')
+                await postgres.query('DELETE FROM locations')
+                await postgres.query('DELETE FROM cities')
+                await postgres.query('DELETE FROM countries')
+                await postgres.end()
+            })
+        })
+    })
     describe('Get all escape rooms by distance', () => {
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlClient)

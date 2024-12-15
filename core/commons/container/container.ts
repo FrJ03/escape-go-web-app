@@ -14,6 +14,7 @@ import { ParticipationsSql } from "../../escape-rooms/infrastructure/services/pa
 import { CreateParticipationUseCase } from "../../escape-rooms/application/create-participation.use-case";
 import { GetEscapeRoomInfoByIdUseCase } from "../../escape-rooms/application/get-escape-room-info-by-id.use-case";
 import { LoginAdminUseCase } from "../../users/application/login-admin.use-case";
+import { GetEscapeRoomsUseCase } from "../../escape-rooms/application/get-escape-rooms.use-case";
 
 const Container = {
     init: () => {
@@ -29,6 +30,7 @@ const Container = {
             checkUserRole: new CheckUserRoleUseCase(users),
             deleteUser: new DeleteUserUseCase(users),
             createEscapeRoom: new CreateEscapeRoomUseCase(escape_rooms),
+            getEscapeRooms: new GetEscapeRoomsUseCase(escape_rooms),
             getEscapeRoomsByDistance: new GetEscapeRoomsByDistanceUseCase(escape_rooms),
             deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms),
             createParticipation: new CreateParticipationUseCase(escape_rooms, participations),
