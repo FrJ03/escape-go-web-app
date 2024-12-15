@@ -26,7 +26,7 @@ describe('escape room api', () => {
     describe('create escape room', () => {
         test('before login', async () => {
             await api
-                .post('/escaperoom/create')
+                .post('/escaperoom/admin/create')
                 .expect(401)
         })
         describe('after login with a participant account', () => {
@@ -61,7 +61,7 @@ describe('escape room api', () => {
             })
             test('after login', async () => {
                 await api
-                    .post('/escaperoom/create')
+                    .post('/escaperoom/admin/create')
                     .set('Authorization', token)
                     .expect(401)
             })
@@ -121,7 +121,7 @@ describe('escape room api', () => {
                 }
 
                 await api
-                    .post('/escaperoom/create')
+                    .post('/escaperoom/admin/create')
                     .set('Authorization', token)
                     .send(request)
                     .expect(200)
@@ -145,7 +145,7 @@ describe('escape room api', () => {
                 }
 
                 await api
-                    .post('/escaperoom/create')
+                    .post('/escaperoom/admin/create')
                     .set('Authorization', token)
                     .send(request)
                     .expect(400)
@@ -171,7 +171,7 @@ describe('escape room api', () => {
     describe('delete escape room', () => {
         test('before login', async () => {
             await api
-                .delete('/escaperoom')
+                .delete('/escaperoom/admin')
                 .expect(401)
         })
         describe('after login with a participant account', () => {
@@ -206,7 +206,7 @@ describe('escape room api', () => {
             })
             test('after login', async () => {
                 await api
-                    .delete('/escaperoom')
+                    .delete('/escaperoom/admin')
                     .set('Authorization', token)
                     .expect(401)
             })
@@ -265,7 +265,7 @@ describe('escape room api', () => {
                     }
                 }
                 await api
-                    .post('/escaperoom/create')
+                    .post('/escaperoom/admin/create')
                     .set('Authorization', token)
                     .send(request)
                     .expect(200)
@@ -278,13 +278,13 @@ describe('escape room api', () => {
                 const id = id_response.rows[0].id
 
                 await api
-                    .delete(`/escaperoom?id=${id}`)
+                    .delete(`/escaperoom/admin?id=${id}`)
                     .set('Authorization', token)
                     .expect(200)
             })
             test('delete a non existing escape room', async () => {
                 await api
-                    .delete(`/escaperoom?id=${1}`)
+                    .delete(`/escaperoom/admin?id=${1}`)
                     .set('Authorization', token)
                     .expect(200)
             })

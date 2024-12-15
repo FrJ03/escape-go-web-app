@@ -2,20 +2,20 @@ import express from 'express';
 import { container } from '../../../commons/container/container'
 import { CreateEscapeRoomRequest } from '../../dto/resquests/create-escape-room.request';
 import { CreateEscapeRoomResponse } from '../../dto/responses/create-escape-room.response';
-import { GetEscapeRoomsByDistanceResponse } from '../../dto/responses/get-escape-rooms-by-distance.response';
-import { GetEscapeRoomsByDistanceRequest } from '../../dto/resquests/get-escape-rooms-by-distance.request';
 import { DeleteEscapeRoomRequest } from '../../dto/resquests/delete-escape-room.request';
 import { DeleteEscapeRoomResponse } from '../../dto/responses/delete-escape-room.response';
 import { GetEscapeRoomInfoRequest } from '../../dto/resquests/get-escape-room-info.request';
 import { GetEscapeRoomInfoResponse } from '../../dto/responses/get-escape-room-info.response';
 import { CreateParticipationRequest } from '../../dto/resquests/create-participation.request';
 import { CreateParticipationResponse } from '../../dto/responses/create-participation.response';
+import { GetEscapeRoomsRequest } from '../../dto/resquests/get-escape-rooms.request';
+import { GetEscapeRoomsResponse } from '../../dto/responses/get-escape-rooms.response';
 
-const escapeRoomRouter = express.Router();
+const escapeRoomAdminRouter = express.Router();
 
 //POST
 
-escapeRoomRouter.post('/create', async (req, res) => { //Crear escape room
+escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
     const { title, description, solution, difficulty, price, maxSessionDuration, location } = req.body;
 
     if (title && description && solution && difficulty && price && maxSessionDuration && location) {
@@ -38,7 +38,7 @@ escapeRoomRouter.post('/create', async (req, res) => { //Crear escape room
 
 //DELETE
 
-escapeRoomRouter.delete('/', async (req, res) => { //Borrar escape room
+escapeRoomAdminRouter.delete('/', async (req, res) => { //Borrar escape room
 
     if(req.body.id != undefined){
 
@@ -54,28 +54,15 @@ escapeRoomRouter.delete('/', async (req, res) => { //Borrar escape room
     }
 });
 
-escapeRoomRouter.get('/proximity', async (req, res) => { //GET obtener escapeRooms por cercania
+escapeRoomAdminRouter.get('/', async (req, res) => { //GET escape rooms
+        const request = GetEscapeRoomsRequest.with({});
 
-    if(req.body.coordinates != undefined){
+        const response: GetEscapeRoomsResponse = await container.getEscapeRooms.with(request);
 
-        const escape_roomRequest = GetEscapeRoomsByDistanceRequest.with({
-
-            coordinates: req.body.coordinates
-
-        });
-
-        const escape_roomResponse: GetEscapeRoomsByDistanceResponse = await container.getEscapeRoomsByDistance.with(escape_roomRequest);
-        res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
-
-    }else{
-
-        res.sendStatus(400); //error al obtener las coordenadas del usuario
-
-    }
-
+        res.sendStatus(response.code || 200)
 });
 
-escapeRoomRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
+escapeRoomAdminRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
 
     if(req.body.id != undefined){
 
@@ -99,7 +86,7 @@ escapeRoomRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
 
 //POST participar en el scapeRoom ID
 
-escapeRoomRouter.post('/participate', async (req, res) => {
+escapeRoomAdminRouter.post('/participate', async (req, res) => {
 
     if(req.body.id != undefined && req.body.start_date != undefined && req.body.end_date != undefined){
 
@@ -124,4 +111,4 @@ escapeRoomRouter.post('/participate', async (req, res) => {
 
 });
 
-export default escapeRoomRouter;
+export {escapeRoomAdminRouter};
