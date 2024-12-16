@@ -1,14 +1,10 @@
 import { describe, test, beforeAll, afterEach } from "@jest/globals"
 import { Client } from "pg"
 import PostgresSqlConfig from "../../../commons/infrastructure/database-client/postgresql-client"
-import { Coordinate } from "../../domain/model/coordinate.entity"
 import { EscapeRoomsSql } from "../../infrastructure/services/escape_rooms_sql.repository"
-import { GetEscapeRoomsByDistanceUseCase } from "../get-escape-rooms-by-distance.use-case"
-import { GetEscapeRoomsByDistanceRequest } from "../../dto/resquests/get-escape-rooms-by-distance.request"
 import { LocationType } from "../../infrastructure/persistence/location.type"
 import { EscapeRoomType } from "../../infrastructure/persistence/escape_room.type"
 import { EscapeRoomDataMapper } from "../../infrastructure/persistence/escape_room.data-mapper"
-import { GetEscapeRoomsRequest } from "../../dto/resquests/get-escape-rooms.request"
 import { GetEscapeRoomsUseCase } from "../get-escape-rooms.use-case"
 
 describe('Get escape rooms use case', () => {

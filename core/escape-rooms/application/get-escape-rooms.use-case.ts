@@ -1,7 +1,6 @@
 import { EscapeRooms } from "../domain/services/escape_rooms.repository";
-import { EscapeRoomData, GetEscapeRoomsByDistanceResponse } from "../dto/responses/get-escape-rooms-by-distance.response";
+import { EscapeRoomData} from "../dto/responses/get-escape-rooms-by-distance.response";
 import { GetEscapeRoomsResponse } from "../dto/responses/get-escape-rooms.response";
-import { GetEscapeRoomsRequest } from "../dto/resquests/get-escape-rooms.request";
 
 export class GetEscapeRoomsUseCase{
     constructor(private readonly escape_rooms: EscapeRooms){}
