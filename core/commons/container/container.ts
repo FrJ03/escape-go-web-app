@@ -16,6 +16,8 @@ import { GetEscapeRoomInfoByIdUseCase } from "../../escape-rooms/application/get
 import { LoginAdminUseCase } from "../../users/application/login-admin.use-case";
 import { GetEscapeRoomsUseCase } from "../../escape-rooms/application/get-escape-rooms.use-case";
 import { GetEscapeRoomUseCase } from "../../escape-rooms/application/get-escape-room.use-case";
+import { RegisterUserParticipationUseCase } from "../../escape-room-sessions/application/register-user-participation.use-case";
+import { UserParticipationsSql } from "../../escape-room-sessions/infrastructure/services/user-participations-sql.repository";
 
 const Container = {
     init: () => {
@@ -23,6 +25,7 @@ const Container = {
         const sessions = new SessionsSql(PostgresSqlClient);
         const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
         const participations = new ParticipationsSql(PostgresSqlClient)
+        const user_participations = new UserParticipationsSql(PostgresSqlClient)
 
         return {
             signUpUser: new SignUpUserUseCase(users, sessions),
@@ -36,7 +39,8 @@ const Container = {
             deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms),
             createParticipation: new CreateParticipationUseCase(escape_rooms, participations),
             getEscapeRoom: new GetEscapeRoomUseCase(escape_rooms),
-            getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms, participations)
+            getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms, participations),
+            registerParticipant: new RegisterUserParticipationUseCase(users, participations, user_participations)
         }
     }
 }
