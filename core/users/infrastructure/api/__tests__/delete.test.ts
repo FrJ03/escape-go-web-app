@@ -6,27 +6,24 @@ import bcrypt from 'bcrypt';
 
 let postgres: Client;
 
-beforeAll(async () => {
-  postgres = new Client(PostgresSqlConfig);
-  await postgres.connect();
-  const password = 'passworddelete';
-  const hashedPassword = await bcrypt.hash(password, 10);
-  await postgres.query('DELETE FROM userssessions');
-  await postgres.query('DELETE FROM users WHERE email = $1', ['correouserdelete@gmail.com']);
-  await postgres.query( 'INSERT INTO users (id, email, username, passwd, user_role, points) VALUES ($1, $2, $3, $4, $5, $6)',
-  [997, 'correouserdelete@gmail.com', 'userdelete', hashedPassword, 'participant', 0]);
-});
-
-afterAll(async () => {
-  await postgres.query('DELETE FROM userssessions');
-  await postgres.query('DELETE FROM users WHERE email = $1', ['correouserdelete@gmail.com']);
-  await postgres.end();
-});
-
-
 describe('DELETE /', () => {
-
-  it('Debe devolver código 200 si el usuario se ha borrado correctamente', async () => {
+  beforeAll(async () => {
+    postgres = new Client(PostgresSqlConfig);
+    await postgres.connect();
+    const password = 'passworddelete';
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await postgres.query('DELETE FROM userssessions');
+    await postgres.query('DELETE FROM users WHERE email = $1', ['correouserdelete@gmail.com']);
+    await postgres.query( 'INSERT INTO users (id, email, username, passwd, user_role, points) VALUES ($1, $2, $3, $4, $5, $6)',
+    [997, 'correouserdelete@gmail.com', 'userdelete', hashedPassword, 'participant', 0]);
+  });
+  
+  afterAll(async () => {
+    await postgres.query('DELETE FROM userssessions');
+    await postgres.query('DELETE FROM users WHERE email = $1', ['correouserdelete@gmail.com']);
+    await postgres.end();
+  });
+  test('Debe devolver código 200 si el usuario se ha borrado correctamente', async () => {
     const Response = await request(app)
       .delete('/account')
       .send({ email: 'correouserdelete@gmail.com', password: 'passworddelete' });
@@ -34,7 +31,7 @@ describe('DELETE /', () => {
     expect(Response.status).toBe(200);
   });
 
-  it('Debe devolver código 400 si no se ha borrado correctamente', async () => {
+  test('Debe devolver código 400 si no se ha borrado correctamente', async () => {
     const response = await request(app)
       .delete('/account')
       .send({
