@@ -43,7 +43,7 @@ export class RegisterUserParticipationUseCase{
         }
         else{
             return {
-                code: 400
+                code: 404
             } as RegisterUserParticipationResponse
         }
     }

@@ -105,7 +105,7 @@ describe('user participations sql repository', () => {
             const response2 = await use_case.with(request)
 
             expect(response1.code).toBe(200)
-            expect(response2.code).toBe(400)
+            expect(response2.code).toBe(404)
         })
         test('invalid user', async () => {
             const request = {
