@@ -4,12 +4,11 @@ import { CreateEscapeRoomRequest } from '../../dto/resquests/create-escape-room.
 import { CreateEscapeRoomResponse } from '../../dto/responses/create-escape-room.response';
 import { DeleteEscapeRoomRequest } from '../../dto/resquests/delete-escape-room.request';
 import { DeleteEscapeRoomResponse } from '../../dto/responses/delete-escape-room.response';
-import { GetEscapeRoomInfoRequest } from '../../dto/resquests/get-escape-room-info.request';
-import { GetEscapeRoomInfoResponse } from '../../dto/responses/get-escape-room-info.response';
 import { CreateParticipationRequest } from '../../dto/resquests/create-participation.request';
 import { CreateParticipationResponse } from '../../dto/responses/create-participation.response';
-import { GetEscapeRoomsRequest } from '../../dto/resquests/get-escape-rooms.request';
 import { GetEscapeRoomsResponse } from '../../dto/responses/get-escape-rooms.response';
+import { GetEscapeRoomRequest } from '../../dto/resquests/get-escape-room.request';
+import { GetEscapeRoomResponse } from '../../dto/responses/get-escape-room.response';
 
 const escapeRoomAdminRouter = express.Router();
 
@@ -77,14 +76,11 @@ escapeRoomAdminRouter.get('/:id', async (req, res) => { //GET info del escapeRoo
         const id = parseInt(req.params.id, 10);
 
         if(!isNaN(id)){
-
-            const escape_roomRequest = GetEscapeRoomInfoRequest.with({
-
+            const escape_roomRequest = GetEscapeRoomRequest.with({
                 id: id
-    
             });
     
-            const escape_roomResponse: GetEscapeRoomInfoResponse = await container.getEscapeRoomInfoById.with(escape_roomRequest);
+            const escape_roomResponse: GetEscapeRoomResponse = await container.getEscapeRoom.with(escape_roomRequest);
     
             res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
 
