@@ -86,15 +86,6 @@ describe('escape room participant api', () => {
                     .set('Authorization', admin_token)
                     .expect(401)
             })
-            afterAll(async () => {
-                const postgres = new Client(PostgresSqlConfig)
-                await postgres.connect();
-                await postgres.query('BEGIN');
-                await postgres.query('DELETE FROM userssessions');
-                await postgres.query('DELETE FROM users');
-                await postgres.query('COMMIT');
-                await postgres.end();
-            })
         })
         describe('after login with a participant account', () => {
             test('valid coordinates', async () => {
@@ -233,15 +224,6 @@ describe('escape room participant api', () => {
                     .send(request)
                     .expect(400)
             })
-            afterAll(async () => {
-                const postgres = new Client(PostgresSqlConfig)
-                await postgres.connect();
-                await postgres.query('BEGIN');
-                await postgres.query('DELETE FROM userssessions');
-                await postgres.query('DELETE FROM users');
-                await postgres.query('COMMIT');
-                await postgres.end();
-            })
         })
     })
     describe('get escape room api endpoint', () => {
@@ -258,7 +240,7 @@ describe('escape room participant api', () => {
                     .expect(401)
             })
         })
-        describe('after login with an admin account', () => {
+        describe('after login with a participant account', () => {
             const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
             test('Without escape rooms', async () => {
                 await api
