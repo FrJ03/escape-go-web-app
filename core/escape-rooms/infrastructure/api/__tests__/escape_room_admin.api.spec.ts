@@ -193,15 +193,15 @@ describe('escape room api', () => {
                 const id = id_response.rows[0].id
 
                 await api
-                    .delete(`/escaperoom/admin?id=${id}`)
+                    .delete(`/escaperoom/admin/${id}`)
                     .set('Authorization', admin_token)
                     .expect(200)
             })
             test('delete a non existing escape room', async () => {
                 await api
-                    .delete(`/escaperoom/admin?id=${1}`)
+                    .delete(`/escaperoom/admin/${1}`)
                     .set('Authorization', admin_token)
-                    .expect(200)
+                    .expect(404)
             })
             afterEach(async () => {
                 const postgres = new Client(PostgresSqlConfig)
