@@ -14,6 +14,19 @@ import { EscapeRoomsSql } from '../../services/escape_rooms_sql.repository';
 const api = supertest(app)
 
 describe('escape room api', () => {
+    const adminData = {
+        username: 'admin',
+        email: 'admin@test.es',
+        password: 'test'
+    }
+    const participantData = {
+        username: 'p',
+        email: 'p@test.es',
+        password: 'test',
+        points: 0
+    }
+    let admin_token = ''
+    let participant_token = ''
     beforeAll(async () => {
         const postgres = new Client(PostgresSqlConfig)
         await postgres.connect()
@@ -24,6 +37,41 @@ describe('escape room api', () => {
         await postgres.query('DELETE FROM cities')
         await postgres.query('DELETE FROM countries')
         await postgres.end()
+
+        const users = new UsersSql(PostgresSqlConfig)
+
+        const participant = new Participant(
+            1, new Email(participantData.email),
+            participantData.username,
+            await bcrypt.hash(participantData.password, 10),
+            participantData.points
+        )
+        const admin = new Admin(
+            1, new Email(adminData.email),
+            adminData.username,
+            await bcrypt.hash(adminData.password, 10),
+        )
+
+        await users.save(participant)
+        await users.save(admin)
+
+        const admin_response = await api
+            .post('/account/signin', )
+            .send({
+                email: adminData.email,
+                password: adminData.password
+            })
+            .expect(200)
+        
+        const participant_response = await api
+            .post('/account/signin', )
+            .send({
+                email: participantData.email,
+                password: participantData.password
+            })
+        
+        admin_token = admin_response.body.token
+        participant_token = participant_response.body.token
     })
     describe('create escape room', () => {
         test('before login', async () => {
@@ -32,80 +80,14 @@ describe('escape room api', () => {
                 .expect(401)
         })
         describe('after login with a participant account', () => {
-            const userData = {
-                username: 'test',
-                email: 'test@test.es',
-                password: 'test'
-            }
-            let token = ''
-            beforeAll(async () => {
-                const users = new UsersSql(PostgresSqlConfig)
-
-                const email = new Email(userData.email)
-                const participant = new Participant(
-                    1, email,
-                    userData.username,
-                    await bcrypt.hash(userData.password, 10),
-                    0
-                )
-
-                await users.save(participant)
-
-                const response = await api
-                    .post('/account/signin', )
-                    .send({
-                        email: userData.email,
-                        password: userData.password
-                    })
-                    .expect(200)
-                
-                token = response.body.token
-            })
             test('after login', async () => {
                 await api
                     .post('/escaperoom/admin/create')
-                    .set('Authorization', token)
+                    .set('Authorization', participant_token)
                     .expect(401)
-            })
-            afterAll(async () => {
-                const postgres = new Client(PostgresSqlConfig)
-                await postgres.connect();
-                await postgres.query('BEGIN');
-                await postgres.query('DELETE FROM userssessions');
-                await postgres.query('DELETE FROM users');
-                await postgres.query('COMMIT');
-                await postgres.end();
             })
         })
         describe('after login with an admin account', () => {
-            const userData = {
-                username: 'test',
-                email: 'test@test.es',
-                password: 'test'
-            }
-            let token = ''
-            beforeAll(async () => {
-                const users = new UsersSql(PostgresSqlConfig)
-
-                const email = new Email(userData.email)
-                const participant = new Admin(
-                    1, email,
-                    userData.username,
-                    await bcrypt.hash(userData.password, 10),
-                )
-
-                await users.save(participant)
-
-                const response = await api
-                    .post('/account/signin', )
-                    .send({
-                        email: userData.email,
-                        password: userData.password
-                    })
-                    .expect(200)
-                
-                token = response.body.token
-            })
             test('create a valid escape room', async () => {
                 const request = {
                     title: 'test',
@@ -126,7 +108,7 @@ describe('escape room api', () => {
 
                 await api
                     .post('/escaperoom/admin/create')
-                    .set('Authorization', token)
+                    .set('Authorization', admin_token)
                     .send(request)
                     .expect(200)
             })
@@ -150,7 +132,7 @@ describe('escape room api', () => {
 
                 await api
                     .post('/escaperoom/admin/create')
-                    .set('Authorization', token)
+                    .set('Authorization', admin_token)
                     .send(request)
                     .expect(400)
             })
@@ -163,13 +145,6 @@ describe('escape room api', () => {
                 await postgres.query('DELETE FROM countries')
                 await postgres.end()
             })
-            afterAll(async () => {
-                const postgres = new Client(PostgresSqlConfig)
-                await postgres.connect();
-                await postgres.query('DELETE FROM userssessions');
-                await postgres.query('DELETE FROM users');
-                await postgres.end();
-            })
         })
     })
     describe('delete escape room', () => {
@@ -179,80 +154,14 @@ describe('escape room api', () => {
                 .expect(401)
         })
         describe('after login with a participant account', () => {
-            const userData = {
-                username: 'test',
-                email: 'test@test.es',
-                password: 'test'
-            }
-            let token = ''
-            beforeAll(async () => {
-                const users = new UsersSql(PostgresSqlConfig)
-
-                const email = new Email(userData.email)
-                const participant = new Participant(
-                    1, email,
-                    userData.username,
-                    await bcrypt.hash(userData.password, 10),
-                    0
-                )
-
-                await users.save(participant)
-
-                const response = await api
-                    .post('/account/signin', )
-                    .send({
-                        email: userData.email,
-                        password: userData.password
-                    })
-                    .expect(200)
-                
-                token = response.body.token
-            })
             test('after login', async () => {
                 await api
                     .delete('/escaperoom/admin')
-                    .set('Authorization', token)
+                    .set('Authorization', participant_token)
                     .expect(401)
-            })
-            afterAll(async () => {
-                const postgres = new Client(PostgresSqlConfig)
-                await postgres.connect();
-                await postgres.query('BEGIN');
-                await postgres.query('DELETE FROM userssessions');
-                await postgres.query('DELETE FROM users');
-                await postgres.query('COMMIT');
-                await postgres.end();
             })
         })
         describe('after login with an admin account', () => {
-            const userData = {
-                username: 'test',
-                email: 'test@test.es',
-                password: 'test'
-            }
-            let token = ''
-            beforeAll(async () => {
-                const users = new UsersSql(PostgresSqlConfig)
-
-                const email = new Email(userData.email)
-                const participant = new Admin(
-                    1, email,
-                    userData.username,
-                    await bcrypt.hash(userData.password, 10),
-                )
-
-                await users.save(participant)
-
-                const response = await api
-                    .post('/account/signin', )
-                    .send({
-                        email: userData.email,
-                        password: userData.password
-                    })
-                    .expect(200)
-                
-                token = response.body.token
-            })
             test('delete a valid escape room', async () => {
                 const request = {
                     title: 'test',
@@ -272,7 +181,7 @@ describe('escape room api', () => {
                 }
                 await api
                     .post('/escaperoom/admin/create')
-                    .set('Authorization', token)
+                    .set('Authorization', admin_token)
                     .send(request)
                     .expect(200)
 
@@ -285,13 +194,13 @@ describe('escape room api', () => {
 
                 await api
                     .delete(`/escaperoom/admin?id=${id}`)
-                    .set('Authorization', token)
+                    .set('Authorization', admin_token)
                     .expect(200)
             })
             test('delete a non existing escape room', async () => {
                 await api
                     .delete(`/escaperoom/admin?id=${1}`)
-                    .set('Authorization', token)
+                    .set('Authorization', admin_token)
                     .expect(200)
             })
             afterEach(async () => {
@@ -301,13 +210,6 @@ describe('escape room api', () => {
                 await postgres.query('DELETE FROM locations')
                 await postgres.query('DELETE FROM cities')
                 await postgres.query('DELETE FROM countries')
-                await postgres.end()
-            })
-            afterAll(async () => {
-                const postgres = new Client(PostgresSqlConfig)
-                await postgres.connect()
-                await postgres.query('DELETE FROM userssessions')
-                await postgres.query('DELETE FROM users')
                 await postgres.end()
             })
         })
@@ -320,83 +222,19 @@ describe('escape room api', () => {
                 .expect(401)
         })
         describe('after login with a participant account', () => {
-            const userData = {
-                username: 'test',
-                email: 'test@test.es',
-                password: 'test'
-            }
-            let token = ''
-            beforeAll(async () => {
-                const users = new UsersSql(PostgresSqlConfig)
-
-                const email = new Email(userData.email)
-                const participant = new Participant(
-                    1, email,
-                    userData.username,
-                    await bcrypt.hash(userData.password, 10),
-                    0
-                )
-
-                await users.save(participant)
-
-                const response = await api
-                    .post('/account/signin', )
-                    .send({
-                        email: userData.email,
-                        password: userData.password
-                    })
-                    .expect(200)
-                
-                token = response.body.token
-            })
             test('after login', async () => {
                 await api
                     .get('/escaperoom/admin')
-                    .set('Authorization', token)
+                    .set('Authorization', participant_token)
                     .expect(401)
-            })
-            afterAll(async () => {
-                const postgres = new Client(PostgresSqlConfig)
-                await postgres.connect();
-                await postgres.query('DELETE FROM userssessions');
-                await postgres.query('DELETE FROM users');
-                await postgres.end();
             })
         })
         describe('after login with an admin account', () => {
-            const userData = {
-                username: 'test',
-                email: 'test@admin.es',
-                password: 'test'
-            }
-            let token = ''
-            beforeAll(async () => {
-                const users = new UsersSql(PostgresSqlConfig)
-
-                const email = new Email(userData.email)
-                const admin = new Admin(
-                    1, email,
-                    userData.username,
-                    await bcrypt.hash(userData.password, 10)
-                )
-
-                await users.save(admin)
-
-                const response = await api
-                    .post('/account/signin', )
-                    .send({
-                        email: userData.email,
-                        password: userData.password
-                    })
-                    .expect(200)
-                
-                token = response.body.token
-            })
             const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
             test('Without escape rooms', async () => {
                 const response = await api
                     .get('/escaperoom/admin')
-                    .set('Authorization', token)
+                    .set('Authorization', admin_token)
                     .expect(200)
 
                 expect(response.body.escape_rooms.length).toBe(0)
@@ -459,7 +297,7 @@ describe('escape room api', () => {
                     
                     const response = await api
                         .get('/escaperoom/admin')
-                        .set('Authorization', token)
+                        .set('Authorization', admin_token)
                         .expect(200)
                 
                     expect(response.body.escape_rooms.length).toBe(1)
@@ -470,7 +308,7 @@ describe('escape room api', () => {
                     
                     const response = await api
                         .get('/escaperoom/admin')
-                        .set('Authorization', token)
+                        .set('Authorization', admin_token)
                         .expect(200)
                     
                     expect(response.body.escape_rooms.length).toBe(2)
@@ -482,7 +320,7 @@ describe('escape room api', () => {
 
                     const response = await api
                         .get('/escaperoom/admin')
-                        .set('Authorization', token)
+                        .set('Authorization', admin_token)
                         .expect(200)
                     
                     expect(response.body.escape_rooms.length).toBe(escape_rooms_data.length)
@@ -497,15 +335,138 @@ describe('escape room api', () => {
                     await postgres.query('DELETE FROM countries')
                     await postgres.end()
                 })
+            })
+        })
+    })
+    describe('get escape room', () => {
+        test('before login', async () => {
+            await api
+                .get(`/escaperoom/admin/1`)
+                .expect(401)
+        })
+        describe('after login with a participant account', () => {
+            test('after login', async () => {
+                await api
+                    .get(`/escaperoom/admin/1`)
+                    .set('Authorization', participant_token)
+                    .expect(401)
+            })
+        })
+        describe('after login with an admin account', () => {
+            const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
+            test('Without escape rooms', async () => {
+                await api
+                    .get(`/escaperoom/admin/1`)
+                    .set('Authorization', admin_token)
+                    .expect(404)
+            })
+            describe('With escape rooms inserted tests', () => {
+                const escape_rooms_data = [{
+                        id: -1,
+                        title: 'test',
+                        description: 'test',
+                        solution: 'test',
+                        difficulty: 1,
+                        price: 100,
+                        location: {
+                            id: -1,
+                            coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                            street: 'test',
+                            street_number: 1,
+                            other_info: '',
+                            city: 'cordoba',
+                            country: 'españa'
+                        }
+                    },
+                    {
+                        id: -1,
+                        title: 'test',
+                        description: 'test',
+                        solution: 'test',
+                        difficulty: 1,
+                        price: 100,
+                        location: {
+                            id: -1,
+                            coordinates: '10º 30\'30\" N, 0º 30\'30\" N',
+                            street: 'test',
+                            street_number: 1,
+                            other_info: '',
+                            city: 'sevilla',
+                            country: 'españa'
+                        }
+                    },
+                    {
+                        id: -1,
+                        title: 'test',
+                        description: 'test',
+                        solution: 'test',
+                        difficulty: 1,
+                        price: 100,
+                        location: {
+                            id: -1,
+                            coordinates: '10º 30\'30\" N, 10º 30\'30\" N',
+                            street: 'test',
+                            street_number: 1,
+                            other_info: '',
+                            city: 'sevilla',
+                            country: 'españa'
+                        }
+                    }
+                ]
+                test('Valid escape room', async () => {
+                    await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
 
-                afterAll(async () => {
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
-                    await postgres.query('DELETE FROM userssessions')
-                    await postgres.query('DELETE FROM users')
+                    const id_response = await postgres.query('SELECT * FROM escaperooms')
+                    await postgres.end()
+                    const id = id_response.rows[0].id
+                    
+                    const response = await api
+                        .get(`/escaperoom/admin/${id}`)
+                        .query({id: id.toString()})
+                        .set('Authorization', admin_token)
+                        .expect(200)
+                
+                    expect(response.body.escape_room.id).toBe(id)
+                })
+                test('Invalid escape room', async () => {
+                    await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
+
+                    const postgres = new Client(PostgresSqlConfig)
+                    await postgres.connect()
+                    const id_response = await postgres.query('SELECT * FROM escaperooms')
+                    await postgres.end()
+                    const id = id_response.rows[0].id
+                    
+                    const response = await api
+                        .get(`/escaperoom/admin/${id + 1}`)
+                        .query({id: id.toString()})
+                        .set('Authorization', admin_token)
+                        .expect(404)
+                })
+        
+                afterEach(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+                    await postgres.connect()
+                    await postgres.query('DELETE FROM escaperooms')
+                    await postgres.query('DELETE FROM locations')
+                    await postgres.query('DELETE FROM cities')
+                    await postgres.query('DELETE FROM countries')
                     await postgres.end()
                 })
             })
         })
+    })
+    afterAll(async () => {
+        const postgres = new Client(PostgresSqlConfig)
+        await postgres.connect()
+        await postgres.query('DELETE FROM userssessions')
+        await postgres.query('DELETE FROM users')
+        await postgres.query('DELETE FROM escaperooms')
+        await postgres.query('DELETE FROM locations')
+        await postgres.query('DELETE FROM cities')
+        await postgres.query('DELETE FROM countries')
+        await postgres.end()
     })
 })

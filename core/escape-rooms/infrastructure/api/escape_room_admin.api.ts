@@ -70,9 +70,7 @@ escapeRoomAdminRouter.get('/', async (req, res) => { //GET escape rooms
 });
 
 escapeRoomAdminRouter.get('/:id', async (req, res) => { //GET info del escapeRoom ID
-
     if(req.params.id != undefined){
-
         const id = parseInt(req.params.id, 10);
 
         if(!isNaN(id)){
