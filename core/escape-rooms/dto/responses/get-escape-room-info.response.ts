@@ -1,10 +1,30 @@
 import { DeepReadonly } from "ts-essentials";
-import { EscapeRoom } from "../../domain/model/escapeRoom.entity";
 
 type GetEscapeRoomInfoResponse  = DeepReadonly <{
 
-    code: number
-    escape_room_found: EscapeRoom
+    code: number,
+    id: number,
+    title: string,
+    description: string,
+    difficulty: number,
+    price: number,
+    maxSessionDuration: number,
+    location: {
+        country: string,
+        city: string,
+        street: string,
+        street_number: number,
+        coordinates: string
+    }
+
+    participations_array:{
+
+        id: number;
+        start_date: Date;
+        end_date: Date;
+        points: number | undefined;
+
+    }[]
 
 }>
 

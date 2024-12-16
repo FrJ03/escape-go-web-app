@@ -7,7 +7,7 @@ import { GetEscapeRoomInfoResponse } from '../../dto/responses/get-escape-room-i
 
 const escapeRoomParticipantRouter = express.Router();
 
-escapeRoomParticipantRouter.get('/proximity', async (req, res) => { //GET obtener escapeRooms por cercania
+escapeRoomParticipantRouter.post('/proximity', async (req, res) => { //POST(información sensible del usuario) obtener escapeRooms por cercania
 
     if(req.body.coordinates != undefined){
 
@@ -28,19 +28,29 @@ escapeRoomParticipantRouter.get('/proximity', async (req, res) => { //GET obtene
 
 });
 
-escapeRoomParticipantRouter.get('/info', async (req, res) => { //GET info del escapeRoom ID
+escapeRoomParticipantRouter.get('/:id', async (req, res) => { //GET info del escapeRoom ID
 
-    if(req.body.id != undefined){
+    if(req.params.id != undefined){
 
-        const escape_roomRequest = GetEscapeRoomInfoRequest.with({
+        const id = parseInt(req.params.id, 10);
 
-            id: req.body.id
+        if(!isNaN(id)){
 
-        });
+            const escape_roomRequest = GetEscapeRoomInfoRequest.with({
 
-        const escape_roomResponse: GetEscapeRoomInfoResponse = await container.getEscapeRoomInfoById.with(escape_roomRequest);
+                id: id
+    
+            });
+    
+            const escape_roomResponse: GetEscapeRoomInfoResponse = await container.getEscapeRoomInfoById.with(escape_roomRequest);
+    
+            res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
 
-        res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
+        }else{
+
+            res.sendStatus(500); //error al parsear el id
+
+        }
 
     }else{
 

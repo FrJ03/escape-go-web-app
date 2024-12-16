@@ -36,7 +36,7 @@ const Container = {
             deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms),
             createParticipation: new CreateParticipationUseCase(escape_rooms, participations),
             getEscapeRoom: new GetEscapeRoomUseCase(escape_rooms),
-            getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms)
+            getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms, participations)
         }
     }
 }
