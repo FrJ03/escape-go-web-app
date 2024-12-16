@@ -102,39 +102,22 @@ escapeRoomAdminRouter.get('/:id', async (req, res) => { //GET info del escapeRoo
 
 });
 
-//POST participar en el scapeRoom ID
+//POST create participation
 
-escapeRoomAdminRouter.post('/:participation_id', async (req, res) => {
+escapeRoomAdminRouter.post('/participation', async (req, res) => {
 
-    if(req.params.participation_id != undefined && req.body.start_date != undefined && req.body.end_date != undefined){
+    if(req.body.escape_room_id != undefined && req.body.start_date != undefined && req.body.end_date != undefined){
+        const escape_roomRequest = CreateParticipationRequest.with({
+            start_date: req.body.start_date,
+            end_date: req.body.end_date,
+            escape_room_id: req.body.escape_room_id  
+        });
 
-        const id = parseInt(req.params.participation_id, 10);
+        const escape_roomResponse: CreateParticipationResponse = await container.createParticipation.with(escape_roomRequest);
 
-        if(!isNaN(id)){
-
-            const escape_roomRequest = CreateParticipationRequest.with({
-
-                start_date: req.body.start_date,
-                end_date: req.body.end_date,
-                escape_room_id: id
-    
-    
-            });
-    
-            const escape_roomResponse: CreateParticipationResponse = await container.createParticipation.with(escape_roomRequest);
-    
-            res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
-
-        }else{
-
-            res.sendStatus(500); //error al parsear id
-
-        }
-
+        res.status(escape_roomResponse.code || 200).send(escape_roomResponse);
     }else{
-
         res.sendStatus(400); //error al obtener la informacion
-
     }
 
 });
