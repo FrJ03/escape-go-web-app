@@ -10,6 +10,8 @@ export class GetEscapeRoomUseCase{
 
         const escape_room_id = command.id;
 
+        console.log(escape_room_id)
+
         if(escape_room_id != undefined){
 
             try{
