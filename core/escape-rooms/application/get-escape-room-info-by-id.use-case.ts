@@ -1,5 +1,5 @@
 import { EscapeRooms } from "../domain/services/escape_rooms.repository";
-import { GetEscapeRoomInfoResponse } from "../dto/responses/get-escape-room-info.response";
+import { GetEscapeRoomInfoResponse, ParticipationGetEscapeRoomInfoResponse } from "../dto/responses/get-escape-room-info.response";
 import { GetEscapeRoomInfoRequest } from "../dto/resquests/get-escape-room-info.request";
 import { ParticipationsSql } from "../infrastructure/services/participations_sql.repository";
 
@@ -21,13 +21,25 @@ export class GetEscapeRoomInfoByIdUseCase{
 
                     try{
 
-                        const participations_array = await this.participations.findAllByEscapeRoom(escape_room_id);
+                        const participations = await this.participations.findAllByEscapeRoom(escape_room_id);
 
-                        if(participations_array != undefined){
+                        const p: Array<ParticipationGetEscapeRoomInfoResponse> = []
 
-                            return{
+                        if(participations.length !== 0){
+                            participations.forEach(participation => {
+                                p.push({
+                                    id: participation.id,
+                                    start_date: participation.start_date.toISOString(),
+                                    end_date: participation.end_date.toISOString(),
+                                    points: participation.points
+                                })
+                            })
+                        }
 
-                                code:200,
+                        return {
+
+                            code:200,
+                            escape_room: {
                                 id: found_escape_room.id,
                                 title: found_escape_room.title,
                                 description: found_escape_room.description,
@@ -42,21 +54,11 @@ export class GetEscapeRoomInfoByIdUseCase{
                                     street_number: found_escape_room.location.number,
                                     coordinates: found_escape_room.location.coordinates.toString()
     
-                                },
-    
-                                participations_array: participations_array
-    
-                            } as GetEscapeRoomInfoResponse
+                                }
+                            },
+                            participations: p
 
-                        }else{
-
-                            return{ //error al obtener participaciones
-
-                                code: 404
-
-                            } as GetEscapeRoomInfoResponse
-
-                        }
+                        } as GetEscapeRoomInfoResponse
 
                     }catch(error){
 
