@@ -17,11 +17,11 @@ import { GetEscapeRoomInfoByIdUseCase } from "../../escape-rooms/application/get
 import { LoginAdminUseCase } from "../../users/application/login-admin.use-case";
 import { GetEscapeRoomsUseCase } from "../../escape-rooms/application/get-escape-rooms.use-case";
 import { GetEscapeRoomUseCase } from "../../escape-rooms/application/get-escape-room.use-case";
-import { RegisterUserParticipationUseCase } from "../../escape-room-sessions/application/register-user-participation.use-case";
-import { UserParticipationsSql } from "../../escape-room-sessions/infrastructure/services/user-participations-sql.repository";
-import { GetClueUseCase } from "../../escape-room-sessions/application/get-clue.use-case";
-import { GetNextClueUseCase } from "../../escape-room-sessions/application/get-next-clue.use-case";
-import { SolveEscapeRoomUseCase } from "../../escape-room-sessions/application/solve-escape-room.use-case";
+import { RegisterUserParticipationUseCase } from "../../game/application/register-user-participation.use-case";
+import { UserParticipationsSql } from "../../game/infrastructure/services/user-participations-sql.repository";
+import { GetClueUseCase } from "../../game/application/get-clue.use-case";
+import { GetNextClueUseCase } from "../../game/application/get-next-clue.use-case";
+import { SolveEscapeRoomUseCase } from "../../game/application/solve-escape-room.use-case";
 
 const Container = {
     init: () => {
