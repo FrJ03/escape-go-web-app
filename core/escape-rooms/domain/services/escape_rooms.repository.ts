@@ -10,4 +10,5 @@ export interface EscapeRooms{
     getAllByDistance(coordinate: Coordinate): Promise<Array<EscapeRoom>>
     findById(id: number): Promise<EscapeRoom | undefined>;
     delete(id: number): Promise<boolean>;
+    update(escape_room: EscapeRoom): Promise<boolean>;
 }

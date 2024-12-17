@@ -10,6 +10,7 @@ import { EscapeRoomsSql } from "../../escape-rooms/infrastructure/services/escap
 import PostgresSqlConfig from "../infrastructure/database-client/postgresql-client";
 import { GetEscapeRoomsByDistanceUseCase } from "../../escape-rooms/application/get-escape-rooms-by-distance.use-case";
 import { DeleteEscapeRoomUseCase } from "../../escape-rooms/application/delete-escape-room.use-case";
+import { UpdateEscapeRoomUseCase } from "../../escape-rooms/application/update-escape-room.use-case";
 import { ParticipationsSql } from "../../escape-rooms/infrastructure/services/participations_sql.repository";
 import { CreateParticipationUseCase } from "../../escape-rooms/application/create-participation.use-case";
 import { GetEscapeRoomInfoByIdUseCase } from "../../escape-rooms/application/get-escape-room-info-by-id.use-case";
@@ -39,6 +40,7 @@ const Container = {
             getEscapeRooms: new GetEscapeRoomsUseCase(escape_rooms),
             getEscapeRoomsByDistance: new GetEscapeRoomsByDistanceUseCase(escape_rooms),
             deleteEscapeRoom: new DeleteEscapeRoomUseCase(escape_rooms),
+            updateEscapeRoom: new UpdateEscapeRoomUseCase(escape_rooms),
             createParticipation: new CreateParticipationUseCase(escape_rooms, participations),
             getEscapeRoom: new GetEscapeRoomUseCase(escape_rooms),
             getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms, participations),

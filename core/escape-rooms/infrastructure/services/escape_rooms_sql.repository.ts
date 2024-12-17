@@ -3,7 +3,7 @@ import { EscapeRooms } from "../../domain/services/escape_rooms.repository";
 import { EscapeRoomPublisher } from "../persistence/escape_room.publisher";
 import { EscapeRoom } from "../../domain/model/escapeRoom.entity";
 import { Coordinate } from "../../domain/model/coordinate.entity";
-import { SELECT_ESCAPE_ROOMS, SELECT_ESCAPE_ROOM_BY_ID, DELETE_ESCAPE_ROOM_BY_ID } from "../queries/escape_rooms.query";
+import { SELECT_ESCAPE_ROOMS, SELECT_ESCAPE_ROOM_BY_ID, DELETE_ESCAPE_ROOM_BY_ID, UPDATE_ESCAPE_ROOM_BY_ID } from "../queries/escape_rooms.query";
 import { EscapeRoomType } from "../persistence/escape_room.type";
 import { LocationType } from "../persistence/location.type";
 import { EscapeRoomDataMapper } from "../persistence/escape_room.data-mapper";
@@ -204,4 +204,12 @@ export class EscapeRoomsSql implements EscapeRooms{
         return response.rowCount ? true : false;
     }
 
+    async update(escape_room: EscapeRoom): Promise<boolean> {
+        const postgres = new Client(this.postgres_config);
+        await postgres.connect();
+        const response = await postgres.query(UPDATE_ESCAPE_ROOM_BY_ID, [escape_room.id, escape_room.title, escape_room.description, escape_room.solution, escape_room.difficulty, escape_room.price]);
+        await postgres.end();
+
+        return response.rowCount ? true : false;
+    }
 }

@@ -2,6 +2,8 @@ import express from 'express';
 import { container } from '../../../commons/container/container'
 import { CreateEscapeRoomRequest } from '../../dto/resquests/create-escape-room.request';
 import { CreateEscapeRoomResponse } from '../../dto/responses/create-escape-room.response';
+import { UpdateEscapeRoomRequest } from '../../dto/resquests/update-escape-room.request';
+import { UpdateEscapeRoomResponse } from '../../dto/responses/update-escape-room.response';
 import { DeleteEscapeRoomRequest } from '../../dto/resquests/delete-escape-room.request';
 import { DeleteEscapeRoomResponse } from '../../dto/responses/delete-escape-room.response';
 import { CreateParticipationRequest } from '../../dto/resquests/create-participation.request';
@@ -30,6 +32,30 @@ escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
         
         const response: CreateEscapeRoomResponse = await container.createEscapeRoom.with(request);
         res.status(response.code || 200).send(response);
+    } else {
+        res.sendStatus(400); // Faltan datos requeridos
+    }
+});
+
+//UPDATE
+
+escapeRoomAdminRouter.put('/:id', async (req, res) => { //Modificar escape room
+    const { id, title, description, solution, difficulty, price } = req.body;
+
+    // Establece valores por defecto como undefined si no se reciben
+    const request: UpdateEscapeRoomRequest = {
+        id,
+        title: title !== undefined ? title : undefined,
+        description: description !== undefined ? description : undefined,
+        solution: solution !== undefined ? solution : undefined,
+        difficulty: difficulty !== undefined ? difficulty : undefined,
+        price: price !== undefined ? price : undefined
+    };
+
+    if (id) {
+        const response: UpdateEscapeRoomResponse = await container.updateEscapeRoom.with(request);
+        res.status(response.code || 200).send(response);
+
     } else {
         res.sendStatus(400); // Faltan datos requeridos
     }
