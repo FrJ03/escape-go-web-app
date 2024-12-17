@@ -18,7 +18,23 @@ export class ParticipationsSql implements Participations{
     async save(participation: Participation): Promise<boolean> {
         return await this._publisher.create(participation)
     }
+    async modify_points(participation_id: number, escape_room_id: number, new_points: number): Promise<boolean> {
+        const participation = await this.findById(escape_room_id, participation_id)
 
+        if(participation === undefined){
+            return false
+        }
+
+        const new_participation = new Participation(
+            participation.id,
+            participation.escape_room,
+            participation.start_date,
+            participation.end_date,
+            new_points
+        )
+
+        this._publisher.update(new_participation)
+    }
     async findAllByEscapeRoom(escape_room_id: number): Promise<Array<Participation>>{
         const postgres = new Client(this.postgres_config)
         await postgres.connect()
