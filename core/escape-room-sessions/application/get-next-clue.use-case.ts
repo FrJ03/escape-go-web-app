@@ -19,10 +19,7 @@ export class GetNextClueUseCase{
             }
         }
 
-        console.error(escape_room.clues)
-
         for (let i = 0 ; i < escape_room.clues.length ; i++){
-            console.error(command.clues_ids.indexOf(escape_room.clues[i].id))
             if(command.clues_ids.indexOf(escape_room.clues[i].id) === -1){
                 return {
                     clue: {
