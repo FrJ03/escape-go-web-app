@@ -5,7 +5,7 @@ import { User } from "../../domain/model/user.entity"
 import { ClientConfig, Client } from 'pg'
 import { UserType } from "../persistence/user.type";
 import UserDataMapper from "../persistence/user.data-mapper";
-import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_USERNAME, GET_ALL_USERS } from "../queries/users.query";
+import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_USERS } from "../queries/users.query";
 import { Email } from "../../domain/model/value-objects/email";
 
 export class UsersSql implements Users {
@@ -101,5 +101,28 @@ export class UsersSql implements Users {
         )
 
         return users
+    }
+
+    async addPoints(user_id: number, points: number): Promise<boolean> {
+        const postgres = new Client(this.postgres_config)
+
+        postgres.connect()
+        const user_response = await postgres.query(FIND_USER_BY_ID, [user_id])
+        postgres.end()
+
+        if(user_response.rowCount === 0){
+            return false
+        }
+
+        const updated_user = UserDataMapper.toModel({
+            id: user_response.rows[0].id,
+            username: user_response.rows[0].username,
+            email: user_response.rows[0].email,
+            role: user_response.rows[0].role,
+            password: user_response.rows[0].passwd,
+            points: user_response.rows[0].points + points
+        })
+
+        return await this.publisher.update(updated_user)
     }
 }
