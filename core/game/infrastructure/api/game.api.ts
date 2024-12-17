@@ -18,6 +18,26 @@ gameRouter.post('/register', async (req, res) => {
 
     res.sendStatus(response.code)
 })
+gameRouter.post('/solve', async (req, res) => {
+    if(req.body.solution === undefined || req.body.escape_room_id === undefined || req.body.participation_id === undefined){
+        res.sendStatus(406)
+    }
+
+    const request = {
+        solution: req.body.solution,
+        escape_room_id: req.body.escape_room_id,
+        participation_id: req.body.participation_id
+    }
+
+    const response = await container.solveEscapeRoom.with(request)
+
+    if(response.code === 200){
+        res.status(200).send(response.points)
+    }
+    else{
+        res.sendStatus(response.code)
+    }
+})
 gameRouter.post('/clue', async (req, res) => {
     if(
         req.body.clues_ids === undefined ||
