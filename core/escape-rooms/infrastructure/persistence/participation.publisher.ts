@@ -21,7 +21,7 @@ export class ParticipationPublisher extends Publisher<Participation>{
             return false
         }
     }
-    async update(instance: Participation, version: number): Promise<boolean> {
+    async update(instance: Participation): Promise<boolean> {
         return false
     }
 }

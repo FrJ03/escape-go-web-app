@@ -24,7 +24,7 @@ export class UserParticipationPublisher extends Publisher<UserParticipation>{
         }
     }
 
-    async update(user_participation: UserParticipation, version: number): Promise<boolean> {
+    async update(user_participation: UserParticipation): Promise<boolean> {
         return false
     }
 }
