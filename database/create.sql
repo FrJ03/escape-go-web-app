@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS UsersParticipations;
 DROP TABLE IF EXISTS UsersSessions;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Participations;
-DROP TABLE IF EXISTS Clue;
+DROP TABLE IF EXISTS Clues;
 DROP TABLE IF EXISTS EscapeRooms;
 DROP TABLE IF EXISTS Locations;
 DROP TABLE IF EXISTS Cities;
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS EscapeRooms(
     FOREIGN KEY (physical_location) REFERENCES Locations(id)
 );
 
-CREATE TABLE IF NOT EXISTS Clue(
+CREATE TABLE IF NOT EXISTS Clues(
     id SERIAL,
     escape_room BIGINT,
     title VARCHAR(64),
