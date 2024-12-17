@@ -1,3 +1,4 @@
+import { Clue } from "./clue.entity";
 import { Location } from "./location.entity";
 
 export class EscapeRoom {
@@ -10,8 +11,9 @@ export class EscapeRoom {
     private _price: number;
     private _maxSessionDuration: number;
     private _location: Location
+    private _clues: Array<Clue>
 
-    constructor(id: number, title: string, description: string, solution: string, difficulty: number, price: number, maxSessionDuration: number, location: Location) {
+    constructor(id: number, title: string, description: string, solution: string, difficulty: number, price: number, maxSessionDuration: number, location: Location, clues: Array<Clue> = []) {
         this._id = id;
         this._title = title;
         this._description = description;
@@ -20,6 +22,7 @@ export class EscapeRoom {
         this._price = price;
         this._maxSessionDuration = maxSessionDuration;
         this._location = location
+        this._clues = clues
     }
 
     get id(): number {
@@ -54,6 +57,10 @@ export class EscapeRoom {
         return this._location
     }
 
+    get clues(): Array<Clue>{
+        return this._clues
+    }
+
     set id(id: number) {
         this._id = id;
     }
@@ -84,5 +91,9 @@ export class EscapeRoom {
 
     set location(location: Location){
         this._location = location
+    }
+
+    set clues(clues: Array<Clue>){
+        this._clues = clues
     }
 }
