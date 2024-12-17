@@ -15,6 +15,7 @@ import { EscapeRoomsSql } from '../../../../escape-rooms/infrastructure/services
 import { EscapeRoomDataMapper } from '../../../../escape-rooms/infrastructure/persistence/escape_room.data-mapper';
 import { ParticipationsSql } from '../../../../escape-rooms/infrastructure/services/participations_sql.repository';
 import { ParticipationDataMapper } from '../../../../escape-rooms/infrastructure/persistence/participation.data-mapper';
+import { ClueDataMapper } from '../../../../escape-rooms/infrastructure/persistence/clue.data-mapper';
 
 const api = supertest(app)
 const base_endpoint = '/game'
@@ -212,6 +213,131 @@ describe('escape room participant api', () => {
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
                     await postgres.query('DELETE FROM participations')
+                    await postgres.query('DELETE FROM escaperooms')
+                    await postgres.query('DELETE FROM locations')
+                    await postgres.query('DELETE FROM cities')
+                    await postgres.query('DELETE FROM countries')
+                    await postgres.end()
+                })
+            })
+        })
+    })
+    describe('get clue by id endpoint tests', () => {
+        const endpoint = `${base_endpoint}/clue`
+        test('before login', async () => {
+            await api
+                .post(endpoint)
+                .expect(401)
+        })
+        describe('after login with an admin account', () => {
+            test('after login', async () => {
+                await api
+                    .post(`${endpoint}/1`)
+                    .set('Authorization', admin_token)
+                    .expect(401)
+            })
+        })
+        describe('after login with a participant account', () => {
+            test('Without clues inserted', async () => {
+                const clue_id = 1
+                const request = {
+                    escape_room_id: -1
+                }
+            
+                await api
+                    .post(`${endpoint}/${clue_id}`)
+                    .set('Authorization', participant_token)
+                    .send(request)
+                    .expect(404)
+            })
+            describe('With clues inserted', () => {
+                let escape_room = {
+                    id: -1,
+                    title: 'test',
+                    description: 'test',
+                    solution: 'test',
+                    difficulty: 1,
+                    price: 100,
+                    location: {
+                        id: -1,
+                        coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                        street: 'test',
+                        street_number: 1,
+                        other_info: '',
+                        city: 'cordoba',
+                        country: 'españa'
+                    }
+                }
+                let clue = {
+                    id: -1,
+                    escape_room: escape_room.id,
+                    title: 'test',
+                    info: 'test'
+                }
+                beforeAll(async () => {
+                    const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
+            
+                    await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_room))
+            
+                    const postgres = new Client(PostgresSqlConfig)
+                    await postgres.connect()
+                    const response = await postgres.query('SELECT * FROM escaperooms')
+                    await postgres.end()
+            
+                    escape_room.id = response.rows[0].id
+                    clue.escape_room = escape_room.id
+            
+                    await escape_rooms.saveClue(ClueDataMapper.toModel(clue), clue.escape_room)
+            
+                    const postgres_2 = new Client(PostgresSqlConfig)
+                    await postgres_2.connect()
+                    const c_response = await postgres_2.query('SELECT * FROM clues')
+                    await postgres_2.end()
+            
+                    clue.id = c_response.rows[0].id
+                })
+                test('Existing clue', async () => {
+                    const clue_id = clue.id
+                    const request = {
+                        escape_room_id: escape_room.id
+                    }
+                
+                    const response = await api
+                        .post(`${endpoint}/${clue_id}`)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(200)
+
+                    expect(response.body.id).toBe(clue.id)
+                })
+                test('Non existing clue: invalid clue id', async () => {
+                    const clue_id = clue.id + 1
+                    const request = {
+                        escape_room_id: escape_room.id
+                    }
+                
+                    await api
+                        .post(`${endpoint}/${clue_id}`)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(404)
+                })
+                test('Non existing clue: invalid escape room id', async () => {
+                    const clue_id = clue.id
+                    const request = {
+                        escape_room_id: escape_room.id + 1
+                    }
+                
+                    await api
+                        .post(`${endpoint}/${clue_id}`)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(404)
+                })
+                afterAll(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+                    await postgres.connect()
+                    await postgres.query('DELETE FROM clues')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
                     await postgres.query('DELETE FROM cities')
