@@ -19,6 +19,7 @@ import { GetEscapeRoomUseCase } from "../../escape-rooms/application/get-escape-
 import { RegisterUserParticipationUseCase } from "../../escape-room-sessions/application/register-user-participation.use-case";
 import { UserParticipationsSql } from "../../escape-room-sessions/infrastructure/services/user-participations-sql.repository";
 import { GetClueUseCase } from "../../escape-room-sessions/application/get-clue.use-case";
+import { GetNextClueUseCase } from "../../escape-room-sessions/application/get-next-clue.use-case";
 
 const Container = {
     init: () => {
@@ -42,7 +43,8 @@ const Container = {
             getEscapeRoom: new GetEscapeRoomUseCase(escape_rooms),
             getEscapeRoomInfoById: new GetEscapeRoomInfoByIdUseCase(escape_rooms, participations),
             registerParticipant: new RegisterUserParticipationUseCase(users, participations, user_participations),
-            getClue: new GetClueUseCase(escape_rooms)
+            getClue: new GetClueUseCase(escape_rooms),
+            getNextClue: new GetNextClueUseCase(escape_rooms)
         }
     }
 }
