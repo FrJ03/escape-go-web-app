@@ -33,7 +33,7 @@ export class ParticipationsSql implements Participations{
             new_points
         )
 
-        this._publisher.update(new_participation)
+        return await this._publisher.update(new_participation)
     }
     async findAllByEscapeRoom(escape_room_id: number): Promise<Array<Participation>>{
         const postgres = new Client(this.postgres_config)
