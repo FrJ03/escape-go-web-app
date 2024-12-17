@@ -9,8 +9,9 @@ import { LocationType } from "../persistence/location.type";
 import { EscapeRoomDataMapper } from "../persistence/escape_room.data-mapper";
 import { Clue } from "../../domain/model/clue.entity";
 import { CluePublisher } from "../persistence/clue.publisher";
-import { GET_CLUE_BY_ID } from "../queries/clues.query";
+import { GET_ALL_CLUES_BY_ESCAPE_ROOM, GET_CLUE_BY_ID } from "../queries/clues.query";
 import { ClueDataMapper } from "../persistence/clue.data-mapper";
+import { ClueType } from "../persistence/clue.type";
 
 export class EscapeRoomsSql implements EscapeRooms{
 
@@ -63,9 +64,27 @@ export class EscapeRoomsSql implements EscapeRooms{
             } as EscapeRoomType)
         })
 
-        escape_rooms_type.forEach(escape_room => {
-            escape_rooms.push(EscapeRoomDataMapper.toModel(escape_room))
-        })
+        for(let i = 0 ; i < escape_rooms_type.length ; i++){
+            const postgres_2 = new Client(this.postgres_config)
+            postgres_2.connect()
+            const c_response = await postgres_2.query(GET_ALL_CLUES_BY_ESCAPE_ROOM, [escape_rooms_type[i].id])
+            postgres_2.end()
+
+            const clues: Array<ClueType> = []
+
+            if(c_response.rowCount !== 0){
+                c_response.rows.forEach(clue => {
+                    clues.push({
+                        id: clue.id,
+                        escape_room: escape_rooms_type[i].id,
+                        title: clue.title,
+                        info: clue.info
+                    })
+                })
+            }
+
+            escape_rooms.push(EscapeRoomDataMapper.toModel(escape_rooms_type[i], clues))
+        }
 
         return escape_rooms
     }
@@ -114,7 +133,6 @@ export class EscapeRoomsSql implements EscapeRooms{
         const postgres = new Client(this.postgres_config)
         await postgres.connect()
         const response = await postgres.query(SELECT_ESCAPE_ROOM_BY_ID, [id])
-        await postgres.end()
 
         if (response.rowCount === 0) {
             return undefined; // No se encontró el EscapeRoom
@@ -138,7 +156,23 @@ export class EscapeRoomsSql implements EscapeRooms{
             } as LocationType
         } as EscapeRoomType
 
-        const escapeRoom = EscapeRoomDataMapper.toModel(escape_room);
+        const c_response = await postgres.query(GET_ALL_CLUES_BY_ESCAPE_ROOM, [response.rows[0].id])
+        await postgres.end()
+
+        const clues: Array<ClueType> = []
+
+        if(c_response.rowCount !== 0){
+            c_response.rows.forEach(clue => {
+                clues.push({
+                    id: clue.id,
+                    escape_room: escape_room.id,
+                    title: clue.title,
+                    info: clue.info
+                })
+            })
+        }
+
+        const escapeRoom = EscapeRoomDataMapper.toModel(escape_room, clues);
         return escapeRoom;
     }
 

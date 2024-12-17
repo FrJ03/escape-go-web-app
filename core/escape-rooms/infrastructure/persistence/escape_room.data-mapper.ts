@@ -1,4 +1,5 @@
 import { CardinalDirections } from "../../domain/model/cardinal_directions.entity";
+import { Clue } from "../../domain/model/clue.entity";
 import { Coordinate } from "../../domain/model/coordinate.entity";
 import { DMSData } from "../../domain/model/dms_data.entity";
 import { EscapeRoom } from "../../domain/model/escapeRoom.entity";
@@ -6,11 +7,13 @@ import { Location } from "../../domain/model/location.entity";
 import { Degree } from "../../domain/model/value-objects/degree.entity";
 import { Minute } from "../../domain/model/value-objects/minute.entity";
 import { Second } from "../../domain/model/value-objects/second.entity";
+import { ClueDataMapper } from "./clue.data-mapper";
+import { ClueType } from "./clue.type";
 import { EscapeRoomType } from "./escape_room.type";
 import { LocationType } from "./location.type";
 
 const EscapeRoomDataMapper = {
-    toModel: (escape_room: EscapeRoomType): EscapeRoom => {
+    toModel: (escape_room: EscapeRoomType, clues: Array<ClueType> = []): EscapeRoom => {
         const coordinate = Coordinate.create(escape_room.location.coordinates)
         if(coordinate !== undefined){
             const location: Location = new Location(
@@ -21,6 +24,15 @@ const EscapeRoomDataMapper = {
                 escape_room.location.street_number,
                 coordinate,
             )
+
+            let clues_array: Array<Clue> = []
+
+            if(clues.length !== 0){
+                clues.forEach(clue => {
+                    clues_array.push(ClueDataMapper.toModel(clue))
+                })
+            }
+
             return new EscapeRoom(
                 escape_room.id,
                 escape_room.title,
@@ -29,7 +41,8 @@ const EscapeRoomDataMapper = {
                 escape_room.difficulty,
                 escape_room.price,
                 3,
-                location
+                location,
+                clues_array
             )
         }
         else{
@@ -56,6 +69,15 @@ const EscapeRoomDataMapper = {
                 escape_room.location.street_number,
                 coordinate,
             )
+
+            let clues_array: Array<Clue> = []
+
+            if(clues.length !== 0){
+                clues.forEach(clue => {
+                    clues_array.push(ClueDataMapper.toModel(clue))
+                })
+            }
+
             return new EscapeRoom(
                 escape_room.id,
                 escape_room.title,
@@ -64,7 +86,8 @@ const EscapeRoomDataMapper = {
                 escape_room.difficulty,
                 escape_room.price,
                 3,
-                location
+                location,
+                clues_array
             )
         }       
     },
