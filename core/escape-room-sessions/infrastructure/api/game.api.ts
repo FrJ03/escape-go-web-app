@@ -18,6 +18,29 @@ gameRouter.post('/register', async (req, res) => {
 
     res.sendStatus(response.code)
 })
+gameRouter.post('/clue', async (req, res) => {
+    if(
+        req.body.clues_ids === undefined ||
+        req.body.escape_room_id === undefined ||
+        Number.isNaN(req.body.escape_room_id)
+    ){
+        res.sendStatus(400)
+    }
+
+    const request = {
+        clues_ids: req.body.clues_ids,
+        escape_room_id: req.body.escape_room_id
+    }
+
+    const response = await container.getNextClue.with(request)
+
+    if(response.code !== 200){
+        res.sendStatus(response.code)
+    }
+    else{
+        res.send(response.clue).status(response.code)
+    }
+})
 
 gameRouter.post('/clue/:id', async (req, res) => {
     if(
@@ -30,7 +53,7 @@ gameRouter.post('/clue/:id', async (req, res) => {
 
     const request = {
         clue_id: Number.parseInt(req.params.id),
-        escape_room_id: req.body.escape_room
+        escape_room_id: req.body.escape_room_id
     }
 
     const response = await container.getClue.with(request)
