@@ -7,18 +7,29 @@ import { SELECT_ESCAPE_ROOMS, SELECT_ESCAPE_ROOM_BY_ID, DELETE_ESCAPE_ROOM_BY_ID
 import { EscapeRoomType } from "../persistence/escape_room.type";
 import { LocationType } from "../persistence/location.type";
 import { EscapeRoomDataMapper } from "../persistence/escape_room.data-mapper";
+import { Clue } from "../../domain/model/clue.entity";
+import { CluePublisher } from "../persistence/clue.publisher";
+import { GET_CLUE_BY_ID } from "../queries/clues.query";
+import { ClueDataMapper } from "../persistence/clue.data-mapper";
 
 export class EscapeRoomsSql implements EscapeRooms{
 
-    private readonly _publisher: EscapeRoomPublisher
+    private readonly _escape_room_publisher: EscapeRoomPublisher
+    private readonly _clue_publisher: CluePublisher
 
     constructor(private readonly postgres_config: ClientConfig){
-        this._publisher = new EscapeRoomPublisher(postgres_config)
+        this._escape_room_publisher = new EscapeRoomPublisher(postgres_config)
+        this._clue_publisher = new CluePublisher(postgres_config)
     }
 
     async save(escape_room: EscapeRoom): Promise<boolean> {
-        return await this._publisher.create(escape_room)
+        return await this._escape_room_publisher.create(escape_room)
     }
+
+    async saveClue(clue: Clue, escape_room_id: number): Promise<boolean>{
+        return await this._clue_publisher.create(clue, escape_room_id)
+    }
+
     async getAll(): Promise<EscapeRoom[]> {
         const postgres = new Client(this.postgres_config)
         await postgres.connect()
@@ -129,6 +140,24 @@ export class EscapeRoomsSql implements EscapeRooms{
 
         const escapeRoom = EscapeRoomDataMapper.toModel(escape_room);
         return escapeRoom;
+    }
+
+    async getClueById(clue_id: number, escape_room_id: number): Promise<Clue | undefined> {
+        const postgres = new Client(this.postgres_config)
+        await postgres.connect()
+        const response = await postgres.query(GET_CLUE_BY_ID, [clue_id, escape_room_id])
+        await postgres.end()
+
+        if(response.rowCount === 0){
+            return undefined
+        }
+
+        return ClueDataMapper.toModel({
+            id: response.rows[0].id,
+            escape_room: response.rows[0].escape_room,
+            title: response.rows[0].title,
+            info: response.rows[0].info
+        })
     }
 
     async delete(id: number): Promise<boolean> {
