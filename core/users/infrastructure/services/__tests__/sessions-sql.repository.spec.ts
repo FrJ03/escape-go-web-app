@@ -43,7 +43,7 @@ describe('Sessions Sql tests', () => {
                 const session = new Session(1, new Date(Date.now()), user)
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date, user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date.getTime(), user.id])
                 await postgres.end()
                 const sessions = new SessionsSql(PostgresSqlConfig)
 
@@ -57,8 +57,8 @@ describe('Sessions Sql tests', () => {
                 const session2 = new Session(2, new Date(Date.now()), user)
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session1.date, user.id])
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session2.date, user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session1.date.getTime(), user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session2.date.getTime(), user.id])
                 await postgres.end()
                 const sessions = new SessionsSql(PostgresSqlConfig)
 
@@ -116,7 +116,7 @@ describe('Sessions Sql tests', () => {
                 const session = new Session(1, new Date(Date.now()), user)
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date, user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date.getTime(), user.id])
                 await postgres.end()
                 const sessions = new SessionsSql(PostgresSqlConfig)
 
@@ -130,8 +130,8 @@ describe('Sessions Sql tests', () => {
                 const session2 = new Session(2, new Date(Date.now()), user)
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session1.date, user.id])
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session2.date, user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session1.date.getTime(), user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session2.date.getTime(), user.id])
                 await postgres.end()
                 const sessions = new SessionsSql(PostgresSqlConfig)
 
@@ -174,7 +174,7 @@ describe('Sessions Sql tests', () => {
                 const session = new Session(1, new Date(Date.now()), user)
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date, user2.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date.getTime(), user2.id])
                 await postgres.end()
             })
 
@@ -182,7 +182,7 @@ describe('Sessions Sql tests', () => {
                 const session = new Session(1, new Date(Date.now()), user)
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date, user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session.date.getTime(), user.id])
                 await postgres.end()
                 const sessions = new SessionsSql(PostgresSqlConfig)
 
@@ -196,8 +196,8 @@ describe('Sessions Sql tests', () => {
                 const session2 = new Session(2, new Date(Date.now()), user)
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session1.date, user.id])
-                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session2.date, user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session1.date.getTime(), user.id])
+                await postgres.query('INSERT INTO userssessions (session_date, user_logued) VALUES ($1, $2)', [session2.date.getTime(), user.id])
                 await postgres.end()
                 const sessions = new SessionsSql(PostgresSqlConfig)
 

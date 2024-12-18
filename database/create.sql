@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS Users(
 
 CREATE TABLE IF NOT EXISTS UsersSessions(
     id SERIAL PRIMARY KEY,
-    session_date DATE NOT NULL,
+    session_date BIGINT NOT NULL,
     user_logued BIGINT,
     FOREIGN KEY (user_logued) REFERENCES Users(id)
 );

@@ -29,7 +29,7 @@ export class SessionsSql implements Sessions{
             sessions.push(
                 SessionDataMapper.toModel({
                     id: session.id,
-                    date: new Date(session.session_date),
+                    date: new Date(Number(session.session_date)),
                     user: {
                         id: session.user_logued,
                         email: session.email,
@@ -58,7 +58,7 @@ export class SessionsSql implements Sessions{
             sessions.push(
                 SessionDataMapper.toModel({
                     id: session.id,
-                    date: new Date(session.session_date),
+                    date: new Date(Number(session.session_date)),
                     user: {
                         id: session.user_logued,
                         email: session.email,

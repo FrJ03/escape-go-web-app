@@ -13,7 +13,7 @@ export class SessionPublisher extends Publisher<Session>{
         try {
             const postgres = new Client(this.postgres_config)
             await postgres.connect()
-            const response = await postgres.query(INSERT_SESSION, [session.date, session.user.id])
+            const response = await postgres.query(INSERT_SESSION, [session.date.getTime(), session.user.id])
             
             return (response.rowCount !== 0)
         } catch (error) {
