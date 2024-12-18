@@ -39,7 +39,7 @@ escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
 
 //UPDATE
 
-escapeRoomAdminRouter.put('/:id', async (req, res) => { //Modificar escape room
+escapeRoomAdminRouter.put('/modify:id', async (req, res) => { //Modificar escape room
     const { id, title, description, solution, difficulty, price } = req.body;
 
     // Establece valores por defecto como undefined si no se reciben
@@ -63,7 +63,7 @@ escapeRoomAdminRouter.put('/:id', async (req, res) => { //Modificar escape room
 
 //DELETE
 
-escapeRoomAdminRouter.delete('/:id', async (req, res) => { //Borrar escape room
+escapeRoomAdminRouter.delete('/delete:id', async (req, res) => { //Borrar escape room
 
     if(req.params.id != undefined){
 
@@ -95,7 +95,7 @@ escapeRoomAdminRouter.get('/', async (req, res) => { //GET escape rooms
         res.status(response.code || 200).send(response)
 });
 
-escapeRoomAdminRouter.get('/:id', async (req, res) => { //GET info del escapeRoom ID
+escapeRoomAdminRouter.get('/info:id', async (req, res) => { //GET info del escapeRoom ID
     if(req.params.id != undefined){
         const id = parseInt(req.params.id, 10);
 
