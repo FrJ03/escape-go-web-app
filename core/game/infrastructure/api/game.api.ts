@@ -32,7 +32,7 @@ gameRouter.post('/solve', async (req, res) => {
     const response = await container.solveEscapeRoom.with(request)
 
     if(response.code === 200){
-        res.status(200).send(response.points)
+        res.status(response.code).send({points: response.points})
     }
     else{
         res.sendStatus(response.code)

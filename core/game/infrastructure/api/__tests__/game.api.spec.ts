@@ -529,15 +529,277 @@ describe('escape room participant api', () => {
             })
         })
     })
-    afterAll(async () => {
-        const postgres = new Client(PostgresSqlConfig)
-        await postgres.connect()
-        await postgres.query('DELETE FROM userssessions')
-        await postgres.query('DELETE FROM users')
-        await postgres.query('DELETE FROM escaperooms')
-        await postgres.query('DELETE FROM locations')
-        await postgres.query('DELETE FROM cities')
-        await postgres.query('DELETE FROM countries')
-        await postgres.end()
+    describe('solve escape room endpoint tests', () => {
+        const endpoint = `${base_endpoint}/solve`
+        test('before login', async () => {
+            await api
+                .post(endpoint)
+                .expect(401)
+        })
+        describe('after login with an admin account', () => {
+            test('after login', async () => {
+                await api
+                    .post(endpoint)
+                    .set('Authorization', admin_token)
+                    .expect(401)
+            })
+        })
+        describe('after login with a participant account', () => {
+            test('Non exisiting participation', async () => {
+                const request = {
+                    escape_room_id: 0,
+                    participation_id: 0,
+                    solution: ''
+                }
+                
+                await api
+                    .post(endpoint)
+                    .set('Authorization', participant_token)
+                    .send(request)
+                    .expect(404)
+            })
+            describe('Participation ended', () => {
+                const now = new Date()
+                let start_date = new Date(now)
+                let end_date = new Date(now)
+                
+                start_date.setHours(start_date.getHours() - 2)
+                end_date.setHours(end_date.getHours() - 1)
+            
+                let participation_data = {
+                    id: 1, 
+                    escape_room: {
+                        id: -1,
+                        title: 'test',
+                        description: 'test',
+                        solution: 'test',
+                        difficulty: 1,
+                        price: 100,
+                        location: {
+                            id: -1,
+                            coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                            street: 'test',
+                            street_number: 1,
+                            other_info: '',
+                            city: 'cordoba',
+                            country: 'españa'
+                        }
+                    },
+                    start_date: start_date,
+                    end_date: end_date,
+                    points: 0
+                }
+                beforeAll(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+            
+                    const escaperooms = new EscapeRoomsSql(PostgresSqlConfig)
+                    const participations = new ParticipationsSql(PostgresSqlConfig)
+            
+                    await escaperooms.save(EscapeRoomDataMapper.toModel(participation_data.escape_room))
+                    await postgres.connect()
+                    const escaperoom_id = await postgres.query('SELECT id FROM escaperooms')
+                    participation_data.escape_room.id = escaperoom_id.rows[0].id
+                    
+                    await participations.save(ParticipationDataMapper.toModel(participation_data))
+                    const participation_id = await postgres.query('SELECT id FROM participations')
+                    participation_data.id = participation_id.rows[0].id
+                    await postgres.end()
+                })
+                test('participation ended test', async () => {
+                    const request = {
+                        escape_room_id: participation_data.escape_room.id,
+                        participation_id: participation_data.id,
+                        solution: ''
+                    }
+                    
+                    await api
+                        .post(endpoint)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(423)
+                })
+                afterAll(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+                
+                    await postgres.connect()
+                    await postgres.query('DELETE FROM participations')
+                    await postgres.query('DELETE FROM escaperooms')
+                    await postgres.query('DELETE FROM locations')
+                    await postgres.query('DELETE FROM cities')
+                    await postgres.query('DELETE FROM countries')
+                    await postgres.end()
+                })
+            })
+            describe('Participation not started yet', () => {
+                const now = new Date()
+                let start_date = new Date(now)
+                let end_date = new Date(now)
+                
+                start_date.setHours(start_date.getHours() + 1)
+                end_date.setHours(end_date.getHours() + 2)
+            
+                let participation_data = {
+                    id: 1, 
+                    escape_room: {
+                        id: -1,
+                        title: 'test',
+                        description: 'test',
+                        solution: 'test',
+                        difficulty: 1,
+                        price: 100,
+                        location: {
+                            id: -1,
+                            coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                            street: 'test',
+                            street_number: 1,
+                            other_info: '',
+                            city: 'cordoba',
+                            country: 'españa'
+                        }
+                    },
+                    start_date: start_date,
+                    end_date: end_date,
+                    points: 0
+                }
+                beforeAll(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+            
+                    const escaperooms = new EscapeRoomsSql(PostgresSqlConfig)
+                    const participations = new ParticipationsSql(PostgresSqlConfig)
+            
+                    await escaperooms.save(EscapeRoomDataMapper.toModel(participation_data.escape_room))
+                    await postgres.connect()
+                    const escaperoom_id = await postgres.query('SELECT id FROM escaperooms')
+                    participation_data.escape_room.id = escaperoom_id.rows[0].id
+                    
+                    await participations.save(ParticipationDataMapper.toModel(participation_data))
+                    const participation_id = await postgres.query('SELECT id FROM participations')
+                    participation_data.id = participation_id.rows[0].id
+                    await postgres.end()
+                })
+                test('participation not started yet test', async () => {
+                    const request = {
+                        escape_room_id: participation_data.escape_room.id,
+                        participation_id: participation_data.id,
+                        solution: ''
+                    }
+                    
+                    await api
+                        .post(endpoint)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(423)
+                })
+                afterAll(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+                
+                    await postgres.connect()
+                    await postgres.query('DELETE FROM participations')
+                    await postgres.query('DELETE FROM escaperooms')
+                    await postgres.query('DELETE FROM locations')
+                    await postgres.query('DELETE FROM cities')
+                    await postgres.query('DELETE FROM countries')
+                    await postgres.end()
+                })
+            })
+            describe('valid participation inserted', () => {
+                const now = new Date(Date.now())
+                let start_date = new Date(now)
+                let end_date = new Date(now)
+                
+                start_date.setHours(start_date.getHours() - 2)
+                end_date.setHours(end_date.getHours() + 2)
+            
+                let participation_data = {
+                    id: 1, 
+                    escape_room: {
+                        id: -1,
+                        title: 'test',
+                        description: 'test',
+                        solution: 'test',
+                        difficulty: 1,
+                        price: 100,
+                        location: {
+                            id: -1,
+                            coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                            street: 'test',
+                            street_number: 1,
+                            other_info: '',
+                            city: 'cordoba',
+                            country: 'españa'
+                        }
+                    },
+                    start_date: start_date,
+                    end_date: end_date,
+                    points: 0
+                }
+                beforeAll(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+            
+                    const escaperooms = new EscapeRoomsSql(PostgresSqlConfig)
+                    const participations = new ParticipationsSql(PostgresSqlConfig)
+            
+                    await escaperooms.save(EscapeRoomDataMapper.toModel(participation_data.escape_room))
+                    await postgres.connect()
+                    const escaperoom_id = await postgres.query('SELECT id FROM escaperooms')
+                    participation_data.escape_room.id = escaperoom_id.rows[0].id
+                    
+                    await participations.save(ParticipationDataMapper.toModel(participation_data))
+                    const participation_id = await postgres.query('SELECT id FROM participations')
+                    participation_data.id = participation_id.rows[0].id
+                    await postgres.end()
+                })
+                test('not valid solution test', async () => {
+                    const request = {
+                        escape_room_id: participation_data.escape_room.id,
+                        participation_id: participation_data.id,
+                        solution: participation_data.escape_room.solution + 's'
+                    }
+                    
+                    await api
+                        .post(endpoint)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(400)
+                })
+                test('valid solution', async () => {
+                    const request = {
+                        escape_room_id: participation_data.escape_room.id,
+                        participation_id: participation_data.id,
+                        solution: participation_data.escape_room.solution
+                    }
+                    
+                    await api
+                        .post(endpoint)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(200)
+                })
+                test('valid solution: upper case', async () => {
+                    const request = {
+                        escape_room_id: participation_data.escape_room.id,
+                        participation_id: participation_data.id,
+                        solution: participation_data.escape_room.solution.toUpperCase()
+                    }
+                    
+                    await api
+                        .post(endpoint)
+                        .set('Authorization', participant_token)
+                        .send(request)
+                        .expect(200)
+                })
+                afterAll(async () => {
+                    const postgres = new Client(PostgresSqlConfig)
+                
+                    await postgres.connect()
+                    await postgres.query('DELETE FROM participations')
+                    await postgres.query('DELETE FROM escaperooms')
+                    await postgres.query('DELETE FROM locations')
+                    await postgres.query('DELETE FROM cities')
+                    await postgres.query('DELETE FROM countries')
+                    await postgres.end()
+                })
+            })
+        })
     })
 })
