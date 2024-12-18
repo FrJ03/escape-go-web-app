@@ -31,12 +31,12 @@ describe('DELETE /', () => {
     expect(Response.status).toBe(200);
   });
 
-  test('Debe devolver código 400 si no se ha borrado correctamente', async () => {
+  test('Non exisiting user', async () => {
     const response = await request(app)
       .delete('/account')
       .send({
         email: 'noexistente@gmail.com', password: 'password' });
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(404);
   });
 });

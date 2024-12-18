@@ -14,7 +14,7 @@ export class DeleteUserUseCase{
 
         const email = Email.create(command.email);
 
-        if(email != undefined){
+        if(email !== undefined){
 
             try{
 
@@ -60,7 +60,7 @@ export class DeleteUserUseCase{
 
                     return{
 
-                        code: 400
+                        code: 404
 
                     } as DeleteResponse
 
@@ -81,7 +81,7 @@ export class DeleteUserUseCase{
 
             return{
 
-                code: 404
+                code: 400
 
             } as DeleteResponse
 

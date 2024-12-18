@@ -26,6 +26,7 @@ describe('Delete users use case tests', () => {
         beforeEach( async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
             await postgres.query('DELETE FROM users')
             await postgres.end()
         })
@@ -66,7 +67,7 @@ describe('Delete users use case tests', () => {
             const users = new UsersSql(PostgresSqlClient)
             const delete_uc = new DeleteUserUseCase(users)
             const request = {
-                email: 'test@test.e',
+                email: 'ttest@test.es',
                 password: password_plain + '1'
             } as DeleteRequest
 
@@ -74,9 +75,22 @@ describe('Delete users use case tests', () => {
 
             expect(response.code).toBe(404)
         })
+        test('Delete with an invalid email', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const delete_uc = new DeleteUserUseCase(users)
+            const request = {
+                email: 'ttesttest.es',
+                password: password_plain + '1'
+            } as DeleteRequest
+
+            const response = await delete_uc.with(request)
+
+            expect(response.code).toBe(400)
+        })
         afterEach( async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
             await postgres.query('DELETE FROM users')
             await postgres.end()
             
@@ -86,6 +100,7 @@ describe('Delete users use case tests', () => {
     afterAll( async () => {
         const postgres = new Client(PostgresSqlClient)
         await postgres.connect()
+        await postgres.query('DELETE FROM userssessions')
         await postgres.query('DELETE FROM users')
         await postgres.end()
         
