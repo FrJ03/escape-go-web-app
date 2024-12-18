@@ -98,7 +98,119 @@ describe('Participations repository tests', () => {
             await postgres.end()
         })
     })
+    describe('Modify participation points', () => {
+        test('Modify points of a non existing participation', async () => {
+            const participations = new ParticipationsSql(PostgresSqlClient)
 
+            const response = await participations.modify_points(1, 1, 10)
+
+            expect(response).toBeFalsy()
+        })
+        describe('With a participation inserted', () => {
+            let participation = {
+                id: 1, 
+                start_date: new Date(2025, 12, 15, 10, 20, 20),
+                end_date: new Date(2025, 12, 15, 13, 20, 20),
+                points: 0
+            } as ParticipationType
+            let escape_room_data = {
+                id: -1,
+                title: 'test',
+                description: 'test',
+                solution: 'test',
+                difficulty: 1,
+                price: 100,
+                location: {
+                    id: -1,
+                    coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                    street: 'test',
+                    street_number: 1,
+                    other_info: '',
+                    city: 'cordoba',
+                    country: 'españa'
+                } as LocationType
+            } as EscapeRoomType
+            
+            beforeAll(async () => {
+                const postgres = new Client(PostgresSqlClient)
+                
+                await postgres.connect()
+                await postgres.query('DELETE FROM participations')
+                await postgres.query('DELETE FROM escaperooms')
+                await postgres.query('DELETE FROM locations')
+                await postgres.query('DELETE FROM cities')
+                await postgres.query('DELETE FROM countries')
+                await postgres.end()
+    
+                const coordinate = Coordinate.create('0º 30\'30\" N, 0º 30\'30\" N')
+            
+                const escape_rooms = new EscapeRoomsSql(PostgresSqlClient)
+    
+                await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_room_data))
+    
+                const postgres2 = new Client(PostgresSqlClient)
+                await postgres2.connect()
+                const er = await postgres2.query('SELECT * FROM escaperooms')
+                await postgres2.end()
+    
+                escape_room_data.id = er.rows[0].id
+                participation.escape_room = escape_room_data
+    
+                const participations = new ParticipationsSql(PostgresSqlClient)
+                await participations.save(ParticipationDataMapper.toModel(participation))
+    
+                const postgres3 = new Client(PostgresSqlClient)
+                await postgres3.connect()
+                const pr = await postgres3.query('SELECT * FROM participations')
+                await postgres3.end()
+    
+                participation.id = pr.rows[0].id
+            })
+            test('modify valid participation points', async () => {
+                const participations = new ParticipationsSql(PostgresSqlClient)
+                const new_points = 10
+
+                const response = await participations.modify_points(participation.id, escape_room_data.id, new_points)
+
+                const new_participation = await participations.findById(escape_room_data.id, participation.id)
+
+                expect(response).toBeTruthy()
+                if(new_participation !== undefined){
+                    expect(new_participation.escape_room.id).toBe(escape_room_data.id)
+                    expect(new_participation.start_date.getTime()).toBe(participation.start_date.getTime())
+                    expect(new_participation.end_date.getTime()).toBe(participation.end_date.getTime())
+                    expect(new_participation.points).toBe(new_points)
+                }
+            })
+            test('modify invalid participation: incorrect participation id', async () => {
+                const participations = new ParticipationsSql(PostgresSqlClient)
+                const new_points = 10
+
+                const response = await participations.modify_points(participation.id + 1, escape_room_data.id, new_points)
+
+                expect(response).toBeFalsy()
+            })
+            test('modify invalid participation: incorrect escape room id', async () => {
+                const participations = new ParticipationsSql(PostgresSqlClient)
+                const new_points = 10
+
+                const response = await participations.modify_points(participation.id, escape_room_data.id + 1, new_points)
+
+                expect(response).toBeFalsy()
+            })
+            afterAll(async () => {
+                const postgres = new Client(PostgresSqlClient)
+                
+                await postgres.connect()
+                await postgres.query('DELETE FROM participations')
+                await postgres.query('DELETE FROM escaperooms')
+                await postgres.query('DELETE FROM locations')
+                await postgres.query('DELETE FROM cities')
+                await postgres.query('DELETE FROM countries')
+                await postgres.end()
+            })
+        })
+    })
     describe('find by escape room tests', () => {
         let escape_room_data = {
             id: -1,
