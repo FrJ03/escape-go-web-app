@@ -88,9 +88,9 @@ CREATE TABLE IF NOT EXISTS Participations(
 );
 
 CREATE TABLE IF NOT EXISTS UsersParticipations(
-    participant BIGINT UNIQUE,
-    participation BIGINT UNIQUE,
-    escape_room BIGINT UNIQUE,
+    participant BIGINT,
+    participation BIGINT,
+    escape_room BIGINT,
 
     FOREIGN KEY (participant) REFERENCES Users(id),
     FOREIGN KEY (participation, escape_room) REFERENCES Participations(id, escape_room),
