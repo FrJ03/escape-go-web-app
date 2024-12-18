@@ -1,5 +1,5 @@
-import { Admin } from '../domain/model/admin.entity';
-import { Email } from '../domain/model/value-objects/email';
+import { Admin } from '../admin.entity';
+import { Email } from '../value-objects/email';
 
 describe('Admin class', () => {
 

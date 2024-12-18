@@ -1,5 +1,5 @@
-import { User } from '../domain/model/user.entity';
-import { Email } from '../domain/model/value-objects/email'
+import { User } from '../user.entity';
+import { Email } from '../value-objects/email'
 
 describe('User class', () => {
 

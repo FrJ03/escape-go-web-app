@@ -1,5 +1,5 @@
-import { Participant } from '../domain/model/participant.entity';
-import { Email } from '../domain/model/value-objects/email';
+import { Participant } from '../participant.entity';
+import { Email } from '../value-objects/email';
 
 describe('Participant class', () => {
 

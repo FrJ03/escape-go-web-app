@@ -1,4 +1,4 @@
-import { Email } from '../domain/model/value-objects/email';
+import { Email } from '../value-objects/email';
 
 
 describe('Email Class', () => {
