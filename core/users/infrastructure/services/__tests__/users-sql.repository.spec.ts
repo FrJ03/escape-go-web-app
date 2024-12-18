@@ -298,3 +298,67 @@ describe('Delete users tests', () => {
         
     })
 })
+
+describe('Add points to user tests', () => {
+    test('Non existing user', async () => {
+        const users = new UsersSql(PostgresSqlClient)
+
+        const response = await users.addPoints(0, 10)
+
+        expect(response).toBeFalsy()
+    })
+    describe('With an exisiting user', () => {
+        const new_user = UserDataMapper.toModel({
+            id: 1,
+            email: 'test@test.com',
+            username: 'test',
+            password: 'test',
+            role: 'participant',
+            points: -1
+        } as UserType)
+
+        beforeEach(async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            await users.save(new_user)
+
+            const postgres = new Client(PostgresSqlClient)
+            await postgres.connect()
+            const response  = await postgres.query('SELECT id FROM users WHERE email = $1', [new_user.email.value])
+            await postgres.end()
+
+            new_user.id = response.rows[0].id
+        })
+        test('Add to a valid user', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const points = 10
+
+            const response = await users.addPoints(new_user.id, points)
+            const user = await users.findUserByEmail(new_user.email)
+
+            expect(response).toBeTruthy()
+            if(user instanceof Participant && new_user instanceof Participant){
+                expect(user.points).toBe(new_user.points + points)
+            }
+        })
+        test('Add to a valid user twice', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            const points = 10
+
+            const response_1 = await users.addPoints(new_user.id, points)
+            const response_2 = await users.addPoints(new_user.id, points)
+            const user = await users.findUserByEmail(new_user.email)
+
+            expect(response_1).toBeTruthy()
+            expect(response_2).toBeTruthy()
+            if(user instanceof Participant && new_user instanceof Participant){
+                expect(user.points).toBe(new_user.points + points * 2)
+            }
+        })
+        afterEach(async () => {
+            const postgres = new Client(PostgresSqlClient)
+            await postgres.connect()
+            await postgres.query('DELETE FROM users')
+            await postgres.end()
+        })
+    })
+})
