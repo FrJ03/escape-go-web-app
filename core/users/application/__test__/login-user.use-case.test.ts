@@ -67,7 +67,7 @@ describe('LoginUserUseCase', () => {
     
             const response = await loginusecase.with(request);
 
-            expect(response.code).toBe(404);
+            expect(response.code).toBe(400);
     
         });
 

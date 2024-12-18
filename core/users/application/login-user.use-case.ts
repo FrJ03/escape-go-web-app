@@ -69,7 +69,7 @@ export class LoginUserUseCase{
 
                     return{
 
-                        code: 400
+                        code: 404
 
                     } as LoginResponse
 
@@ -89,7 +89,7 @@ export class LoginUserUseCase{
 
             return{
 
-                code: 404
+                code: 400
 
             } as LoginResponse
 

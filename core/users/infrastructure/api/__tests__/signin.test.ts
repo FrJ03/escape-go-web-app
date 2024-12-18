@@ -38,6 +38,6 @@ describe('POST /signin', () => {
           .post('/account/signin')
           .send({ password: 'wrongpass', email: 'wrong@mail.com' });
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(404);
   });
 });

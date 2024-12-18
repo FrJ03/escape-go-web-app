@@ -90,7 +90,7 @@ export class LoginAdminUseCase{
 
             return{
 
-                code: 404
+                code: 400
 
             } as LoginResponse
 
