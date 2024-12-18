@@ -53,7 +53,7 @@ describe('SignupUserUseCase', () => {
     
             const response = await signupusercase.with(request);
     
-            expect(response.code).toBe(404);
+            expect(response.code).toBe(400);
     
         });
 

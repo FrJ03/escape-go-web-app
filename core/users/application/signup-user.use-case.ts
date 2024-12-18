@@ -65,32 +65,20 @@ export class SignUpUserUseCase{
 
                         return{
 
-                            code: 4043
+                            code: 400
 
                         } as SignUpResponse
 
                     }
-
                 }
-
             }catch (error){
-
-                console.error(error);
-
                 return{
-
-                    code: 404
-
+                    code: 400
                 } as SignUpResponse
-
             }
-
         }else{
-
             return{
-
-                code: 404
-
+                code: 400
             } as SignUpResponse
 
         }
