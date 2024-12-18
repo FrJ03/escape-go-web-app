@@ -80,9 +80,9 @@ CREATE TABLE IF NOT EXISTS Clues(
 CREATE TABLE IF NOT EXISTS Participations(
     id SERIAL,
     escape_room BIGINT,
-    start_time DATE,
+    start_time BIGINT,
     points INTEGER,
-    end_time DATE,
+    end_time BIGINT,
     FOREIGN KEY (escape_room) REFERENCES EscapeRooms(id),
     PRIMARY KEY (id, escape_room)
 );

@@ -13,7 +13,7 @@ export class ParticipationPublisher extends Publisher<Participation>{
         try {
             const postgres = new Client(this.postgres_config)
             await postgres.connect()
-            const response = await postgres.query(INSERT_PARTICIPATION, [data.escape_room.id, data.start_date, data.end_date, data.points])
+            const response = await postgres.query(INSERT_PARTICIPATION, [data.escape_room.id, data.start_date.getTime(), data.end_date.getTime(), data.points])
             await postgres.end()
 
             return response.rowCount !== 0
@@ -27,11 +27,12 @@ export class ParticipationPublisher extends Publisher<Participation>{
         try{
             const postgres = new Client(this.postgres_config)
             await postgres.connect()
-            const response = await postgres.query(UPDATE_PARTICIPATION, [data.id, data.start_date, data.end_date, data.points])
+            const response = await postgres.query(UPDATE_PARTICIPATION, [data.id, data.start_date.getTime(), data.end_date.getTime(), data.points])
             await postgres.end()
 
             return response.rowCount !== 0
         } catch (error) {
+            console.error(error)
             return false
         }
     }

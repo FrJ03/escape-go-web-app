@@ -7,8 +7,6 @@ import { ParticipationDataMapper } from "../persistence/participation.data-mappe
 import { EscapeRoomType } from "../persistence/escape_room.type";
 import { LocationType } from "../persistence/location.type";
 import { SELECT_PARTICIPATION_BY_ESCAPE_ROOM, SELECT_PARTICIPATION_BY_ID } from "../queries/participations.query";
-import { EscapeRoom } from "../../domain/model/escapeRoom.entity";
-import { EscapeRoomsSql } from "./escape_rooms_sql.repository";
 
 export class ParticipationsSql implements Participations{
     private readonly _publisher: ParticipationPublisher
@@ -68,8 +66,8 @@ export class ParticipationsSql implements Participations{
                     } as LocationType
                 } as EscapeRoomType,
                 points: (participation.points) ? participation.points: undefined,
-                start_date: new Date(participation.start_time),
-                end_date: new Date(participation.end_time)
+                start_date: new Date(Number(participation.start_time)),
+                end_date: new Date(Number(participation.end_time))
             } as ParticipationType
 
             participations.push(ParticipationDataMapper.toModel(participation_data))
@@ -109,8 +107,8 @@ export class ParticipationsSql implements Participations{
                     } as LocationType
                 } as EscapeRoomType,
                 points: (response.rows[0].points) ? response.rows[0].points: undefined,
-                start_date: new Date(response.rows[0].start_time),
-                end_date: new Date(response.rows[0].end_time)
+                start_date: new Date(Number(response.rows[0].start_time)),
+                end_date: new Date(Number(response.rows[0].end_time))
             } as ParticipationType
 
             const participation = ParticipationDataMapper.toModel(participation_data);
