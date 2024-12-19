@@ -39,8 +39,14 @@ escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
 
 //UPDATE
 
-escapeRoomAdminRouter.put('/modify:id', async (req, res) => { //Modificar escape room
+escapeRoomAdminRouter.put('/modify', async (req, res) => { //Modificar escape room
     const { id, title, description, solution, difficulty, price } = req.body;
+
+    // Validar que el ID está presente y es un número válido
+    if (!id || isNaN(Number(id))) {
+        res.sendStatus(400);
+       return;
+    }
 
     // Establece valores por defecto como undefined si no se reciben
     const request: UpdateEscapeRoomRequest = {
