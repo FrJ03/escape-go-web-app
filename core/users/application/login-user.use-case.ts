@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 import { SessionsSql } from "../infrastructure/services/sessions-sql.repository";
 import { Session } from '../domain/model/session.entity';
 import { PASS } from "../../commons/utils/config";
+import { Admin } from "../domain/model/admin.entity";
 
 export class LoginUserUseCase{
 
@@ -48,8 +49,7 @@ export class LoginUserUseCase{
 
                         return{
 
-                            username: posible_user.username,
-                            email: command.email,
+                            role: (posible_user instanceof Admin) ? 'admin' : 'participant',
                             code: 200,
                             token: token
 

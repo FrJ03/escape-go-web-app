@@ -46,14 +46,7 @@ export class SignUpUserUseCase{
 
                     //lo registramos
 
-                    if(await this.users.save(new_user)){ //introduce al usuario en la BD, la BD machaca el valor del ID generando uno automático
-
-                        const fecha_actual: Date = new Date();
-
-                        const sesion = new Session(0, fecha_actual, new_user); //creamos el objeto sesion necesario para la funcion save
-
-                        this.sessions.save(sesion); //guarda log de registro en BD
-
+                    if(await this.users.save(new_user)){
                         return{
 
                             code: 200

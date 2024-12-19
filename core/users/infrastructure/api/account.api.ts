@@ -28,7 +28,27 @@ accountRouter.post('/signup', async (req, res) => { //REGISTRO -- solo se regist
 
         const userResponse: SignUpResponse = await container.signUpUser.with(userRequest);
 
-        res.status(userResponse.code || 200).send(userResponse);
+        if(userResponse.code === 200){
+            const login_response = await container.loginUser.with({
+                email: userRequest.email,
+                password: userRequest.password
+            })
+
+            if(login_response.code === 200){
+                const response = {
+                    code: 200,
+                    role: login_response.role,
+                    token: login_response.token
+                }
+                res.status(200).send(response);
+            }
+            else{
+                res.sendStatus(login_response.code)
+            }     
+        }
+        else{
+            res.sendStatus(userResponse.code)
+        }
     }
     else{
 
