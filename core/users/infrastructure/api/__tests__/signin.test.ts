@@ -5,26 +5,17 @@ import PostgresSqlConfig from '../../../../commons/infrastructure/database-clien
 import bcrypt from 'bcrypt';
 
 let postgres: Client;
-
-beforeAll(async () => {
-  postgres = new Client(PostgresSqlConfig);
-  await postgres.connect();
-  const password = 'passwordlogin';
-  const hashedPassword = await bcrypt.hash(password, 10);
-  await postgres.query('DELETE FROM userssessions');
-  await postgres.query('DELETE FROM users WHERE email = $1', ['correouserlogin@gmail.com']);
-  await postgres.query( 'INSERT INTO users (id, email, username, passwd, user_role, points) VALUES ($1, $2, $3, $4, $5, $6)',
-  [998, 'correouserlogin@gmail.com', 'userlogin', hashedPassword, 'participant', 0]);
-});
-
-afterAll(async () => {
+describe('POST /signin', () => {
+  beforeAll(async () => {
+    postgres = new Client(PostgresSqlConfig);
+    await postgres.connect();
+    const password = 'passwordlogin';
+    const hashedPassword = await bcrypt.hash(password, 10);
     await postgres.query('DELETE FROM userssessions');
     await postgres.query('DELETE FROM users WHERE email = $1', ['correouserlogin@gmail.com']);
-    await postgres.end();
+    await postgres.query( 'INSERT INTO users (id, email, username, passwd, user_role, points) VALUES ($1, $2, $3, $4, $5, $6)',
+    [998, 'correouserlogin@gmail.com', 'userlogin', hashedPassword, 'participant', 0]);
   });
-
-
-describe('POST /signin', () => {
   it('Debe devolver código 200 si las credenciales son correctas', async () => {
       const response = await request(app)
           .post('/account/signin')
@@ -33,11 +24,16 @@ describe('POST /signin', () => {
       expect(response.status).toBe(200);
   });
 
-  it('Debe devolver código 400 si las credenciales son incorrectas', async () => {
+  test('Debe devolver código 400 si las credenciales son incorrectas', async () => {
       const response = await request(app)
           .post('/account/signin')
           .send({ password: 'wrongpass', email: 'wrong@mail.com' });
 
       expect(response.status).toBe(404);
+  });
+  afterAll(async () => {
+    await postgres.query('DELETE FROM userssessions');
+    await postgres.query('DELETE FROM users WHERE email = $1', ['correouserlogin@gmail.com']);
+    await postgres.end();
   });
 });

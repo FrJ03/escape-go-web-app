@@ -49,8 +49,7 @@ export class LoginAdminUseCase{
 
                         return{
 
-                            username: posible_user.username,
-                            email: command.email,
+                            role: 'admin',
                             code: 200,
                             token: token
 

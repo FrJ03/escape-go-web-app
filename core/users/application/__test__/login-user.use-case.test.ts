@@ -30,14 +30,10 @@ describe('LoginUserUseCase', () => {
     })
 
     test('Recibir LoginRequest correctamente y obtener LoginResponse válida', async () => {
-
         const request: LoginRequest = {
-
             email: 'test@test.es',
             password: 'test'
-
         }
-
         const users = new UsersSql(PostgresSqlClient);
         const sessions = new SessionsSql(PostgresSqlClient);
         const loginusecase = new LoginUserUseCase(users, sessions);
@@ -45,9 +41,7 @@ describe('LoginUserUseCase', () => {
         const response = await loginusecase.with(request);
 
         expect(response.code).toBe(200);
-        expect(response.email).toBe('test@test.es');
-
-
+        expect(response.role).toBe('admin');
     });
 
     describe('LoginUserUseCase', () => {

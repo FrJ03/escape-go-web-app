@@ -46,7 +46,7 @@ describe('login admin use case tests', () => {
         const response = await loginusecase.with(request);
 
         expect(response.code).toBe(200);
-        expect(response.email).toBe('test@test.es');
+        expect(response.role).toBe('admin')
     })
     test('log invalid admin', async () => {
         const request: LoginRequest = {
