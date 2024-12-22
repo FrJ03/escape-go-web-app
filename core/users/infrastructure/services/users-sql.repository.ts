@@ -5,7 +5,7 @@ import { User } from "../../domain/model/user.entity"
 import { ClientConfig, Client } from 'pg'
 import { UserType } from "../persistence/user.type";
 import UserDataMapper from "../persistence/user.data-mapper";
-import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_USERS } from "../queries/users.query";
+import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_PARTICIPANTS, GET_ALL_USERS } from "../queries/users.query";
 import { Email } from "../../domain/model/value-objects/email";
 
 export class UsersSql implements Users {
@@ -84,6 +84,30 @@ export class UsersSql implements Users {
 
         await postgres.connect()
         const response = await postgres.query(GET_ALL_USERS)
+        await postgres.end()
+
+        const users: Array<User> = []
+
+        response.rows.forEach(user => 
+            users.push(
+                UserDataMapper.toModel({
+                    id: user.id,
+                    email: user.email,
+                    password: user.passwd,
+                    role: user.user_role,
+                    points: user.points
+                } as UserType)
+            )
+        )
+
+        return users
+    }
+
+    async getAllParticipants(): Promise<Array<User>>{
+        const postgres = new Client(this.postgres_config)
+
+        await postgres.connect()
+        const response = await postgres.query(GET_ALL_PARTICIPANTS)
         await postgres.end()
 
         const users: Array<User> = []

@@ -7,5 +7,6 @@ export interface Users{
     findUserByUsername(username: string): Promise<User | undefined>
     delete(user_id: number): Promise<boolean>
     getAll(): Promise<Array<User>>
+    getAllParticipants(): Promise<Array<User>>
     addPoints(user_id: number, points: number): Promise<boolean>
 }
