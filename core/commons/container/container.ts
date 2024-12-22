@@ -22,6 +22,7 @@ import { UserParticipationsSql } from "../../game/infrastructure/services/user-p
 import { GetClueUseCase } from "../../game/application/get-clue.use-case";
 import { GetNextClueUseCase } from "../../game/application/get-next-clue.use-case";
 import { SolveEscapeRoomUseCase } from "../../game/application/solve-escape-room.use-case";
+import { GetConversionRateUseCase } from "../../measures/application/get-conversion-rate.use-case";
 
 const Container = {
     init: () => {
@@ -48,7 +49,8 @@ const Container = {
             registerParticipant: new RegisterUserParticipationUseCase(users, participations, user_participations),
             getClue: new GetClueUseCase(escape_rooms),
             getNextClue: new GetNextClueUseCase(escape_rooms),
-            solveEscapeRoom: new SolveEscapeRoomUseCase(users, user_participations, participations)
+            solveEscapeRoom: new SolveEscapeRoomUseCase(users, user_participations, participations),
+            getConversionRate: new GetConversionRateUseCase(user_participations, sessions)
         }
     }
 }
