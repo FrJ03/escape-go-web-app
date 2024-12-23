@@ -12,9 +12,6 @@ export class GetConversionRateUseCase {
         const ups = await this.user_participations.getAll()
         const s = await this.sessions.getAll()
 
-        console.error(ups.length)
-        console.error(s.length)
-
         if(ups.length === 0 || s.length === 0){
             return {
                 code: 200,

@@ -9,7 +9,7 @@ export class GetSessionsIntervalUseCase{
     async with(): Promise<GetSessionsIntervalResponse>{
         const s_response = await this.sessions.getAll()
 
-        if(s_response.length === 0){
+        if(s_response.length <= 1){
             return {
                 code: 200,
                 years: 0,
