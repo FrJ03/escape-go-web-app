@@ -13,5 +13,10 @@ measureRouter.get('/sessions-interval', async (req, res) => {
 
     res.status(response.code).send(response)
 })
+measureRouter.get('/growth', async (req, res) => {
+    const response = await container.getGrowthRate.with()
+
+    res.status(response.code).send(response)
+})
 
 export {measureRouter}
