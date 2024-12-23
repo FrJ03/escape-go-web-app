@@ -23,5 +23,6 @@ else{
 }
 const SALT = s
 const PASS = process.env.PASS || 'password'
+const LAUNCH_DATE = process.env.LAUNCH_DATE || '2025-01-01'
 
-export { ENV, PORT, POSTGRES_URL, SSL, SALT, PASS }
+export { ENV, PORT, POSTGRES_URL, SSL, SALT, PASS, LAUNCH_DATE }

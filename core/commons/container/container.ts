@@ -24,6 +24,7 @@ import { GetNextClueUseCase } from "../../game/application/get-next-clue.use-cas
 import { SolveEscapeRoomUseCase } from "../../game/application/solve-escape-room.use-case";
 import { GetConversionRateUseCase } from "../../measures/application/get-conversion-rate.use-case";
 import { GetSessionsIntervalUseCase } from "../../measures/application/get-sessions-interval.use-case";
+import { GetGrowthRateUseCase } from "../../measures/application/get-growth-rate.use-case";
 
 const Container = {
     init: () => {
@@ -52,6 +53,7 @@ const Container = {
             getNextClue: new GetNextClueUseCase(escape_rooms),
             solveEscapeRoom: new SolveEscapeRoomUseCase(users, user_participations, participations),
             getConversionRate: new GetConversionRateUseCase(user_participations, sessions),
+            getGrowthRate: new GetGrowthRateUseCase(users),
             getSessionsInterval: new GetSessionsIntervalUseCase(sessions)
         }
     }
