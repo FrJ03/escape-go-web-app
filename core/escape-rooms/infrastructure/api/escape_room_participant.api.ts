@@ -28,7 +28,7 @@ escapeRoomParticipantRouter.post('/proximity', async (req, res) => { //POST(info
 
 });
 
-escapeRoomParticipantRouter.get('/info:id', async (req, res) => { //GET info del escapeRoom ID
+escapeRoomParticipantRouter.get('/info/:id', async (req, res) => { //GET info del escapeRoom ID
 
     if(req.params.id != undefined){
 
