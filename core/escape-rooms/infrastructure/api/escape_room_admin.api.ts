@@ -31,7 +31,13 @@ escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
         });
         
         const response: CreateEscapeRoomResponse = await container.createEscapeRoom.with(request);
-        res.status(response.code || 200).send(response);
+
+        if(response.code == 200){
+            res.status(200).send(response);
+        }
+        else{
+            res.sendStatus(response.code);
+        }
     } else {
         res.sendStatus(400); // Faltan datos requeridos
     }
