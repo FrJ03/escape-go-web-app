@@ -107,8 +107,8 @@ export class UserParticipationsSql implements UserParticipations{
                         }
                     },
                     points: (response.rows[i].points) ? response.rows[i].points: undefined,
-                    start_date: new Date(response.rows[i].start_time),
-                    end_date: new Date(response.rows[i].end_time)
+                    start_date: new Date(Number(response.rows[i].start_time)),
+                    end_date: new Date(Number(response.rows[i].end_time))
                 }
             }))
         }
