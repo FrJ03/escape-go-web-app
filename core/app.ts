@@ -6,6 +6,7 @@ import { escapeRoomAdminRouter } from "./escape-rooms/infrastructure/api/escape_
 import escapeRoomParticipantRouter from "./escape-rooms/infrastructure/api/escape_room_participant.api";
 import { gameRouter } from "./game/infrastructure/api/game.api";
 import { measureRouter } from "./measures/infrastructure/api/measures.api";
+import { profileRouter } from "./profile/infrastructure/api/profile.api";
 
 const app = express();
 app.use(express.json()); //middleware que transforma req.body a JSON
@@ -15,5 +16,6 @@ app.use('/escaperoom/admin', userAuthentication, adminAuthentication, escapeRoom
 app.use('/escaperoom/participant', userAuthentication, participantAuthentication, escapeRoomParticipantRouter) //ruta para la API escaperoom admin
 app.use('/game', userAuthentication, participantAuthentication, gameRouter)
 app.use('/measures', userAuthentication, adminAuthentication, measureRouter)
+app.use('/profile', userAuthentication, profileRouter)
 
 export default app 

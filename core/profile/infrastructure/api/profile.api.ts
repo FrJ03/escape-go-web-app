@@ -46,3 +46,5 @@ profileRouter.get('/participations', async (req, res) => {
         }
     }
 })
+
+export { profileRouter }
