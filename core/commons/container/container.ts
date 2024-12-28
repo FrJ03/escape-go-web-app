@@ -26,6 +26,7 @@ import { GetConversionRateUseCase } from "../../measures/application/get-convers
 import { GetSessionsIntervalUseCase } from "../../measures/application/get-sessions-interval.use-case";
 import { GetGrowthRateUseCase } from "../../measures/application/get-growth-rate.use-case";
 import { GetProfileUseCase } from "../../profile/application/get-profile.use-case";
+import { GetParticipationsByUserUseCase } from "../../profile/application/get-participations-by-user.use-case";
 
 const Container = {
     init: () => {
@@ -56,7 +57,8 @@ const Container = {
             getConversionRate: new GetConversionRateUseCase(user_participations, sessions),
             getGrowthRate: new GetGrowthRateUseCase(users),
             getSessionsInterval: new GetSessionsIntervalUseCase(sessions),
-            getProfile: new GetProfileUseCase(users)
+            getProfile: new GetProfileUseCase(users),
+            getParticipationsByUser: new GetParticipationsByUserUseCase(users, user_participations)
         }
     }
 }
