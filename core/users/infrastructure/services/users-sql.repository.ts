@@ -5,8 +5,9 @@ import { User } from "../../domain/model/user.entity"
 import { ClientConfig, Client } from 'pg'
 import { UserType } from "../persistence/user.type";
 import UserDataMapper from "../persistence/user.data-mapper";
-import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_PARTICIPANTS, GET_ALL_USERS } from "../queries/users.query";
+import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_PARTICIPANTS, GET_ALL_USERS, GET_RANKING } from "../queries/users.query";
 import { Email } from "../../domain/model/value-objects/email";
+import { Participant } from "../../domain/model/participant.entity";
 
 export class UsersSql implements Users {
     private publisher: UserPublisher
@@ -148,5 +149,29 @@ export class UsersSql implements Users {
         })
 
         return await this.publisher.update(updated_user)
+    }
+    async getRanking(n_users: number): Promise<Array<Participant>> {
+        const postgres = new Client(this.postgres_config)
+
+        await postgres.connect()
+        const response = await postgres.query(GET_RANKING, [n_users])
+        await postgres.end()
+
+        const users: Array<Participant> = []
+
+        response.rows.forEach(user => {
+            const u =  UserDataMapper.toModel({
+                id: user.id,
+                email: user.email,
+                password: user.passwd,
+                role: user.user_role,
+                points: user.points
+            } as UserType)
+            if(u instanceof Participant){
+                users.push(u)
+            }
+        })
+
+        return users
     }
 }

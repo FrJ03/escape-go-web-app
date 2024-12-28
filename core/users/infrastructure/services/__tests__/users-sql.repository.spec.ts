@@ -437,3 +437,80 @@ describe('Add points to user tests', () => {
         })
     })
 })
+
+describe('Get ranking tests', () => {
+    test('Without users', async () => {
+        const users = new UsersSql(PostgresSqlClient)
+
+        const response = await users.getRanking(10)
+
+        expect(response.length).toBe(0)
+    })
+    describe('With users', () => {
+        const users_data = [
+            {
+                id: 1,
+                email: 'test1@test.es',
+                username: 'test1',
+                password: 'test',
+                role: 'participant',
+                points: 10
+            },
+            {
+                id: 2,
+                email: 'test2@test.es',
+                username: 'test2',
+                password: 'test',
+                role: 'participant',
+                points: 20
+            },
+            {
+                id: 3,
+                email: 'test3@test.es',
+                username: 'test3',
+                password: 'test',
+                role: 'participant',
+                points: 30
+            }
+        ]
+        beforeAll(async () => {
+            const users = new UsersSql(PostgresSqlClient)
+            for(const user_data of users_data){
+                await users.save(UserDataMapper.toModel(user_data))
+            }
+        })
+        test('Get the first user', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+
+            const response = await users.getRanking(1)
+
+            expect(response.length).toBe(1)
+            expect(response[0].points).toBe(30)
+        })
+        test('Get the first two users', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+
+            const response = await users.getRanking(2)
+
+            expect(response.length).toBe(2)
+            expect(response[0].points).toBe(30)
+            expect(response[1].points).toBe(20)
+        })
+        test('Get all users', async () => {
+            const users = new UsersSql(PostgresSqlClient)
+
+            const response = await users.getRanking(10)
+
+            expect(response.length).toBe(3)
+            expect(response[0].points).toBe(30)
+            expect(response[1].points).toBe(20)
+            expect(response[2].points).toBe(10)
+        })
+        afterAll(async () => {
+            const postgres = new Client(PostgresSqlClient)
+            await postgres.connect()
+            await postgres.query('DELETE FROM users')
+            await postgres.end()
+        })
+    })
+})
