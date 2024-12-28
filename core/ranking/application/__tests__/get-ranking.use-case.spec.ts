@@ -50,8 +50,11 @@ describe('get ranking use case tests', () => {
             expect(response.code).toBe(200)
             expect(response.ranking.length).toBe(3)
             expect(response.ranking[0].points).toBe(30)
+            expect(response.ranking[0].username).toBe('test3')
             expect(response.ranking[1].points).toBe(20)
+            expect(response.ranking[1].username).toBe('test2')
             expect(response.ranking[2].points).toBe(10)
+            expect(response.ranking[2].username).toBe('test1')
         })
         afterAll(async () => {
             const postgres = new Client(PostgresSqlClient)

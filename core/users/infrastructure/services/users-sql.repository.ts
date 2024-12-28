@@ -54,6 +54,7 @@ export class UsersSql implements Users {
             const data = {
                 id: response.rows[0].id,
                 email: response.rows[0].email,
+                username: response.rows[0].username,
                 password: response.rows[0].passwd,
                 role: response.rows[0].user_role,
                 points: response.rows[0].points
@@ -94,6 +95,7 @@ export class UsersSql implements Users {
                 UserDataMapper.toModel({
                     id: user.id,
                     email: user.email,
+                    username: user.username,
                     password: user.passwd,
                     role: user.user_role,
                     points: user.points
@@ -118,6 +120,7 @@ export class UsersSql implements Users {
                 UserDataMapper.toModel({
                     id: user.id,
                     email: user.email,
+                    username: user.username,
                     password: user.passwd,
                     role: user.user_role,
                     points: user.points
@@ -163,6 +166,7 @@ export class UsersSql implements Users {
             const u =  UserDataMapper.toModel({
                 id: user.id,
                 email: user.email,
+                username: user.username,
                 password: user.passwd,
                 role: user.user_role,
                 points: user.points
