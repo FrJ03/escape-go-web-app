@@ -31,7 +31,7 @@ escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
         });
         
         const response: CreateEscapeRoomResponse = await container.createEscapeRoom.with(request);
-
+        
         if(response.code == 200){
             res.status(200).send(response);
         }
@@ -75,7 +75,7 @@ escapeRoomAdminRouter.put('/modify', async (req, res) => { //Modificar escape ro
 
 //DELETE
 
-escapeRoomAdminRouter.delete('/delete:id', async (req, res) => { //Borrar escape room
+escapeRoomAdminRouter.delete('/delete/:id', async (req, res) => { //Borrar escape room
 
     if(req.params.id != undefined){
 
