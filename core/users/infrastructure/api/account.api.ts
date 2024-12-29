@@ -7,6 +7,7 @@ import { LoginRequest } from '../../dto/requests/login.request';
 import { LoginResponse } from '../../dto/responses/login.response';
 import { DeleteRequest } from '../../dto/requests/delete.request';
 import { DeleteResponse } from '../../dto/responses/delete.response';
+import { userAuthentication } from '../../../commons/utils/middlewares/user-authentication';
 
 
 const accountRouter = express.Router();
@@ -89,7 +90,7 @@ accountRouter.post('/signin', async (req, res) => { //FUNCIONALIDAD
 
 //DELETE /account --> elimina la cuenta
 
-accountRouter.post('/delete', async (req, res) => { //FUNCIONALIDAD
+accountRouter.post('/delete', userAuthentication, async (req, res) => { //FUNCIONALIDAD
     
     if(req.body.password != undefined && Email.esMail(req.body.email)){
 
