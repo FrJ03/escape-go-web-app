@@ -5,7 +5,7 @@ import { User } from "../../domain/model/user.entity"
 import { ClientConfig, Client } from 'pg'
 import { UserType } from "../persistence/user.type";
 import UserDataMapper from "../persistence/user.data-mapper";
-import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_PARTICIPANTS, GET_ALL_USERS, GET_RANKING } from "../queries/users.query";
+import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_PARTICIPANTS, GET_ALL_USERS, GET_RANKING, UPDATE_PROFILE } from "../queries/users.query";
 import { Email } from "../../domain/model/value-objects/email";
 import { Participant } from "../../domain/model/participant.entity";
 import { DELETE_SESSIONS_BY_USER } from "../queries/sessions.query";
@@ -179,5 +179,18 @@ export class UsersSql implements Users {
         })
 
         return users
+    }
+
+    async updateProfile(user: User): Promise<boolean> {
+        const postgres = new Client(this.postgres_config);
+        await postgres.connect();
+
+        const emailValue = typeof user.email === 'object' && 'value' in user.email 
+        ? user.email.value 
+        : user.email;
+        const response = await postgres.query(UPDATE_PROFILE, [user.id, emailValue, user.username, user.password]);
+        await postgres.end();
+
+        return response.rowCount ? true : false;
     }
 }
