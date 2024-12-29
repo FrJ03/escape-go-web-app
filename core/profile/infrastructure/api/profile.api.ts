@@ -1,6 +1,8 @@
 import express from "express";
 import { container } from "../../../commons/container/container";
 import { decode } from "jsonwebtoken";
+import { UpdateProfileRequest } from "../../dto/requests/update-profile.request";
+import { UpdateProfileResponse } from "../../dto/response/update-profile.response";
 
 const profileRouter = express.Router();
 
@@ -46,5 +48,32 @@ profileRouter.get('/participations', async (req, res) => {
         }
     }
 })
+
+profileRouter.put('/update', async (req, res) => {
+    const { emailNuevo, username, password } = req.body;
+
+    const decodedToken = decode(`${req.headers.authorization}`);
+
+    if (!decodedToken || typeof decodedToken !== 'object' || !('email' in decodedToken)) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const request: UpdateProfileRequest = {
+        emailOriginal: decodedToken.email,
+        emailNuevo: emailNuevo || undefined,
+        username: username || undefined,
+        password: password || undefined,
+    };
+
+    const response: UpdateProfileResponse = await container.updateProfile.with(request);
+
+    if (response.code === 200) {
+        res.status(response.code || 200).send(response);
+    } else {
+        res.sendStatus(response.code);
+    }
+});
+
 
 export { profileRouter }
