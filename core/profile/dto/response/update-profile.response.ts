@@ -1,7 +1,8 @@
 import { DeepReadonly } from "ts-essentials";
 
 type UpdateProfileResponse = DeepReadonly<{
-    code: number;
+    code: number,
+    token: string
 }>;
 
 const UpdateProfileResponse = {

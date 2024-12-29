@@ -3,7 +3,8 @@ import { Users } from "../../users/domain/services/users.repository";
 import { UpdateProfileRequest } from "../dto/requests/update-profile.request";
 import { UpdateProfileResponse } from "../dto/response/update-profile.response";
 import bcrypt from 'bcrypt';
-import { SALT } from '../../commons/utils/config';
+import { PASS, SALT } from '../../commons/utils/config';
+import jwt from 'jsonwebtoken';
 
 export class UpdateProfileUseCase {
     constructor(
@@ -41,11 +42,13 @@ export class UpdateProfileUseCase {
                 } as UpdateProfileResponse;
             }
 
-            const emailExistente = await this.users.findUserByEmail(emailNuevo);
-            if (emailExistente) {
-                return {
-                    code: 400,
-                } as UpdateProfileResponse;
+            if(emailNuevo.value !== emailOriginal.value){
+                const emailExistente = await this.users.findUserByEmail(emailNuevo);
+                if (emailExistente !== undefined) {
+                    return {
+                        code: 400,
+                    } as UpdateProfileResponse;
+                }
             }
 
             user.email = emailNuevo;
@@ -62,8 +65,16 @@ export class UpdateProfileUseCase {
 
         try {
             if (await this.users.updateProfile(user)) {
+                const userForToken = {
+                    username: command.username,
+                    email: command.emailNuevo,
+                    id: command.id
+                }
+
+                const token = jwt.sign(userForToken, PASS);
                 return {
                     code: 200,
+                    token: token
                 } as UpdateProfileResponse;
             } else {
                 return {

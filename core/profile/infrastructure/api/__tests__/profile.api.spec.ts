@@ -7,8 +7,6 @@ import PostgresSqlConfig from '../../../../commons/infrastructure/database-clien
 import { UsersSql } from '../../../../users/infrastructure/services/users-sql.repository';
 import { Email } from '../../../../users/domain/model/value-objects/email';
 import { Participant } from '../../../../users/domain/model/participant.entity';
-import UserDataMapper from '../../../../users/infrastructure/persistence/user.data-mapper';
-import e from 'express';
 import { EscapeRoomDataMapper } from '../../../../escape-rooms/infrastructure/persistence/escape_room.data-mapper';
 import { ParticipationDataMapper } from '../../../../escape-rooms/infrastructure/persistence/participation.data-mapper';
 import { ParticipationsSql } from '../../../../escape-rooms/infrastructure/services/participations_sql.repository';
@@ -219,6 +217,90 @@ describe('profile api', () => {
                     await postgres.end()
                 })
             })
+        })
+    })
+    describe('modify profile tests', () => {
+        const endpoint = `${base_endpoint}/update`
+        test('before login', async () => {
+            await api
+                .put(endpoint)
+                .expect(401)
+        })
+        describe('after login an account', () => {
+            test('modify valid profile', async () => {
+                const request = {
+                    emailNuevo: participantData.email,
+                    username: participantData.username + 's',
+                    password: participantData.password + 's'
+                }
+                const response = await api
+                    .put(endpoint)
+                    .set('Authorization', participant_token)
+                    .send(request)
+                    .expect(200)
+                
+                participant_token = response.body.token
+            })
+            test('wrong email', async () => {
+                const request = {
+                    emailNuevo: 'test',
+                    username: participantData.username + 's',
+                    password: participantData.password + 's'
+                }
+                const response = await api
+                    .put(endpoint)
+                    .set('Authorization', participant_token)
+                    .send(request)
+                    .expect(400)
+            })
+            test('valid email', async () => {
+                const request = {
+                    emailNuevo: 's' + participantData.email,
+                    username: participantData.username + 's',
+                    password: participantData.password + 's'
+                }
+                const response = await api
+                    .put(endpoint)
+                    .set('Authorization', participant_token)
+                    .send(request)
+                    .expect(200)
+                
+                participant_token = response.body.token
+            })
+        })
+        afterAll(async () => {
+            const postgres = new Client(PostgresSqlConfig)
+            await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
+            await postgres.query('DELETE FROM users')
+            await postgres.end()
+
+            const users = new UsersSql(PostgresSqlConfig)
+
+            const participant = new Participant(
+                1, new Email(participantData.email),
+                participantData.username,
+                await bcrypt.hash(participantData.password, 10),
+                participantData.points
+            )
+
+            await users.save(participant)
+
+            const postgres1 = new Client(PostgresSqlConfig)
+            await postgres1.connect()
+            const er = await postgres1.query('SELECT id FROM users')
+            await postgres1.end()
+
+            participantData.id = er.rows[0].id
+            
+            const participant_response = await api
+                .post('/account/signin', )
+                .send({
+                    email: participantData.email,
+                    password: participantData.password
+                })
+            
+            participant_token = participant_response.body.token
         })
     })
     afterAll(async () => {

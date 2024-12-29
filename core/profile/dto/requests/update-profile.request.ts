@@ -5,6 +5,7 @@ type UpdateProfileRequest = DeepReadonly<{
     emailNuevo?: string;
     username?: string;
     password?: string;
+    id: number
 }>;
 
 const UpdateProfileRequest = {

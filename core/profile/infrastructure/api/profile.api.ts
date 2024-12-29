@@ -64,6 +64,7 @@ profileRouter.put('/update', async (req, res) => {
         emailNuevo: emailNuevo || undefined,
         username: username || undefined,
         password: password || undefined,
+        id: decodedToken.id
     };
 
     const response: UpdateProfileResponse = await container.updateProfile.with(request);
