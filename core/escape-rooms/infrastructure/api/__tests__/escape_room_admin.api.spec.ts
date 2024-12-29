@@ -147,59 +147,146 @@ describe('escape room api', () => {
             })
         })
     })
-    describe('delete escape room', () => {
+    describe('modify escape room', () => {
         test('before login', async () => {
             await api
-                .delete('/escaperoom/admin')
+                .put('/escaperoom/admin/modify')
                 .expect(401)
         })
         describe('after login with a participant account', () => {
             test('after login', async () => {
                 await api
-                    .delete('/escaperoom/admin')
+                    .put('/escaperoom/admin/modify')
                     .set('Authorization', participant_token)
                     .expect(401)
             })
         })
         describe('after login with an admin account', () => {
-            test('delete a valid escape room', async () => {
-                const request = {
-                    title: 'test',
-                    description: 'test',
-                    solution: 'test',
-                    difficulty: 1,
-                    price: 100,
-                    maxSessionDuration: 1,
-                    location:{
-                        country: 'españa',
-                        city: 'córdoba',
-                        street: 'test',
-                        street_number: 1,
-                        coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
-                        info: ''
-                    }
+            const escape_room_request = {
+                title: 'test',
+                description: 'test',
+                solution: 'test',
+                difficulty: 1,
+                price: 100,
+                maxSessionDuration: 1,
+                location:{
+                    country: 'españa',
+                    city: 'córdoba',
+                    street: 'test',
+                    street_number: 1,
+                    coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                    info: ''
                 }
+            }
+            let escape_room_id = 0
+            beforeEach(async () => {
                 await api
                     .post('/escaperoom/admin/create')
                     .set('Authorization', admin_token)
-                    .send(request)
-                    .expect(200)
+                    .send(escape_room_request)
 
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
                 const id_response = await postgres.query('SELECT * FROM escaperooms')
                 await postgres.end()
 
-                const id = id_response.rows[0].id
-
+                escape_room_id = id_response.rows[0].id
+            })
+            test('modify a valid escape room', async () => {
+                const request = {
+                    id: escape_room_id,
+                    title: escape_room_request.title + 's',
+                    description: escape_room_request.description,
+                    solution: escape_room_request.solution,
+                    difficulty: escape_room_request.difficulty,
+                    price: escape_room_request.price
+                }
                 await api
-                    .delete(`/escaperoom/admin/${id}`)
+                    .put(`/escaperoom/admin/modify`)
+                    .set('Authorization', admin_token)
+                    .send(request)
+                    .expect(200)
+            })
+            test('modfy a non existing escape room', async () => {
+                const request = {
+                    id: escape_room_id + 1,
+                    title: escape_room_request.title + 's',
+                    description: escape_room_request.description,
+                    solution: escape_room_request.solution,
+                    difficulty: escape_room_request.difficulty,
+                    price: escape_room_request.price
+                }
+                await api
+                    .put(`/escaperoom/admin/modify`)
+                    .set('Authorization', admin_token)
+                    .send(request)
+                    .expect(404)
+            })
+            afterEach(async () => {
+                const postgres = new Client(PostgresSqlConfig)
+                await postgres.connect()
+                await postgres.query('DELETE FROM escaperooms')
+                await postgres.query('DELETE FROM locations')
+                await postgres.query('DELETE FROM cities')
+                await postgres.query('DELETE FROM countries')
+                await postgres.end()
+            })
+        })    
+    })
+    describe('delete escape room', () => {
+        test('before login', async () => {
+            await api
+                .delete('/escaperoom/admin/delete/1')
+                .expect(401)
+        })
+        describe('after login with a participant account', () => {
+            test('after login', async () => {
+                await api
+                    .delete('/escaperoom/admin/delete/1')
+                    .set('Authorization', participant_token)
+                    .expect(401)
+            })
+        })
+        describe('after login with an admin account', () => {
+            const escape_room_request = {
+                title: 'test',
+                description: 'test',
+                solution: 'test',
+                difficulty: 1,
+                price: 100,
+                maxSessionDuration: 1,
+                location:{
+                    country: 'españa',
+                    city: 'córdoba',
+                    street: 'test',
+                    street_number: 1,
+                    coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
+                    info: ''
+                }
+            }
+            let escape_room_id = 0
+            beforeEach(async () => {
+                await api
+                    .post('/escaperoom/admin/create')
+                    .set('Authorization', admin_token)
+                    .send(escape_room_request)
+
+                const postgres = new Client(PostgresSqlConfig)
+                await postgres.connect()
+                const id_response = await postgres.query('SELECT * FROM escaperooms')
+                await postgres.end()
+
+                escape_room_id = id_response.rows[0].id
+            })
+            test('delete a valid escape room', async () => {
+                await api
+                    .delete(`/escaperoom/admin/delete/${escape_room_id}`)
                     .set('Authorization', admin_token)
                     .expect(200)
             })
             test('delete a non existing escape room', async () => {
                 await api
-                    .delete(`/escaperoom/admin/${1}`)
+                    .delete(`/escaperoom/admin/delete/${escape_room_id + 1}`)
                     .set('Authorization', admin_token)
                     .expect(404)
             })
@@ -347,7 +434,7 @@ describe('escape room api', () => {
         describe('after login with a participant account', () => {
             test('after login', async () => {
                 await api
-                    .get(`/escaperoom/admin/1`)
+                    .get(`/escaperoom/admin/info/1`)
                     .set('Authorization', participant_token)
                     .expect(401)
             })
@@ -356,7 +443,7 @@ describe('escape room api', () => {
             const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
             test('Without escape rooms', async () => {
                 await api
-                    .get(`/escaperoom/admin/1`)
+                    .get(`/escaperoom/admin/info/1`)
                     .set('Authorization', admin_token)
                     .expect(404)
             })
@@ -423,7 +510,7 @@ describe('escape room api', () => {
                     const id = id_response.rows[0].id
                     
                     const response = await api
-                        .get(`/escaperoom/admin/${id}`)
+                        .get(`/escaperoom/admin/info/${id}`)
                         .query({id: id.toString()})
                         .set('Authorization', admin_token)
                         .expect(200)
@@ -440,7 +527,7 @@ describe('escape room api', () => {
                     const id = id_response.rows[0].id
                     
                     const response = await api
-                        .get(`/escaperoom/admin/${id + 1}`)
+                        .get(`/escaperoom/admin/info/${id + 1}`)
                         .query({id: id.toString()})
                         .set('Authorization', admin_token)
                         .expect(404)
