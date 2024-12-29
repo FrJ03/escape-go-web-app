@@ -8,6 +8,7 @@ import UserDataMapper from "../persistence/user.data-mapper";
 import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME, GET_ALL_PARTICIPANTS, GET_ALL_USERS, GET_RANKING } from "../queries/users.query";
 import { Email } from "../../domain/model/value-objects/email";
 import { Participant } from "../../domain/model/participant.entity";
+import { DELETE_SESSIONS_BY_USER } from "../queries/sessions.query";
 
 export class UsersSql implements Users {
     private publisher: UserPublisher
@@ -72,6 +73,7 @@ export class UsersSql implements Users {
             const postgres = new Client(this.postgres_config)
 
             await postgres.connect()
+            await postgres.query(DELETE_SESSIONS_BY_USER, [user_id])
             const response = await postgres.query(DELETE_USER, [user_id])
             await postgres.end()
 
