@@ -89,17 +89,17 @@ accountRouter.post('/signin', async (req, res) => { //FUNCIONALIDAD
 
 //DELETE /account --> elimina la cuenta
 
-accountRouter.delete('/', async (req, res) => { //FUNCIONALIDAD
-
+accountRouter.post('/delete', async (req, res) => { //FUNCIONALIDAD
+    
     if(req.body.password != undefined && Email.esMail(req.body.email)){
 
         const userRequest = DeleteRequest.with({
-
             password: req.body.password,
             email: req.body.email
-
-        })
-
+        });
+        
+        
+        
         const userResponse: DeleteResponse = await container.deleteUser.with(userRequest);
 
         res.status(userResponse.code || 200).send(userResponse);
