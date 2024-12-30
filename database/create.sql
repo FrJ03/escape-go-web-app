@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS CrecimientoUsuarios;
 DROP TABLE IF EXISTS UsersParticipations;
 DROP TABLE IF EXISTS UsersSessions;
 DROP TABLE IF EXISTS Users;
@@ -8,13 +7,6 @@ DROP TABLE IF EXISTS EscapeRooms;
 DROP TABLE IF EXISTS Locations;
 DROP TABLE IF EXISTS Cities;
 DROP TABLE IF EXISTS Countries;
-
-CREATE TABLE IF NOT EXISTS CrecimientoUsuarios(
-    id SERIAL PRIMARY KEY,
-    info_date DATE,
-    n_usuarios INTEGER,
-    crecimiento INTEGER
-);
 
 CREATE TABLE IF NOT EXISTS Users(
     id SERIAL PRIMARY KEY,
