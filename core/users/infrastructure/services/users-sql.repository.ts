@@ -9,6 +9,7 @@ import { DELETE_USER, FIND_USER_BY_EMAIL, FIND_USER_BY_ID, FIND_USER_BY_USERNAME
 import { Email } from "../../domain/model/value-objects/email";
 import { Participant } from "../../domain/model/participant.entity";
 import { DELETE_SESSIONS_BY_USER } from "../queries/sessions.query";
+import { DELETE_ALL_USERS_PARTICIPATIONS_BY_USER_ID } from "../queries/users-participations.query";
 
 export class UsersSql implements Users {
     private publisher: UserPublisher
@@ -74,6 +75,7 @@ export class UsersSql implements Users {
 
             await postgres.connect()
             await postgres.query(DELETE_SESSIONS_BY_USER, [user_id])
+            await postgres.query(DELETE_ALL_USERS_PARTICIPATIONS_BY_USER_ID, [user_id])
             const response = await postgres.query(DELETE_USER, [user_id])
             await postgres.end()
 
