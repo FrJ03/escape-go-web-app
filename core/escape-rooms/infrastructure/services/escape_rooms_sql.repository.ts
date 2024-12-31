@@ -9,7 +9,7 @@ import { LocationType } from "../persistence/location.type";
 import { EscapeRoomDataMapper } from "../persistence/escape_room.data-mapper";
 import { Clue } from "../../domain/model/clue.entity";
 import { CluePublisher } from "../persistence/clue.publisher";
-import { GET_ALL_CLUES_BY_ESCAPE_ROOM, GET_CLUE_BY_ID } from "../queries/clues.query";
+import { DELETE_CLUES_BY_ESCAPE_ROOM, GET_ALL_CLUES_BY_ESCAPE_ROOM, GET_CLUE_BY_ID } from "../queries/clues.query";
 import { ClueDataMapper } from "../persistence/clue.data-mapper";
 import { ClueType } from "../persistence/clue.type";
 
@@ -210,6 +210,19 @@ export class EscapeRoomsSql implements EscapeRooms{
         const response = await postgres.query(UPDATE_ESCAPE_ROOM_BY_ID, [escape_room.id, escape_room.title, escape_room.description, escape_room.solution, escape_room.difficulty, escape_room.price]);
         await postgres.end();
 
-        return response.rowCount ? true : false;
+        return response.rowCount !== 0
+    }
+
+    async deleteAllCluesByEscapeRoom(escape_room_id: number): Promise<boolean> {
+        try {
+            const postgres = new Client(this.postgres_config);
+            await postgres.connect();
+            await postgres.query(DELETE_CLUES_BY_ESCAPE_ROOM, [escape_room_id]);
+            await postgres.end();
+
+            return true;
+        } catch (error) {
+            return false;
+        }
     }
 }

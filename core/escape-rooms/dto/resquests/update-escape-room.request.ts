@@ -7,6 +7,10 @@ type UpdateEscapeRoomRequest = DeepReadonly<{
     solution: string,
     difficulty: number,
     price: number,
+    clues: Array<{
+        title: string,
+        info: string
+    }>
 }>;
 
 const UpdateEscapeRoomRequest = {

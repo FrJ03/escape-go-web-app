@@ -11,4 +11,5 @@ export interface EscapeRooms{
     findById(id: number): Promise<EscapeRoom | undefined>;
     delete(id: number): Promise<boolean>;
     update(escape_room: EscapeRoom): Promise<boolean>;
+    deleteAllCluesByEscapeRoom(escape_room_id: number): Promise<boolean>
 }

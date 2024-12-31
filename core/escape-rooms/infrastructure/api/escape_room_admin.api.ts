@@ -46,7 +46,7 @@ escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
 //UPDATE
 
 escapeRoomAdminRouter.put('/modify', async (req, res) => { //Modificar escape room
-    const { id, title, description, solution, difficulty, price } = req.body;
+    const { id, title, description, solution, difficulty, price, clues } = req.body;
 
     // Validar que el ID está presente y es un número válido
     if (!id || isNaN(Number(id))) {
@@ -61,7 +61,8 @@ escapeRoomAdminRouter.put('/modify', async (req, res) => { //Modificar escape ro
         description: description !== undefined ? description : undefined,
         solution: solution !== undefined ? solution : undefined,
         difficulty: difficulty !== undefined ? difficulty : undefined,
-        price: price !== undefined ? price : undefined
+        price: price !== undefined ? price : undefined,
+        clues: clues !== undefined ? clues : []
     };
 
     if (id) {
