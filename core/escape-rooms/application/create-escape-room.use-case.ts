@@ -1,3 +1,4 @@
+import { Clue } from "../domain/model/clue.entity";
 import { Coordinate } from "../domain/model/coordinate.entity";
 import { EscapeRoom } from "../domain/model/escapeRoom.entity";
 import { Location } from "../domain/model/location.entity";
@@ -25,6 +26,16 @@ export class CreateEscapeRoomUseCase{
             coordinates,
             command.location.info
         )
+        let clues: Array<Clue> = []
+
+        command.clues.forEach(clue => {
+            clues.push(new Clue(
+                1,
+                clue.title,
+                clue.info
+            ))
+        })
+
         const escape_room = new EscapeRoom(
             1,
             command.title,
@@ -33,7 +44,8 @@ export class CreateEscapeRoomUseCase{
             command.difficulty,
             command.price,
             command.maxSessionDuration,
-            location
+            location,
+            clues
         )
 
         try {

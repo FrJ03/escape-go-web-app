@@ -17,7 +17,7 @@ const escapeRoomAdminRouter = express.Router();
 //POST
 
 escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
-    const { title, description, solution, difficulty, price, maxSessionDuration, location } = req.body;
+    const { title, description, solution, difficulty, price, maxSessionDuration, location, clues } = req.body;
 
     if (title && description && solution && difficulty && price && maxSessionDuration && location) {
         const request = CreateEscapeRoomRequest.with({
@@ -27,7 +27,8 @@ escapeRoomAdminRouter.post('/create', async (req, res) => { //Crear escape room
             difficulty,
             price,
             maxSessionDuration,
-            location
+            location,
+            clues
         });
         
         const response: CreateEscapeRoomResponse = await container.createEscapeRoom.with(request);

@@ -32,6 +32,7 @@ describe('escape room api', () => {
         await postgres.connect()
         await postgres.query('DELETE FROM userssessions')
         await postgres.query('DELETE FROM users')
+        await postgres.query('DELETE FROM clues')
         await postgres.query('DELETE FROM escaperooms')
         await postgres.query('DELETE FROM locations')
         await postgres.query('DELETE FROM cities')
@@ -103,7 +104,8 @@ describe('escape room api', () => {
                         street_number: 1,
                         coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
                         info: ''
-                    }
+                    },
+                    clues: []
                 }
 
                 await api
@@ -127,7 +129,8 @@ describe('escape room api', () => {
                         street_number: 1,
                         coordinates: '0º 30\'30\"N, 0º 30\'30\" N',
                         info: ''
-                    }
+                    },
+                    clues: []
                 }
 
                 await api
@@ -139,6 +142,7 @@ describe('escape room api', () => {
             afterEach(async () => {
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
+                await postgres.query('DELETE FROM clues')
                 await postgres.query('DELETE FROM escaperooms')
                 await postgres.query('DELETE FROM locations')
                 await postgres.query('DELETE FROM cities')
@@ -176,7 +180,8 @@ describe('escape room api', () => {
                     street_number: 1,
                     coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
                     info: ''
-                }
+                },
+                clues: []
             }
             let escape_room_id = 0
             beforeEach(async () => {
@@ -227,6 +232,7 @@ describe('escape room api', () => {
             afterEach(async () => {
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
+                await postgres.query('DELETE FROM clues')
                 await postgres.query('DELETE FROM escaperooms')
                 await postgres.query('DELETE FROM locations')
                 await postgres.query('DELETE FROM cities')
@@ -264,7 +270,8 @@ describe('escape room api', () => {
                     street_number: 1,
                     coordinates: '0º 30\'30\" N, 0º 30\'30\" N',
                     info: ''
-                }
+                },
+                clues: []
             }
             let escape_room_id = 0
             beforeEach(async () => {
@@ -295,6 +302,7 @@ describe('escape room api', () => {
             afterEach(async () => {
                 const postgres = new Client(PostgresSqlConfig)
                 await postgres.connect()
+                await postgres.query('DELETE FROM clues')
                 await postgres.query('DELETE FROM escaperooms')
                 await postgres.query('DELETE FROM locations')
                 await postgres.query('DELETE FROM cities')
@@ -418,6 +426,7 @@ describe('escape room api', () => {
                 afterEach(async () => {
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
+                    await postgres.query('DELETE FROM clues')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
                     await postgres.query('DELETE FROM cities')
@@ -538,6 +547,7 @@ describe('escape room api', () => {
                 afterEach(async () => {
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
+                    await postgres.query('DELETE FROM clues')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
                     await postgres.query('DELETE FROM cities')
@@ -552,6 +562,7 @@ describe('escape room api', () => {
         await postgres.connect()
         await postgres.query('DELETE FROM userssessions')
         await postgres.query('DELETE FROM users')
+        await postgres.query('DELETE FROM clues')
         await postgres.query('DELETE FROM escaperooms')
         await postgres.query('DELETE FROM locations')
         await postgres.query('DELETE FROM cities')

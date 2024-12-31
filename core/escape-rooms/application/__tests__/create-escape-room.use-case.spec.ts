@@ -9,6 +9,7 @@ describe('Create escape room use case tests', () => {
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlConfig)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')
@@ -31,7 +32,8 @@ describe('Create escape room use case tests', () => {
                     city: 'cordoba',
                     country: 'españa',
                     info: ''
-                }
+                },
+                clues: []
             } as CreateEscapeRoomRequest
 
             const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
@@ -57,7 +59,8 @@ describe('Create escape room use case tests', () => {
                     city: 'cordoba',
                     country: 'españa',
                     info: ''
-                }
+                },
+                clues: []
             } as CreateEscapeRoomRequest
 
             const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
@@ -70,6 +73,7 @@ describe('Create escape room use case tests', () => {
         afterEach(async () => {
             const postgres = new Client(PostgresSqlConfig)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')

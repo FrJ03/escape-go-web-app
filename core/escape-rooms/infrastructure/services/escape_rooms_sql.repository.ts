@@ -24,7 +24,20 @@ export class EscapeRoomsSql implements EscapeRooms{
     }
 
     async save(escape_room: EscapeRoom): Promise<boolean> {
-        return await this._escape_room_publisher.create(escape_room)
+        const response_er =  await this._escape_room_publisher.create(escape_room)
+
+        if(!response_er){
+            return false
+        }
+
+        for(let i = 0 ; i < escape_room.clues.length ; i++){
+            const response_clue = await this._clue_publisher.create(escape_room.clues[i], escape_room.id)
+            if(!response_clue){
+                return false
+            }
+        }
+
+        return true
     }
 
     async saveClue(clue: Clue, escape_room_id: number): Promise<boolean>{

@@ -13,6 +13,7 @@ describe('Escape rooms sql repository tests', () => {
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')
@@ -47,6 +48,7 @@ describe('Escape rooms sql repository tests', () => {
         afterEach(async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')
@@ -155,6 +157,7 @@ describe('Escape rooms sql repository tests', () => {
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')
@@ -254,6 +257,7 @@ describe('Escape rooms sql repository tests', () => {
             afterEach(async () => {
                 const postgres = new Client(PostgresSqlClient)
                 await postgres.connect()
+                await postgres.query('DELETE FROM clues')
                 await postgres.query('DELETE FROM escaperooms')
                 await postgres.query('DELETE FROM locations')
                 await postgres.query('DELETE FROM cities')
@@ -266,6 +270,7 @@ describe('Escape rooms sql repository tests', () => {
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')
@@ -381,6 +386,7 @@ describe('Escape rooms sql repository tests', () => {
             afterEach(async () => {
                 const postgres = new Client(PostgresSqlClient)
                 await postgres.connect()
+                await postgres.query('DELETE FROM clues')
                 await postgres.query('DELETE FROM escaperooms')
                 await postgres.query('DELETE FROM locations')
                 await postgres.query('DELETE FROM cities')
@@ -499,6 +505,7 @@ describe('Escape rooms sql repository tests', () => {
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')
@@ -534,6 +541,7 @@ describe('Escape rooms sql repository tests', () => {
         afterAll(async () => {
             const postgres = new Client(PostgresSqlClient)
             await postgres.connect()
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')

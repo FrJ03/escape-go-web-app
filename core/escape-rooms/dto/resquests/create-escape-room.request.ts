@@ -14,7 +14,11 @@ type CreateEscapeRoomRequest = DeepReadonly<{
         street_number: number,
         coordinates: string,
         info: string
-    }
+    },
+    clues: Array<{
+        title: string,
+        info: string
+    }>
 }>
 
 const CreateEscapeRoomRequest = {
