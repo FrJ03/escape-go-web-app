@@ -22,6 +22,7 @@ gameRouter.post('/register', async (req, res) => {
 gameRouter.post('/solve', async (req, res) => {
     if(req.body.solution === undefined || req.body.escape_room_id === undefined || req.body.participation_id === undefined){
         res.sendStatus(406)
+        return;
     }
 
     const decodedToken = decode(`${req.headers.authorization}`);
@@ -54,6 +55,7 @@ gameRouter.post('/clue', async (req, res) => {
         req.body.participation_id === undefined
     ){
         res.sendStatus(400)
+        return;
     }
 
     const decodedToken = decode(`${req.headers.authorization}`);
@@ -61,7 +63,7 @@ gameRouter.post('/clue', async (req, res) => {
     if (!decodedToken || typeof decodedToken !== 'object' || !('email' in decodedToken)) {
         res.sendStatus(401);
         return;
-    }      
+    }   
 
     const request = {
         clues_ids: req.body.clues_ids,
@@ -87,6 +89,7 @@ gameRouter.post('/clue/:id', async (req, res) => {
         req.body.participation_id === undefined
     ){
         res.sendStatus(400)
+        return;
     }
     else{
         const decodedToken = decode(`${req.headers.authorization}`);
