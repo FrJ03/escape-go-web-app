@@ -17,7 +17,12 @@ type GetEscapeRoomResponse  = DeepReadonly <{
             street: string,
             street_number: number,
             coordinates: string
-        }
+        },
+        clues: Array<{
+            id: number,
+            title: string,
+            info: string
+        }>
     }
 
 }>

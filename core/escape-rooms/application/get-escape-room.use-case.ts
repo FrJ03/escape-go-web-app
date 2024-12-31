@@ -18,6 +18,20 @@ export class GetEscapeRoomUseCase{
 
                 if(found_escape_room != undefined){ //devolvemos el escape_room la info se gestiona en frontend
 
+                    let clues: Array<{
+                        id: number,
+                        title: string,
+                        info: string
+                    }> = []
+
+                    for(let i = 0; i < found_escape_room.clues.length; i++){
+                        clues.push({
+                            id: found_escape_room.clues[i].id,
+                            title: found_escape_room.clues[i].title,
+                            info: found_escape_room.clues[i].info
+                        })
+                    }
+
                     return{
 
                         escape_room: {
@@ -34,7 +48,8 @@ export class GetEscapeRoomUseCase{
                                 street: found_escape_room.location.street,
                                 street_number: found_escape_room.location.number,
                                 coordinates: found_escape_room.location.coordinates.toString()
-                            }
+                            },
+                            clues: clues
                         },
                         code: 200
 
