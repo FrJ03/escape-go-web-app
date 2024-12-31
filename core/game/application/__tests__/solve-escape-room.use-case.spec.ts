@@ -12,8 +12,10 @@ describe('solve escape room use case tests', () => {
         const postgres = new Client(PostgresSqlConfig)
         
         await postgres.connect()
+        await postgres.query('DELETE FROM userssessions')
         await postgres.query('DELETE FROM usersparticipations')
         await postgres.query('DELETE FROM users')
+        await postgres.query('DELETE FROM clues')
         await postgres.query('DELETE FROM participations')
         await postgres.query('DELETE FROM escaperooms')
         await postgres.query('DELETE FROM locations')
@@ -22,7 +24,7 @@ describe('solve escape room use case tests', () => {
         await postgres.end()
     })
     test('Non exisiting participation', async () => {
-        const response = await container.solveEscapeRoom.with({escape_room_id: 0, participation_id: 0, solution: ''})
+        const response = await container.solveEscapeRoom.with({escape_room_id: 0, participation_id: 0, solution: '', user_email: ''})
 
         expect(response.code).toBe(404)
     })
@@ -57,6 +59,12 @@ describe('solve escape room use case tests', () => {
             end_date: end_date,
             points: 0
         }
+
+        let participant = {
+            email: 'test@test.es',
+            username: 'test',
+            password: 'test',
+        }
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlConfig)
 
@@ -72,9 +80,17 @@ describe('solve escape room use case tests', () => {
             const participation_id = await postgres.query('SELECT id FROM participations')
             participation_data.id = participation_id.rows[0].id
             await postgres.end()
+
+            await container.signUpUser.with(participant)
+
+            await container.registerParticipant.with({
+                user_email: participant.email,
+                escape_room_id: participation_data.escape_room.id,
+                participation_id: participation_data.id
+            }) 
         })
         test('participation ended test', async () => {
-            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: ''})
+            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: '', user_email: participant.email})
 
             expect(response.code).toBe(423)
         })
@@ -82,6 +98,10 @@ describe('solve escape room use case tests', () => {
             const postgres = new Client(PostgresSqlConfig)
         
             await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
+            await postgres.query('DELETE FROM usersparticipations')
+            await postgres.query('DELETE FROM users')
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM participations')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
@@ -121,6 +141,11 @@ describe('solve escape room use case tests', () => {
             end_date: end_date,
             points: 0
         }
+        let participant = {
+            email: 'test@test.es',
+            username: 'test',
+            password: 'test',
+        }
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlConfig)
 
@@ -136,9 +161,17 @@ describe('solve escape room use case tests', () => {
             const participation_id = await postgres.query('SELECT id FROM participations')
             participation_data.id = participation_id.rows[0].id
             await postgres.end()
+
+            await container.signUpUser.with(participant)
+
+            await container.registerParticipant.with({
+                user_email: participant.email,
+                escape_room_id: participation_data.escape_room.id,
+                participation_id: participation_data.id
+            }) 
         })
         test('participation not started yet test', async () => {
-            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: ''})
+            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: '', user_email: participant.email})
 
             expect(response.code).toBe(423)
         })
@@ -146,6 +179,10 @@ describe('solve escape room use case tests', () => {
             const postgres = new Client(PostgresSqlConfig)
         
             await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
+            await postgres.query('DELETE FROM usersparticipations')
+            await postgres.query('DELETE FROM users')
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM participations')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
@@ -185,6 +222,11 @@ describe('solve escape room use case tests', () => {
             end_date: end_date,
             points: 0
         }
+        let participant = {
+            email: 'test@test.es',
+            username: 'test',
+            password: 'test',
+        }
         beforeAll(async () => {
             const postgres = new Client(PostgresSqlConfig)
 
@@ -200,18 +242,26 @@ describe('solve escape room use case tests', () => {
             const participation_id = await postgres.query('SELECT id FROM participations')
             participation_data.id = participation_id.rows[0].id
             await postgres.end()
+
+            await container.signUpUser.with(participant)
+
+            await container.registerParticipant.with({
+                user_email: participant.email,
+                escape_room_id: participation_data.escape_room.id,
+                participation_id: participation_data.id
+            }) 
         })
         test('not valid solution test', async () => {
             const solution = participation_data.escape_room.solution + 's'
 
-            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: solution})
+            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: solution, user_email: participant.email})
 
             expect(response.code).toBe(400)
         })
         test('valid solution: upper case', async () => {
             const solution = participation_data.escape_room.solution
 
-            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: solution})
+            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: solution, user_email: participant.email})
             
             const postgres = new Client(PostgresSqlConfig)
         
@@ -225,7 +275,7 @@ describe('solve escape room use case tests', () => {
         test('valid solution: upper case', async () => {
             const solution = participation_data.escape_room.solution.toUpperCase()
 
-            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: solution})
+            const response = await container.solveEscapeRoom.with({escape_room_id: participation_data.escape_room.id, participation_id: participation_data.id, solution: solution, user_email: participant.email})
 
             const postgres = new Client(PostgresSqlConfig)
         
@@ -240,6 +290,10 @@ describe('solve escape room use case tests', () => {
             const postgres = new Client(PostgresSqlConfig)
         
             await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
+            await postgres.query('DELETE FROM usersparticipations')
+            await postgres.query('DELETE FROM users')
+            await postgres.query('DELETE FROM clues')
             await postgres.query('DELETE FROM participations')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')

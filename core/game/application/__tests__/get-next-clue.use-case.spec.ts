@@ -11,7 +11,9 @@ describe('Get next clue use case tests', () => {
     test('Without clues inserted', async () => {
         const request = {
             clues_ids: [],
-            escape_room_id: -1
+            escape_room_id: -1,
+            participation_id: -1,
+            user_email: 'test@test.es'
         }
 
         const response = await container.getNextClue.with(request)
@@ -19,6 +21,7 @@ describe('Get next clue use case tests', () => {
         expect(response.code).toBe(404)
     })
     describe('With clues inserted', () => {
+        const now = new Date()
         let escape_room = {
             id: -1,
             title: 'test',
@@ -35,6 +38,24 @@ describe('Get next clue use case tests', () => {
                 city: 'cordoba',
                 country: 'españa'
             }
+        }
+        let participation = {
+            id: -1,
+            escape_room: escape_room,
+            start_date: now,
+            end_date: new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate(),
+                now.getHours() + 3,
+                now.getMinutes(),
+                now.getSeconds()),
+            points: 0
+        }
+        let participant = {
+            email: 'test@test.es',
+            username: 'test',
+            password: 'test',
         }
         let clues = [
             {
@@ -67,6 +88,7 @@ describe('Get next clue use case tests', () => {
             await postgres.end()
 
             escape_room.id = response.rows[0].id
+            participation.escape_room = escape_room
 
             for (let i = 0 ; i < clues.length ; i++){
                 clues[i].escape_room = escape_room.id
@@ -80,12 +102,34 @@ describe('Get next clue use case tests', () => {
 
             for (let i = 0 ; i < clues.length ; i++){
                 clues[i].id = c_response.rows[i].id
-            }            
+            }           
+            await container.createParticipation.with({
+                escape_room_id: escape_room.id,
+                start_date: participation.start_date.toISOString(),
+                end_date: participation.end_date.toISOString()
+            })
+
+            const postgres_3 = new Client(PostgresSqlConfig)
+            await postgres_3.connect()
+            const p_response = await postgres_3.query('SELECT * FROM participations WHERE escape_room = $1', [escape_room.id])
+            await postgres_3.end()
+
+            participation.id = p_response.rows[0].id
+
+            await container.signUpUser.with(participant)
+
+            await container.registerParticipant.with({
+                user_email: participant.email,
+                escape_room_id: escape_room.id,
+                participation_id: participation.id
+            }) 
         })
         test('Existing clue', async () => {
             const request = {
                 clues_ids: [],
-                escape_room_id: escape_room.id
+                escape_room_id: escape_room.id,
+                participation_id: participation.id,
+                user_email: participant.email
             }
     
             const response = await container.getNextClue.with(request)
@@ -96,7 +140,9 @@ describe('Get next clue use case tests', () => {
         test('With the first clue known', async () => {
             const request = {
                 clues_ids: [clues[0].id],
-                escape_room_id: escape_room.id
+                escape_room_id: escape_room.id,
+                participation_id: participation.id,
+                user_email: participant.email
             }
     
             const response = await container.getNextClue.with(request)
@@ -107,7 +153,9 @@ describe('Get next clue use case tests', () => {
         test('With the second clue known', async () => {
             const request = {
                 clues_ids: [clues[1].id],
-                escape_room_id: escape_room.id
+                escape_room_id: escape_room.id,
+                participation_id: participation.id,
+                user_email: participant.email
             }
     
             const response = await container.getNextClue.with(request)
@@ -118,7 +166,9 @@ describe('Get next clue use case tests', () => {
         test('With two clues known', async () => {
             const request = {
                 clues_ids: [clues[0].id, clues[1].id],
-                escape_room_id: escape_room.id
+                escape_room_id: escape_room.id,
+                participation_id: participation.id,
+                user_email: participant.email
             }
     
             const response = await container.getNextClue.with(request)
@@ -129,7 +179,9 @@ describe('Get next clue use case tests', () => {
         test('With all clues known', async () => {
             const request = {
                 clues_ids: [clues[0].id, clues[1].id, clues[2].id],
-                escape_room_id: escape_room.id
+                escape_room_id: escape_room.id,
+                participation_id: participation.id,
+                user_email: participant.email
             }
     
             const response = await container.getNextClue.with(request)
@@ -139,7 +191,9 @@ describe('Get next clue use case tests', () => {
         test('invalid escape room id', async () => {
             const request = {
                 clues_ids: [],
-                escape_room_id: escape_room.id + 1
+                escape_room_id: escape_room.id + 1,
+                participation_id: participation.id,
+                user_email: participant.email
             }
     
             const response = await container.getNextClue.with(request)
@@ -149,7 +203,11 @@ describe('Get next clue use case tests', () => {
         afterAll(async () => {
             const postgres = new Client(PostgresSqlConfig)
             await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
+            await postgres.query('DELETE FROM usersparticipations')
+            await postgres.query('DELETE FROM users')
             await postgres.query('DELETE FROM clues')
+            await postgres.query('DELETE FROM participations')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')

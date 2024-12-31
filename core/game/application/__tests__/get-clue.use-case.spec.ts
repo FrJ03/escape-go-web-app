@@ -10,7 +10,9 @@ describe('Get clue use case tests', () => {
     test('Without clues inserted', async () => {
         const request = {
             clue_id: -1,
-            escape_room_id: -1
+            escape_room_id: -1,
+            participation_id: -1,
+            user_email: 'test@test.es'
         }
 
         const response = await container.getClue.with(request)
@@ -18,6 +20,7 @@ describe('Get clue use case tests', () => {
         expect(response.code).toBe(404)
     })
     describe('With clues inserted', () => {
+        const now = new Date()
         let escape_room = {
             id: -1,
             title: 'test',
@@ -35,11 +38,29 @@ describe('Get clue use case tests', () => {
                 country: 'españa'
             }
         }
+        let participation = {
+            id: -1,
+            escape_room: escape_room,
+            start_date: now,
+            end_date: new Date(
+                now.getFullYear(),
+                now.getMonth(),
+                now.getDate(),
+                now.getHours() + 3,
+                now.getMinutes(),
+                now.getSeconds()),
+            points: 0
+        }
         let clue = {
             id: -1,
             escape_room: escape_room.id,
             title: 'test',
             info: 'test'
+        }
+        let participant = {
+            email: 'test@test.es',
+            username: 'test',
+            password: 'test',
         }
         beforeAll(async () => {
             const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
@@ -52,6 +73,7 @@ describe('Get clue use case tests', () => {
             await postgres.end()
 
             escape_room.id = response.rows[0].id
+            participation.escape_room = escape_room
             clue.escape_room = escape_room.id
 
             await escape_rooms.saveClue(ClueDataMapper.toModel(clue), clue.escape_room)
@@ -62,11 +84,34 @@ describe('Get clue use case tests', () => {
             await postgres_2.end()
 
             clue.id = c_response.rows[0].id
+
+            await container.createParticipation.with({
+                escape_room_id: escape_room.id,
+                start_date: participation.start_date.toISOString(),
+                end_date: participation.end_date.toISOString()
+            })
+
+            const postgres_3 = new Client(PostgresSqlConfig)
+            await postgres_3.connect()
+            const p_response = await postgres_3.query('SELECT * FROM participations WHERE escape_room = $1', [escape_room.id])
+            await postgres_3.end()
+
+            participation.id = p_response.rows[0].id
+
+            await container.signUpUser.with(participant)
+
+            await container.registerParticipant.with({
+                user_email: participant.email,
+                escape_room_id: escape_room.id,
+                participation_id: participation.id
+            })
         })
         test('Existing clue', async () => {
             const request = {
                 clue_id: clue.id,
-                escape_room_id: clue.escape_room
+                escape_room_id: clue.escape_room,
+                participation_id: participation.id,
+                user_email: participant.email
             }
     
             const response = await container.getClue.with(request)
@@ -76,7 +121,9 @@ describe('Get clue use case tests', () => {
         test('Non existing clue: invalid clue id', async () => {
             const request = {
                 clue_id: clue.id + 1,
-                escape_room_id: clue.escape_room
+                escape_room_id: clue.escape_room,
+                participation_id: -1,
+                user_email: 'test@test.es'
             }
     
             const response = await container.getClue.with(request)
@@ -86,7 +133,9 @@ describe('Get clue use case tests', () => {
         test('Non existing clue: invalid escape room id', async () => {
             const request = {
                 clue_id: clue.id,
-                escape_room_id: clue.escape_room + 1
+                escape_room_id: clue.escape_room + 1,
+                participation_id: -1,
+                user_email: 'test@test.es'
             }
     
             const response = await container.getClue.with(request)
@@ -96,7 +145,11 @@ describe('Get clue use case tests', () => {
         afterAll(async () => {
             const postgres = new Client(PostgresSqlConfig)
             await postgres.connect()
+            await postgres.query('DELETE FROM userssessions')
+            await postgres.query('DELETE FROM usersparticipations')
+            await postgres.query('DELETE FROM users')
             await postgres.query('DELETE FROM clues')
+            await postgres.query('DELETE FROM participations')
             await postgres.query('DELETE FROM escaperooms')
             await postgres.query('DELETE FROM locations')
             await postgres.query('DELETE FROM cities')
