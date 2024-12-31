@@ -51,7 +51,7 @@ describe('get escape room info by id use case tests', () => {
             await postgres.query('INSERT INTO cities (id, city_name, country) VALUES (1, \'cordoba\', 1)'); //cities
             await postgres.query('INSERT INTO locations (id, coordinates, street, street_number, other_info, city) VALUES (1, \'test\', \'test\', 1, \'test\', 1)');
             await postgres.query('INSERT INTO escaperooms (id, title, description, solution, difficulty, price, physical_location, deleted) VALUES (1, \'test\', \'test\', \'test\', 1, 100, 1, false)');
-            await postgres.query('INSERT INTO participations (id, escape_room, start_time, points, end_time) VALUES (1, 1, \'2024-12-17\', 0, \'2024-12-18\')');
+            await postgres.query('INSERT INTO participations (id, escape_room, start_time, points, end_time) VALUES (1, 1, 0, 0, 1)');
             await postgres.end();
 
         }) //creados he introducidos el escape_room con un participation
@@ -70,6 +70,8 @@ describe('get escape room info by id use case tests', () => {
             const getescaperoominfobyidusecase = new GetEscapeRoomInfoByIdUseCase(escape_rooms, participations);
         
             const response: GetEscapeRoomInfoResponse = await getescaperoominfobyidusecase.with(request);
+
+            console.error(response.participations[0].points);
         
             expect(response.code).toBe(200); //debe encontrar el escape_room
             expect(response.escape_room.id).toBe(1); //debe encontrar el id del escape_room insertado
