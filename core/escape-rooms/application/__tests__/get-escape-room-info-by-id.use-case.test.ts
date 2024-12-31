@@ -70,8 +70,6 @@ describe('get escape room info by id use case tests', () => {
             const getescaperoominfobyidusecase = new GetEscapeRoomInfoByIdUseCase(escape_rooms, participations);
         
             const response: GetEscapeRoomInfoResponse = await getescaperoominfobyidusecase.with(request);
-
-            console.error(response.participations[0].points);
         
             expect(response.code).toBe(200); //debe encontrar el escape_room
             expect(response.escape_room.id).toBe(1); //debe encontrar el id del escape_room insertado
