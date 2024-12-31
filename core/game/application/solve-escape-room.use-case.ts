@@ -1,4 +1,5 @@
 import { Participations } from "../../escape-rooms/domain/services/participation.repository";
+import { Email } from "../../users/domain/model/value-objects/email";
 import { Users } from "../../users/domain/services/users.repository";
 import { UserParticipations } from "../domain/services/user-participations.repository";
 import { SolveEscapeRoomRequest } from "../dto/requests/solve-escape-room.request";
@@ -24,6 +25,22 @@ export class SolveEscapeRoomUseCase{
                 code: 423,
                 points: -1
             }
+        }
+
+        const user_email = Email.create(command.user_email)
+
+        if(user_email === undefined){
+            return {
+                code: 400
+            } as SolveEscapeRoomResponse
+        }
+
+        const user_participation = await this.userparticipations.getByUser(user_email, command.escape_room_id, command.participation_id)
+
+        if(user_participation === undefined){
+            return {
+                code: 423
+            } as SolveEscapeRoomResponse
         }
 
         if(participation.escape_room.solution.toLowerCase() === command.solution.toLowerCase()){
