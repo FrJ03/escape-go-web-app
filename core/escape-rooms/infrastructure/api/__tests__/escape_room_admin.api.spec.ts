@@ -199,7 +199,8 @@ describe('escape room api', () => {
                     description: escape_room_request.description,
                     solution: escape_room_request.solution,
                     difficulty: escape_room_request.difficulty,
-                    price: escape_room_request.price
+                    price: escape_room_request.price,
+                    clues: []
                 }
                 await api
                     .put(`/escaperoom/admin/modify`)
@@ -214,7 +215,8 @@ describe('escape room api', () => {
                     description: escape_room_request.description,
                     solution: escape_room_request.solution,
                     difficulty: escape_room_request.difficulty,
-                    price: escape_room_request.price
+                    price: escape_room_request.price,
+                    clues: []
                 }
                 await api
                     .put(`/escaperoom/admin/modify`)
