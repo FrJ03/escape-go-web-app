@@ -57,6 +57,7 @@ describe('Update escape room use case tests', () => {
             solution: 'Updated Solution',
             difficulty: 4,
             price: 200,
+            clues: []
         };
 
         let escape_rooms: EscapeRoomsSql;
@@ -74,7 +75,8 @@ describe('Update escape room use case tests', () => {
             description: 'New Description',
             solution: 'New Solution',
             difficulty: 2,
-            price: 120
+            price: 120,
+            clues: []
         } as UpdateEscapeRoomRequest;
 
         let escape_rooms: EscapeRoomsSql;

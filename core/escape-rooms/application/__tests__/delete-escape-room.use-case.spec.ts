@@ -29,7 +29,8 @@ describe('Delete escape room use case tests', () => {
                 street_number: 1,
                 coordinates: '0º 30\'30" N, 0º 30\'30" W',
                 info: '',
-            }
+            },
+            clues: [],
         };
 
         escape_rooms = new EscapeRoomsSql(PostgresSqlConfig);
@@ -44,6 +45,7 @@ describe('Delete escape room use case tests', () => {
     });
 
     afterEach(async () => {
+        await postgres.query('DELETE FROM clues');
         await postgres.query('DELETE FROM escaperooms');
         await postgres.query('DELETE FROM locations');
         await postgres.query('DELETE FROM cities');

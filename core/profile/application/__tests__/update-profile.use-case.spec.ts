@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { Email } from "../../../users/domain/model/value-objects/email";
 import { UsersSql } from "../../../users/infrastructure/services/users-sql.repository";
 import { SALT } from "../../../commons/utils/config";
+import { UpdateProfileRequest } from "../../dto/requests/update-profile.request";
 
 describe('UpdateProfileUseCase tests', () => {
   let postgres: Client;
@@ -42,7 +43,7 @@ describe('UpdateProfileUseCase tests', () => {
       emailNuevo: 'new@gmail.com',
       username: 'newUsername',
       password: 'newPassword'
-    };
+    } as UpdateProfileRequest;
 
     const response = await container.updateProfile.with(request);
     expect(response.code).toBe(200);
@@ -51,8 +52,8 @@ describe('UpdateProfileUseCase tests', () => {
   test('Debe actualizar el perfil con al menos un parámetro', async () => {
     const request = {
       emailOriginal: 'new@gmail.com',
-      username: 'new2Username',
-    };
+      username: 'new2Username'
+    } as UpdateProfileRequest;
 
     const response = await container.updateProfile.with(request);
     expect(response.code).toBe(200);
@@ -62,8 +63,8 @@ describe('UpdateProfileUseCase tests', () => {
   test('Debe devolver 404 si no encuentra el usuario', async () => {
     const request = {
       emailOriginal: 'no_existe@gmail.com',
-      emailNuevo: 'newEmail@gmail.com',
-    };
+      emailNuevo: 'newEmail@gmail.com'
+    } as UpdateProfileRequest;
 
     const response = await container.updateProfile.with(request);
     expect(response.code).toBe(404);

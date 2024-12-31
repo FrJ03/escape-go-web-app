@@ -229,13 +229,13 @@ describe('escape room participant api', () => {
     describe('get escape room api endpoint', () => {
         test('before login', async () => {
             await api
-                .get(`/escaperoom/participant/1`)
+                .get(`/escaperoom/participant/info/1`)
                 .expect(401)
         })
         describe('after login with an admin account', () => {
             test('after login', async () => {
                 await api
-                    .get(`/escaperoom/participant/1`)
+                    .get(`/escaperoom/participant/info/1`)
                     .set('Authorization', admin_token)
                     .expect(401)
             })
@@ -244,7 +244,7 @@ describe('escape room participant api', () => {
             const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
             test('Without escape rooms', async () => {
                 await api
-                    .get(`/escaperoom/participant/1`)
+                    .get(`/escaperoom/participant/info/1`)
                     .set('Authorization', participant_token)
                     .expect(404)
             })
@@ -264,7 +264,8 @@ describe('escape room participant api', () => {
                             other_info: '',
                             city: 'cordoba',
                             country: 'españa'
-                        }
+                        },
+                        clues: []
                     },
                     {
                         id: -1,
@@ -281,7 +282,8 @@ describe('escape room participant api', () => {
                             other_info: '',
                             city: 'sevilla',
                             country: 'españa'
-                        }
+                        },
+                        clues: []
                     },
                     {
                         id: -1,
@@ -298,11 +300,12 @@ describe('escape room participant api', () => {
                             other_info: '',
                             city: 'sevilla',
                             country: 'españa'
-                        }
+                        },
+                        clues: []
                     }
                 ]
                 test('Valid escape room', async () => {
-                    await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
+                    const res = await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
 
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
@@ -311,7 +314,7 @@ describe('escape room participant api', () => {
                     const id = id_response.rows[0].id
                     
                     const response = await api
-                        .get(`/escaperoom/participant/${id}`)
+                        .get(`/escaperoom/participant/info/${id}`)
                         .query({id: id.toString()})
                         .set('Authorization', participant_token)
                         .expect(200)
@@ -328,7 +331,7 @@ describe('escape room participant api', () => {
                     const id = id_response.rows[0].id
                     
                     const response = await api
-                        .get(`/escaperoom/participant/${id + 1}`)
+                        .get(`/escaperoom/participant/info/${id + 1}`)
                         .query({id: id.toString()})
                         .set('Authorization', participant_token)
                         .expect(404)
