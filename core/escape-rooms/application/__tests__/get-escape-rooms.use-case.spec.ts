@@ -79,7 +79,6 @@ describe('Get escape rooms use case', () => {
             } as LocationType
         } as EscapeRoomType
     ]
-        const escape_room_data_2 = 
         test('With one escape room', async () => {
             await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_rooms_data[0]))
             const use_case = new GetEscapeRoomsUseCase(escape_rooms)
