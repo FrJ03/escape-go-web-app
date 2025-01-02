@@ -8,8 +8,10 @@ import { gameRouter } from "./game/infrastructure/api/game.api";
 import { measureRouter } from "./measures/infrastructure/api/measures.api";
 import { profileRouter } from "./profile/infrastructure/api/profile.api";
 import { rankingRouter } from "./ranking/infrastrucutre/api/ranking.api";
+import cors from 'cors';
 
 const app = express();
+app.use(cors());
 app.use(express.json()); //middleware que transforma req.body a JSON
 
 app.use('/account', accountRouter) //ruta para la API account
