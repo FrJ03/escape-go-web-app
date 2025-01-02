@@ -19,6 +19,8 @@ const api = supertest(app)
 const base_endpoint = '/game'
 
 describe('escape room participant api', () => {
+    const now = new Date(Date.now())
+
     const adminData = {
         username: 'admin',
         email: 'admin@test.es',
@@ -128,8 +130,14 @@ describe('escape room participant api', () => {
                 let participation_data = {
                     id: 1, 
                     escape_room: escape_room_data,
-                    start_date: new Date(2025, 12, 15, 10, 20, 20),
-                    end_date: new Date(2025, 12, 15, 13, 20, 20),
+                    start_date: now,
+                    end_date: new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        now.getDate(),
+                        now.getHours() + 3,
+                        now.getMinutes(),
+                        now.getSeconds()),
                     points: 0
                 }
                 beforeAll(async () => {
@@ -237,18 +245,19 @@ describe('escape room participant api', () => {
         })
         describe('after login with a participant account', () => {
             test('Without clues inserted', async () => {
-                const clue_id = 1
                 const request = {
-                    escape_room_id: -1
+                    escape_room_id: -1,
+                    participation_id: -1
                 }
-            
+        
                 await api
-                    .post(`${endpoint}/${clue_id}`)
+                    .post(`${endpoint}/1`)
                     .set('Authorization', participant_token)
                     .send(request)
                     .expect(404)
             })
             describe('With clues inserted', () => {
+                const now = new Date()
                 let escape_room = {
                     id: -1,
                     title: 'test',
@@ -266,6 +275,19 @@ describe('escape room participant api', () => {
                         country: 'españa'
                     }
                 }
+                let participation = {
+                    id: -1,
+                    escape_room: escape_room,
+                    start_date: now,
+                    end_date: new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        now.getDate(),
+                        now.getHours() + 3,
+                        now.getMinutes(),
+                        now.getSeconds()),
+                    points: 0
+                }
                 let clue = {
                     id: -1,
                     escape_room: escape_room.id,
@@ -274,60 +296,80 @@ describe('escape room participant api', () => {
                 }
                 beforeAll(async () => {
                     const escape_rooms = new EscapeRoomsSql(PostgresSqlConfig)
-            
+        
                     await escape_rooms.save(EscapeRoomDataMapper.toModel(escape_room))
-            
+        
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
                     const response = await postgres.query('SELECT * FROM escaperooms')
                     await postgres.end()
-            
+        
                     escape_room.id = response.rows[0].id
+                    participation.escape_room = escape_room
                     clue.escape_room = escape_room.id
-            
+        
                     await escape_rooms.saveClue(ClueDataMapper.toModel(clue), clue.escape_room)
-            
+        
                     const postgres_2 = new Client(PostgresSqlConfig)
                     await postgres_2.connect()
                     const c_response = await postgres_2.query('SELECT * FROM clues')
                     await postgres_2.end()
-            
+        
                     clue.id = c_response.rows[0].id
+
+                    const participations = new ParticipationsSql(PostgresSqlConfig)
+
+                    await participations.save(ParticipationDataMapper.toModel(participation))
+        
+                    const postgres_3 = new Client(PostgresSqlConfig)
+                    await postgres_3.connect()
+                    const p_response = await postgres_3.query('SELECT * FROM participations WHERE escape_room = $1', [escape_room.id])
+                    await postgres_3.end()
+        
+                    participation.id = p_response.rows[0].id
+        
+                    await api
+                        .post(`${base_endpoint}/register`)
+                        .set('Authorization', participant_token)
+                        .send({
+                            escape_room_id: escape_room.id,
+                            participation_id: participation.id,
+                            user_email: participantData.email
+                        })
+                        .expect(200)
                 })
                 test('Existing clue', async () => {
-                    const clue_id = clue.id
                     const request = {
-                        escape_room_id: escape_room.id
+                        escape_room_id: clue.escape_room,
+                        participation_id: participation.id,
                     }
-                
-                    const response = await api
-                        .post(`${endpoint}/${clue_id}`)
+            
+                    await api
+                        .post(`${endpoint}/${clue.id}`)
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(200)
-
-                    expect(response.body.id).toBe(clue.id)
                 })
                 test('Non existing clue: invalid clue id', async () => {
-                    const clue_id = clue.id + 1
                     const request = {
-                        escape_room_id: escape_room.id
+                        escape_room_id: clue.escape_room,
+                        participation_id: participation.id,
                     }
-                
+            
                     await api
-                        .post(`${endpoint}/${clue_id}`)
+                        .post(`${endpoint}/${clue.id + 1}`)
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(404)
                 })
                 test('Non existing clue: invalid escape room id', async () => {
-                    const clue_id = clue.id
                     const request = {
-                        escape_room_id: escape_room.id + 1
+                        escape_room_id: clue.escape_room + 1,
+                        participation_id: participation.id,
                     }
-                
+            
                     await api
-                        .post(`${endpoint}/${clue_id}`)
+                        .post(`${endpoint}/${clue.id}`)
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(404)
@@ -335,7 +377,9 @@ describe('escape room participant api', () => {
                 afterAll(async () => {
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
+                    await postgres.query('DELETE FROM usersparticipations')
                     await postgres.query('DELETE FROM clues')
+                    await postgres.query('DELETE FROM participations')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
                     await postgres.query('DELETE FROM cities')
@@ -364,7 +408,8 @@ describe('escape room participant api', () => {
             test('Without clues inserted', async () => {
                 const request = {
                     clues_ids: [],
-                    escape_room_id: -1
+                    escape_room_id: -1,
+                    participation_id: -1
                 }
         
                 await api
@@ -374,6 +419,7 @@ describe('escape room participant api', () => {
                     .expect(404)
             })
             describe('With clues inserted', () => {
+                const now = new Date()
                 let escape_room = {
                     id: -1,
                     title: 'test',
@@ -390,6 +436,24 @@ describe('escape room participant api', () => {
                         city: 'cordoba',
                         country: 'españa'
                     }
+                }
+                let participation = {
+                    id: -1,
+                    escape_room: escape_room,
+                    start_date: now,
+                    end_date: new Date(
+                        now.getFullYear(),
+                        now.getMonth(),
+                        now.getDate(),
+                        now.getHours() + 3,
+                        now.getMinutes(),
+                        now.getSeconds()),
+                    points: 0
+                }
+                let participant = {
+                    email: 'test@test.es',
+                    username: 'test',
+                    password: 'test',
                 }
                 let clues = [
                     {
@@ -422,6 +486,7 @@ describe('escape room participant api', () => {
                     await postgres.end()
         
                     escape_room.id = response.rows[0].id
+                    participation.escape_room = escape_room
         
                     for (let i = 0 ; i < clues.length ; i++){
                         clues[i].escape_room = escape_room.id
@@ -435,12 +500,34 @@ describe('escape room participant api', () => {
         
                     for (let i = 0 ; i < clues.length ; i++){
                         clues[i].id = c_response.rows[i].id
-                    }            
+                    }           
+                    
+                    const participations = new ParticipationsSql(PostgresSqlConfig)
+
+                    await participations.save(ParticipationDataMapper.toModel(participation))
+        
+                    const postgres_3 = new Client(PostgresSqlConfig)
+                    await postgres_3.connect()
+                    const p_response = await postgres_3.query('SELECT * FROM participations WHERE escape_room = $1', [escape_room.id])
+                    await postgres_3.end()
+        
+                    participation.id = p_response.rows[0].id
+        
+                    await api
+                        .post(`${base_endpoint}/register`)
+                        .set('Authorization', participant_token)
+                        .send({
+                            escape_room_id: escape_room.id,
+                            participation_id: participation.id,
+                            user_email: participantData.email
+                        })
+                        .expect(200)
                 })
-                test('Existing clue', async () => {
+                test('Existing clue', async () => {            
                     const request = {
                         clues_ids: [],
-                        escape_room_id: escape_room.id
+                        escape_room_id: escape_room.id,
+                        participation_id: participation.id,
                     }
             
                     const response = await api
@@ -448,12 +535,14 @@ describe('escape room participant api', () => {
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(200)
+            
                     expect(response.body.id).toBe(clues[0].id)
                 })
                 test('With the first clue known', async () => {
                     const request = {
                         clues_ids: [clues[0].id],
-                        escape_room_id: escape_room.id
+                        escape_room_id: escape_room.id,
+                        participation_id: participation.id,
                     }
             
                     const response = await api
@@ -461,13 +550,14 @@ describe('escape room participant api', () => {
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(200)
-
+            
                     expect(response.body.id).toBe(clues[1].id)
                 })
                 test('With the second clue known', async () => {
                     const request = {
                         clues_ids: [clues[1].id],
-                        escape_room_id: escape_room.id
+                        escape_room_id: escape_room.id,
+                        participation_id: participation.id,
                     }
             
                     const response = await api
@@ -475,13 +565,14 @@ describe('escape room participant api', () => {
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(200)
-
+            
                     expect(response.body.id).toBe(clues[0].id)
                 })
                 test('With two clues known', async () => {
                     const request = {
                         clues_ids: [clues[0].id, clues[1].id],
-                        escape_room_id: escape_room.id
+                        escape_room_id: escape_room.id,
+                        participation_id: participation.id,
                     }
             
                     const response = await api
@@ -489,13 +580,14 @@ describe('escape room participant api', () => {
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(200)
-
+            
                     expect(response.body.id).toBe(clues[2].id)
                 })
                 test('With all clues known', async () => {
                     const request = {
                         clues_ids: [clues[0].id, clues[1].id, clues[2].id],
-                        escape_room_id: escape_room.id
+                        escape_room_id: escape_room.id,
+                        participation_id: participation.id,
                     }
             
                     await api
@@ -506,8 +598,9 @@ describe('escape room participant api', () => {
                 })
                 test('invalid escape room id', async () => {
                     const request = {
-                        clues_ids: [],
-                        escape_room_id: escape_room.id + 1
+                        clues_ids: [clues[0].id],
+                        escape_room_id: escape_room.id + 1,
+                        participation_id: participation.id,
                     }
             
                     await api
@@ -519,7 +612,9 @@ describe('escape room participant api', () => {
                 afterAll(async () => {
                     const postgres = new Client(PostgresSqlConfig)
                     await postgres.connect()
+                    await postgres.query('DELETE FROM usersparticipations')
                     await postgres.query('DELETE FROM clues')
+                    await postgres.query('DELETE FROM participations')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
                     await postgres.query('DELETE FROM cities')
@@ -551,7 +646,6 @@ describe('escape room participant api', () => {
                     participation_id: 0,
                     solution: ''
                 }
-                
                 await api
                     .post(endpoint)
                     .set('Authorization', participant_token)
@@ -565,7 +659,7 @@ describe('escape room participant api', () => {
                 
                 start_date.setHours(start_date.getHours() - 2)
                 end_date.setHours(end_date.getHours() - 1)
-            
+        
                 let participation_data = {
                     id: 1, 
                     escape_room: {
@@ -591,10 +685,10 @@ describe('escape room participant api', () => {
                 }
                 beforeAll(async () => {
                     const postgres = new Client(PostgresSqlConfig)
-            
+        
                     const escaperooms = new EscapeRoomsSql(PostgresSqlConfig)
                     const participations = new ParticipationsSql(PostgresSqlConfig)
-            
+        
                     await escaperooms.save(EscapeRoomDataMapper.toModel(participation_data.escape_room))
                     await postgres.connect()
                     const escaperoom_id = await postgres.query('SELECT id FROM escaperooms')
@@ -604,6 +698,16 @@ describe('escape room participant api', () => {
                     const participation_id = await postgres.query('SELECT id FROM participations')
                     participation_data.id = participation_id.rows[0].id
                     await postgres.end()
+        
+                    await api
+                        .post(`${base_endpoint}/register`)
+                        .set('Authorization', participant_token)
+                        .send({
+                            escape_room_id: participation_data.escape_room.id,
+                            participation_id: participation_data.id,
+                            user_email: participantData.email
+                        })
+                        .expect(200)
                 })
                 test('participation ended test', async () => {
                     const request = {
@@ -611,7 +715,6 @@ describe('escape room participant api', () => {
                         participation_id: participation_data.id,
                         solution: ''
                     }
-                    
                     await api
                         .post(endpoint)
                         .set('Authorization', participant_token)
@@ -622,6 +725,8 @@ describe('escape room participant api', () => {
                     const postgres = new Client(PostgresSqlConfig)
                 
                     await postgres.connect()
+                    await postgres.query('DELETE FROM usersparticipations')
+                    await postgres.query('DELETE FROM clues')
                     await postgres.query('DELETE FROM participations')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
@@ -637,7 +742,7 @@ describe('escape room participant api', () => {
                 
                 start_date.setHours(start_date.getHours() + 1)
                 end_date.setHours(end_date.getHours() + 2)
-            
+        
                 let participation_data = {
                     id: 1, 
                     escape_room: {
@@ -663,10 +768,10 @@ describe('escape room participant api', () => {
                 }
                 beforeAll(async () => {
                     const postgres = new Client(PostgresSqlConfig)
-            
+        
                     const escaperooms = new EscapeRoomsSql(PostgresSqlConfig)
                     const participations = new ParticipationsSql(PostgresSqlConfig)
-            
+        
                     await escaperooms.save(EscapeRoomDataMapper.toModel(participation_data.escape_room))
                     await postgres.connect()
                     const escaperoom_id = await postgres.query('SELECT id FROM escaperooms')
@@ -676,6 +781,16 @@ describe('escape room participant api', () => {
                     const participation_id = await postgres.query('SELECT id FROM participations')
                     participation_data.id = participation_id.rows[0].id
                     await postgres.end()
+        
+                    await api
+                        .post(`${base_endpoint}/register`)
+                        .set('Authorization', participant_token)
+                        .send({
+                            escape_room_id: participation_data.escape_room.id,
+                            participation_id: participation_data.id,
+                            user_email: participantData.email
+                        })
+                        .expect(200) 
                 })
                 test('participation not started yet test', async () => {
                     const request = {
@@ -683,7 +798,6 @@ describe('escape room participant api', () => {
                         participation_id: participation_data.id,
                         solution: ''
                     }
-                    
                     await api
                         .post(endpoint)
                         .set('Authorization', participant_token)
@@ -694,6 +808,8 @@ describe('escape room participant api', () => {
                     const postgres = new Client(PostgresSqlConfig)
                 
                     await postgres.connect()
+                    await postgres.query('DELETE FROM usersparticipations')
+                    await postgres.query('DELETE FROM clues')
                     await postgres.query('DELETE FROM participations')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
@@ -709,7 +825,7 @@ describe('escape room participant api', () => {
                 
                 start_date.setHours(start_date.getHours() - 2)
                 end_date.setHours(end_date.getHours() + 2)
-            
+        
                 let participation_data = {
                     id: 1, 
                     escape_room: {
@@ -735,10 +851,10 @@ describe('escape room participant api', () => {
                 }
                 beforeAll(async () => {
                     const postgres = new Client(PostgresSqlConfig)
-            
+        
                     const escaperooms = new EscapeRoomsSql(PostgresSqlConfig)
                     const participations = new ParticipationsSql(PostgresSqlConfig)
-            
+        
                     await escaperooms.save(EscapeRoomDataMapper.toModel(participation_data.escape_room))
                     await postgres.connect()
                     const escaperoom_id = await postgres.query('SELECT id FROM escaperooms')
@@ -748,14 +864,25 @@ describe('escape room participant api', () => {
                     const participation_id = await postgres.query('SELECT id FROM participations')
                     participation_data.id = participation_id.rows[0].id
                     await postgres.end()
+        
+                    await api
+                        .post(`${base_endpoint}/register`)
+                        .set('Authorization', participant_token)
+                        .send({
+                            escape_room_id: participation_data.escape_room.id,
+                            participation_id: participation_data.id,
+                            user_email: participantData.email
+                        })
+                        .expect(200) 
                 })
                 test('not valid solution test', async () => {
+                    const solution = participation_data.escape_room.solution + 's'
+        
                     const request = {
                         escape_room_id: participation_data.escape_room.id,
                         participation_id: participation_data.id,
-                        solution: participation_data.escape_room.solution + 's'
+                        solution: solution
                     }
-                    
                     await api
                         .post(endpoint)
                         .set('Authorization', participant_token)
@@ -763,35 +890,55 @@ describe('escape room participant api', () => {
                         .expect(400)
                 })
                 test('valid solution', async () => {
+                    const solution = participation_data.escape_room.solution
+        
                     const request = {
                         escape_room_id: participation_data.escape_room.id,
                         participation_id: participation_data.id,
-                        solution: participation_data.escape_room.solution
+                        solution: solution
                     }
-                    
-                    await api
+                    const response = await api
                         .post(endpoint)
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(200)
+                    
+                    const postgres = new Client(PostgresSqlConfig)
+                
+                    await postgres.connect()
+                    const points = await postgres.query('SELECT points FROM participations WHERE id = $1 AND escape_room = $2', [participation_data.id, participation_data.escape_room.id])
+                    await postgres.end()
+        
+                    expect(points.rows[0].points).toBe(response.body.points)
                 })
                 test('valid solution: upper case', async () => {
+                    const solution = participation_data.escape_room.solution.toUpperCase()
+        
                     const request = {
                         escape_room_id: participation_data.escape_room.id,
                         participation_id: participation_data.id,
-                        solution: participation_data.escape_room.solution.toUpperCase()
+                        solution: solution
                     }
-                    
-                    await api
+                    const response = await api
                         .post(endpoint)
                         .set('Authorization', participant_token)
                         .send(request)
                         .expect(200)
+        
+                    const postgres = new Client(PostgresSqlConfig)
+                
+                    await postgres.connect()
+                    const points = await postgres.query('SELECT points FROM participations WHERE id = $1 AND escape_room = $2', [participation_data.id, participation_data.escape_room.id])
+                    await postgres.end()
+        
+                    expect(points.rows[0].points).toBe(response.body.points)
                 })
                 afterAll(async () => {
                     const postgres = new Client(PostgresSqlConfig)
                 
                     await postgres.connect()
+                    await postgres.query('DELETE FROM usersparticipations')
+                    await postgres.query('DELETE FROM clues')
                     await postgres.query('DELETE FROM participations')
                     await postgres.query('DELETE FROM escaperooms')
                     await postgres.query('DELETE FROM locations')
@@ -801,5 +948,12 @@ describe('escape room participant api', () => {
                 })
             })
         })
+    })
+    afterAll(async () => {
+        const postgres = new Client(PostgresSqlConfig)
+        await postgres.connect()
+        await postgres.query('DELETE FROM userssessions')
+        await postgres.query('DELETE FROM users')
+        await postgres.end()
     })
 })

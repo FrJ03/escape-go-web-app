@@ -7,6 +7,7 @@ const gameRouter = express.Router();
 gameRouter.post('/register', async (req, res) => {
     if(req.body.user_email === undefined || req.body.escape_room_id === undefined || req.body.participation_id === undefined){
         res.sendStatus(400)
+        return;
     }
 
     const request = {
@@ -116,7 +117,6 @@ gameRouter.post('/clue/:id', async (req, res) => {
         }
     }
 
-    
 })
 
 export {gameRouter}
