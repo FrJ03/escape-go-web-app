@@ -6,6 +6,7 @@ import { User } from '../domain/model/user.entity';
 import bcrypt from 'bcrypt';
 import { SessionsSql } from '../../users/infrastructure/services/sessions-sql.repository';
 import { SALT } from '../../commons/utils/config';
+import { Participant } from '../domain/model/participant.entity';
 
 export class SignUpUserUseCase{
 
@@ -40,7 +41,7 @@ export class SignUpUserUseCase{
 
                     const hashedPassword = await bcrypt.hash(command.password, SALT); //encriptamos la contraseña antes de guardarla junto con los datos del usuario en la BD
 
-                    const new_user = new User(0, email, command.username, hashedPassword);
+                    const new_user = new Participant(0, email, command.username, hashedPassword);
 
                     //lo registramos
 
