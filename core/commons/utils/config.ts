@@ -4,6 +4,7 @@ dotenv.config()
 
 const ENV = process.env.ENV || 'prod'
 const PORT = process.env.PORT || '3000'
+const DB_PASSWORD = process.env.DB_PASSWORD || ''
 const POSTGRES_URL = 
     (ENV === 'prod') ? 
         process.env.PROD_POSTGRES_URL || ''
@@ -25,4 +26,4 @@ const SALT = s
 const PASS = process.env.PASS || 'password'
 const LAUNCH_DATE = process.env.LAUNCH_DATE || '2025-01-01'
 
-export { ENV, PORT, POSTGRES_URL, SSL, SALT, PASS, LAUNCH_DATE }
+export { ENV, PORT, POSTGRES_URL, SSL, SALT, PASS, LAUNCH_DATE, DB_PASSWORD }

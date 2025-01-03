@@ -26,7 +26,6 @@ export class SignUpUserUseCase{
                 const posible_user = await this.users.findUserByEmail(email) //buscamos al usuario por mail
                                 
                 if(posible_user != undefined){ //si se cumple quiere decir que el usuario ya existe en la BD
-                    console.log("Usuario ya existe")
 
                     return{
 
@@ -45,8 +44,9 @@ export class SignUpUserUseCase{
 
                     //lo registramos
 
-                    if(await this.users.save(new_user)){
-                        console.log("Usuario registrado")
+                    const response = await this.users.save(new_user)
+
+                    if(response){
                         return{
 
                             code: 200
@@ -55,26 +55,23 @@ export class SignUpUserUseCase{
 
                     }
                     else{
-                        console.log("Error al registrar usuario")
 
                         return{
 
-                            code: 400
+                            code: 403
 
                         } as SignUpResponse
 
                     }
                 }
             }catch (error){
-                console.log("Error al registrar usuario 2")
                 return{
-                    code: 400
+                    code: 402
                 } as SignUpResponse
             }
         }else{
-            console.log("Error al registrar usuario 3")
             return{
-                code: 400
+                code: 401
             } as SignUpResponse
 
         }

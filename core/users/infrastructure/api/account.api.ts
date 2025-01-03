@@ -52,7 +52,6 @@ accountRouter.post('/signup', async (req, res) => { //REGISTRO -- solo se regist
         }
     }
     else{
-
         res.sendStatus(400); //algunos datos son undefined o el correo no es valido
     }
 
