@@ -74,7 +74,6 @@ export class SolveEscapeRoomUseCase{
 
     _calc_points(now: number, start: number, end: number, difficulty: number): number{
         const duration = end - start
-
-        return Math.trunc((now - start) / duration) * 50 * difficulty
+        return Math.trunc((now - start) / duration * 50 * difficulty)
     }
 }
