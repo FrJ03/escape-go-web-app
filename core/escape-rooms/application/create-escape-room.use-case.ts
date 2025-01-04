@@ -31,8 +31,8 @@ export class CreateEscapeRoomUseCase{
         for (let i = 0 ; i < command.clues.length; i++){
             clues.push(new Clue(
                 1,
-                clues[i].title,
-                clues[i].info
+                command.clues[i].title,
+                command.clues[i].info
             ))
         }
 
