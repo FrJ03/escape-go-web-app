@@ -87,6 +87,33 @@ accountRouter.post('/signin', async (req, res) => { //FUNCIONALIDAD
 
 });
 
+accountRouter.post('/signin/admin', async (req, res) => { //FUNCIONALIDAD
+
+    //res.send('Datos recibidos: ' + posiblemail + ', ' + username + ', ' + password);
+
+    if(req.body.password != undefined && Email.esMail(req.body.email) == true){ //comprobamos que los datos esten correctos
+
+        //res.send('Datos recibidos: ' + req.body.email + ', ' + req.body.username + ', ' + req.body.password);
+
+        const userRequest = LoginRequest.with({
+
+            email: req.body.email,
+            password: req.body.password
+
+        })
+
+        const userResponse: LoginResponse = await container.loginAdmin.with(userRequest);
+
+        res.status(userResponse.code || 200).send(userResponse);
+
+    }
+    else{
+
+        res.sendStatus(400); //error en algun dato o correo no valido
+
+    }
+
+});
 //DELETE /account --> elimina la cuenta
 
 accountRouter.post('/delete', userAuthentication, async (req, res) => { //FUNCIONALIDAD
