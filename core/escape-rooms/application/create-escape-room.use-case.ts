@@ -28,13 +28,13 @@ export class CreateEscapeRoomUseCase{
         )
         let clues: Array<Clue> = []
 
-        command.clues.forEach(clue => {
+        for (let i = 0 ; i < command.clues.length; i++){
             clues.push(new Clue(
                 1,
-                clue.title,
-                clue.info
+                clues[i].title,
+                clues[i].info
             ))
-        })
+        }
 
         const escape_room = new EscapeRoom(
             1,
