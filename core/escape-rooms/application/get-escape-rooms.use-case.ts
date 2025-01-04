@@ -37,6 +37,7 @@ export class GetEscapeRoomsUseCase{
                 } as GetEscapeRoomsResponse
             }
         } catch (error) {
+            console.log(error)
             return {
                 escape_rooms: [],
                 code: 500
