@@ -13,9 +13,7 @@ export class DMSData{
     ){}
 
     public static create(dms_data: string): DMSData | undefined{
-        console.log(dms_data.length)
-        if(dms_data.length < 11){
-            console.log('0')
+        if(dms_data.length < 9){
             return undefined
         }
 
@@ -24,7 +22,6 @@ export class DMSData{
         console.log(quotes)
 
         if(!dms_data.includes('º ') || !dms_data.includes('\'') || !dms_data.includes('\" ')){
-            console.log('1')
             return undefined
         }
 
@@ -47,7 +44,6 @@ export class DMSData{
             card_dir = CardinalDirections.South
         }
         else{
-            console.log('2')
             return undefined
         }
 
