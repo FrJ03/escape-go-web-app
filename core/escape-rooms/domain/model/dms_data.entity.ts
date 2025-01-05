@@ -13,6 +13,7 @@ export class DMSData{
     ){}
 
     public static create(dms_data: string): DMSData | undefined{
+        console.log(dms_data.length)
         if(dms_data.length < 11){
             console.log('0')
             return undefined
