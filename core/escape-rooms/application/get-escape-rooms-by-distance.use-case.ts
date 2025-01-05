@@ -14,6 +14,9 @@ export class GetEscapeRoomsByDistanceUseCase{
         console.error(command.coordinates)
 
         const coordinates = Coordinate.create(command.coordinates)
+
+        console.error(coordinates)
+
         if(coordinates === undefined){
             return {
                 escape_rooms: [],
