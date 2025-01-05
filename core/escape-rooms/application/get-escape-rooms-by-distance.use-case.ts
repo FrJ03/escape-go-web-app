@@ -11,11 +11,7 @@ export class GetEscapeRoomsByDistanceUseCase{
     constructor(private readonly escape_rooms: EscapeRooms){}
 
     async with(command: GetEscapeRoomsByDistanceRequest): Promise<GetEscapeRoomsByDistanceResponse>{
-        console.error(command.coordinates)
-
         const coordinates = Coordinate.create(command.coordinates)
-
-        console.error(coordinates)
 
         if(coordinates === undefined){
             return {

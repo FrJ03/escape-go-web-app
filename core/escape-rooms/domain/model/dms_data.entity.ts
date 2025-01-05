@@ -1,4 +1,3 @@
-import utf8 from "utf8";
 import { CardinalDirections } from "./cardinal_directions.entity";
 import { Degree } from "./value-objects/degree.entity";
 import { Minute } from "./value-objects/minute.entity";
@@ -17,18 +16,14 @@ export class DMSData{
             return undefined
         }
 
-        const quotes = utf8.decode("\x22")
-
-        console.log(quotes)
-
         if(!dms_data.includes('º ') || !dms_data.includes('\'') || !dms_data.includes('\" ')){
             return undefined
         }
 
         const degree_str = dms_data.substring(0, dms_data.indexOf('º'))
         const minute_str = dms_data.substring(dms_data.indexOf('º') + 2, dms_data.indexOf('\''))
-        const second_str = dms_data.substring(dms_data.indexOf('\'') + 1, dms_data.indexOf(quotes))
-        const card_dir_letter = dms_data.substring(dms_data.indexOf(quotes) + 2)
+        const second_str = dms_data.substring(dms_data.indexOf('\'') + 1, dms_data.indexOf("\""))
+        const card_dir_letter = dms_data.substring(dms_data.indexOf("\"") + 2)
         let card_dir
 
         if(card_dir_letter === 'N'){
