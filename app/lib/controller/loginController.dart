@@ -37,13 +37,7 @@ class LoginController {
           // Almacena el token de manera segura
           await saveToken(token);
           _showSuccessDialog(context, 'Correcto', 'Usuario logueado correctamente.');
-          if(role=='participant'){
-          // Navega a la pantalla principal
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => PanelParticipantScreen()),
-          );}
-          else if(role=='admin'){
+          if(role=='admin'){
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => PanelScreen()),
@@ -65,7 +59,7 @@ class LoginController {
   }
 
   Future<http.Response> _loginWithServer(String email, String password) async {
-    final url = Uri.parse('$baseUrl/account/signin'); // Ruta para el login
+    final url = Uri.parse('$baseUrl/account/signin/admin'); // Ruta para el login
     final headers = <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     };
