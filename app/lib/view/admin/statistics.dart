@@ -56,7 +56,7 @@ class StatisticsScreen extends StatelessWidget {
                     ); // Muestra el error si ocurrió.
                   } else if (snapshot.hasData) {
                     return Text(
-                      snapshot.data.toString(),
+                      '${snapshot.data.toString()}%',
                       style: TextStyle(fontSize: 18),
                     ); // Muestra el resultado.
                   } else {
@@ -74,7 +74,7 @@ class StatisticsScreen extends StatelessWidget {
             ),
             Center(
               child: FutureBuilder<double>(
-                future: controller.getConversionRate(),
+                future: controller.getGrowthRate(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return CircularProgressIndicator(); // Muestra un spinner mientras esperas los datos.
@@ -85,7 +85,7 @@ class StatisticsScreen extends StatelessWidget {
                     ); // Muestra el error si ocurrió.
                   } else if (snapshot.hasData) {
                     return Text(
-                      snapshot.data.toString(),
+                      '${snapshot.data.toString()}%',
                       style: TextStyle(fontSize: 18),
                     ); // Muestra el resultado.
                   } else {
