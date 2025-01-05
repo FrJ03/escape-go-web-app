@@ -59,7 +59,7 @@ export class SignUpUserUseCase{
 
                         return{
 
-                            code: 403
+                            code: 400
 
                         } as SignUpResponse
 
@@ -67,12 +67,12 @@ export class SignUpUserUseCase{
                 }
             }catch (error){
                 return{
-                    code: 402
+                    code: 400
                 } as SignUpResponse
             }
         }else{
             return{
-                code: 401
+                code: 400
             } as SignUpResponse
 
         }
