@@ -44,7 +44,7 @@ class StatisticsScreen extends StatelessWidget {
               ),
             ),
             Center(
-              child: FutureBuilder<int>(
+              child: FutureBuilder<double>(
                 future: controller.getConversionRate(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -73,7 +73,7 @@ class StatisticsScreen extends StatelessWidget {
               ),
             ),
             Center(
-              child: FutureBuilder<int>(
+              child: FutureBuilder<double>(
                 future: controller.getConversionRate(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {

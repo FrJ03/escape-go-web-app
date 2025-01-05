@@ -5,7 +5,7 @@ import 'dart:convert';
 
 class StatisticsController {
   final String baseUrl = dotenv.env['BASEURL'] ?? 'NO BASEURL FOUND';
-  Future<int> getConversionRate() async {
+  Future<double> getConversionRate() async {
     try {
       final token = await _getToken(); // Recupera el token almacenado
       if (token == null) {
@@ -22,7 +22,7 @@ class StatisticsController {
         final json = jsonDecode(response.body);
 
         // Extrae el valor del campo 'rate' de la respuesta JSON
-        final int rate = json['rate'];
+        final double rate = json['rate'];
 
         // Convierte el valor a entero si lo necesitas
         return (rate * 100); // Ejemplo: convierte 0.5 a 50 (porcentaje)
@@ -34,7 +34,7 @@ class StatisticsController {
     }
   }
 
-  Future<int> getGrowthRate() async {
+  Future<double> getGrowthRate() async {
     try {
       final token = await _getToken(); // Recupera el token almacenado
       if (token == null) {
@@ -51,7 +51,7 @@ class StatisticsController {
         final json = jsonDecode(response.body);
 
         // Extrae el valor del campo 'rate' de la respuesta JSON
-        final int rate = json['rate'];
+        final double rate = json['rate'];
 
         // Convierte el valor a entero si lo necesitas
         return (rate * 100); // Ejemplo: convierte 0.5 a 50 (porcentaje)
