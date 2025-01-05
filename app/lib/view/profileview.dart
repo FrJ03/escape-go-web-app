@@ -69,13 +69,13 @@ class ProfileScreen extends StatelessWidget {
 					Center(child: Image.asset('lib/view/assets/perfil.png', height: 150)),
 					SizedBox(height: 30),
 					buildProfileDetail('Nombre de usuario:', user.username),
-					SizedBox(height: 30),
+					SizedBox(height: 15),
 					buildProfileDetail('Email:', user.email),
-					SizedBox(height: 30),
+					SizedBox(height: 15),
 					buildProfileDetail('Role:', user.role),
-					SizedBox(height: 30),
+					SizedBox(height: 15),
 					buildProfileDetail('Puntos:', user.points.toString()),
-					SizedBox(height: 100),
+					SizedBox(height: 30),
 					Center(
 						child: Column(
 							children: [
