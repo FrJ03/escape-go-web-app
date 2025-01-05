@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'widgets/widgets.dart';
-import 'registerview.dart';
 import '../controller/profileController.dart';
 import 'loginview.dart';
 void main() {

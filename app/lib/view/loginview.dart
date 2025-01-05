@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'widgets/widgets.dart';
-import 'registerview.dart';
 import '../controller/loginController.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -102,28 +101,7 @@ class LoginScreen extends StatelessWidget {
                 },
               ),
             ),
-            Center(
-              child:
-                Column(
-                  children:
-                  [
-                    Text('¿No tienes cuenta?',style: TextStyle(fontSize: 17),),
-                    InkWell(child:
-                    Text('Registrarse',style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold,decoration: TextDecoration.underline)),
-                        onTap: () {
-                        Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisterScreen()),
-                        );
-                        },
-                    ),
-
-
-                  ],
-                )
-            )
-
-
+            
           ],
         ),
       ),
