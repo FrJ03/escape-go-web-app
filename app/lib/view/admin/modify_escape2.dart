@@ -84,7 +84,7 @@ class _ModifyEscapeRoomScreenState extends State<ModifyEscapeRoomScreen> {
                       _showDialog('Error', 'El campo de historia está vacío.');
                     } else {
                       controller.clues.add({
-                        'name': controller.nameController.text.trim(),
+                        'title': controller.nameController.text.trim(),
                         'info': controller.storyController.text.trim(),
                       });
                       controller.nameController.clear();
@@ -102,7 +102,7 @@ class _ModifyEscapeRoomScreenState extends State<ModifyEscapeRoomScreen> {
               ...controller.clues.map((clue) {
                 return Card(
                   child: ListTile(
-                    title: Text(clue['name'] ?? 'Nombre no disponible'),
+                    title: Text(clue['title'] ?? 'Nombre no disponible'),
                     subtitle: Text(clue['info'] ?? 'Información no disponible'),
                   ),
                 );
