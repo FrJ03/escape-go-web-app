@@ -36,13 +36,15 @@ export class UpdateEscapeRoomUseCase {
                 await this.escape_rooms.deleteAllCluesByEscapeRoom(updatedEscapeRoom.id);
 
                 for (let i = 0 ; i < command.clues.length; i++) {
-                    await this.escape_rooms.saveClue(
+                    console.log(command.clues[i]);
+                    const res = await this.escape_rooms.saveClue(
                         new Clue(
                             1, command.clues[i].title,
                             command.clues[i].info
                         ),
                         updatedEscapeRoom.id
                     );
+                    console.log(res);
                 }
 
                 return {
@@ -55,6 +57,7 @@ export class UpdateEscapeRoomUseCase {
                 } as UpdateEscapeRoomResponse;
             }
         } catch (error) {
+            console.log(error);
             return {
                 code: 500,
             } as UpdateEscapeRoomResponse;
