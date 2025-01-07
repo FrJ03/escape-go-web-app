@@ -38741,7 +38741,7 @@ $0(){var s,r,q=this.b,p=q.r,o=B.d.e9(p.a.a),n=this.a
 if(o.length===0)n.aa7("Error","El campo de historia est\xe1 vac\xedo.")
 else{s=q.f
 r=t.N
-q.w.push(A.aj(["name",B.d.e9(s.a.a),"info",o],r,r))
+q.w.push(A.aj(["title",B.d.e9(s.a.a),"info",o],r,r))
 s.e_(B.ba)
 p.e_(B.ba)
 n.aa(new A.akb())}},
@@ -38750,7 +38750,7 @@ A.akb.prototype={
 $0(){},
 $S:0}
 A.akd.prototype={
-$1(a){var s,r=null,q=a.h(0,"name")
+$1(a){var s,r=null,q=a.h(0,"title")
 q=A.a_(q==null?"Nombre no disponible":q,r,r,r,r,r,r,r,r)
 s=a.h(0,"info")
 return new A.nC(new A.J3(q,A.a_(s==null?"Informaci\xf3n no disponible":s,r,r,r,r,r,r,r,r),r),r)},
