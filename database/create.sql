@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS Clues(
     id SERIAL,
     escape_room BIGINT,
     title VARCHAR(64),
-    info VARCHAR(128),
+    info VARCHAR(256),
     PRIMARY KEY (escape_room, id),
     FOREIGN KEY (escape_room) REFERENCES EscapeRooms(id)
 );

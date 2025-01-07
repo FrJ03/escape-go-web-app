@@ -16,7 +16,6 @@ export class UpdateEscapeRoomUseCase {
             } as UpdateEscapeRoomResponse;
         }
 
-        console.log(command.clues)
         // Crear la escape room con los datos actualizados
         const updatedEscapeRoom = new EscapeRoom(
             existingEscapeRoom.id,
@@ -36,7 +35,6 @@ export class UpdateEscapeRoomUseCase {
                 await this.escape_rooms.deleteAllCluesByEscapeRoom(updatedEscapeRoom.id);
 
                 for (let i = 0 ; i < command.clues.length; i++) {
-                    console.log(command.clues[i]);
                     const res = await this.escape_rooms.saveClue(
                         new Clue(
                             1, command.clues[i].title,
@@ -44,7 +42,6 @@ export class UpdateEscapeRoomUseCase {
                         ),
                         updatedEscapeRoom.id
                     );
-                    console.log(res);
                 }
 
                 return {
