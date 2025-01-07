@@ -16,7 +16,7 @@ export class UpdateEscapeRoomUseCase {
             } as UpdateEscapeRoomResponse;
         }
 
-
+        console.log(command.clues)
         // Crear la escape room con los datos actualizados
         const updatedEscapeRoom = new EscapeRoom(
             existingEscapeRoom.id,
